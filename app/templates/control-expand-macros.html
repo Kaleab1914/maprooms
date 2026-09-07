@@ -32,6 +32,15 @@
         <legend class="legend-label">{{ pageText.opt_ts_raw.start_mon }}</legend>
         <div id="{{ tempRes }}-chart-raw-startmonth" style="width: 120px;"></div>
     </fieldset>
+    <!--  -->
+    <fieldset id="{{ tempRes }}-chart-raw-plot-type-cont" class="border border-secondary rounded-3 py-1" style="display: none;">
+        <legend class="legend-label">{{ pageText.opt_ts_raw_plot.label }}</legend>
+        <select id="{{ tempRes }}-chart-raw-plot-type" class="form-select {{ tempRes }}-raw-select2" style="width: 150px;">
+            {% for key, value in pageText.opt_ts_raw_plot.select.items() %}
+            <option value="{{key}}">{{value}}</option>
+            {% endfor %}
+        </select>
+    </fieldset>
 </div>
 {% endmacro %}
 <!--  -->

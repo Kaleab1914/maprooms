@@ -1,9 +1,60 @@
+
+function alwaysFloatAxis(axisName) {
+    return axis => (axis === axisName ? 'float' : null);
+}
+
+
+function parameterDrivenAxis(axisName, variableSelId, parametersSelId) {
+    return function(axis) {
+        if (axis !== axisName) {
+            return null;
+        }
+        if (!parametersSelId) {
+            return 'float';
+        }
+        const variable = $(`#${variableSelId}`).val();
+        const paramKey = $(`#${parametersSelId}`).val();
+        const param = (typeof PARAMS_LIST !== 'undefined') && PARAMS_LIST[variable]?.[paramKey];
+        return param?.dtype === 'integer' ? { kind: 'integer', unit: param.unit } : 'float';
+    };
+}
+
+function yearIndexAxis(axisName) {
+    return axis => (axis === axisName ? 'year' : null);
+}
+
+
+function combineAxisResolvers(...resolvers) {
+    return axis => {
+        for (const resolver of resolvers) {
+            const kind = resolver(axis);
+            if (kind) {
+                return kind;
+            }
+        }
+        return null;
+    };
+}
+
+
+function makeCaseKeyResolver(...selectIds) {
+    return () => selectIds.map(id => $(`#${id}`).val() ?? '').join('|');
+}
+
 function setAnalysisExpandModalRaw(tempRes, contID) {
     showModalDialog(`modal-expand-${contID}`);
     expandModalCharts(
         contID,
         expand_analysis_charts_rawdata,
-        tempRes
+        tempRes,
+        '',
+        undefined,
+        alwaysFloatAxis('yaxis'),
+        makeCaseKeyResolver(
+            `${tempRes}-chart-raw-variable`,
+            `${tempRes}-chart-raw-series`,
+            `${tempRes}-chart-raw-plot-type`
+        )
     );
     purgePlotlyChartExpandModal(contID);
 
@@ -21,8 +72,10 @@ function setAnalysisExpandModalRaw(tempRes, contID) {
     const updateRawSeriesControls = () => {
         if ($(`#${tempRes}-chart-raw-series`).val() === 'one') {
             $(`#${tempRes}-chart-raw-startmonth-list`).hide();
+            $(`#${tempRes}-chart-raw-plot-type-cont`).show();
         } else {
             $(`#${tempRes}-chart-raw-startmonth-list`).show();
+            $(`#${tempRes}-chart-raw-plot-type-cont`).hide();
         }
     };
     updateRawSeriesControls();
@@ -40,6 +93,14 @@ function setAnalysisExpandModalRaw(tempRes, contID) {
         .off('change.chartTsRaw')
         .on('change.chartTsRaw', function() {
             expand_analysis_charts_rawdata(contChart, tempRes);
+        });
+
+    $(`#${tempRes}-chart-raw-plot-type`)
+        .off('change.chartTsRaw')
+        .on('change.chartTsRaw', function() {
+            maproomDB.getData('ts_rawdata', function(data) {
+                expand_analysis_display_rawdata(data, contChart);
+            });
         });
 
     $(`#${tempRes}-chart-raw-startmonth-calendar`)
@@ -70,7 +131,15 @@ function setAnalysisExpandModalClim(tempRes, contID) {
     expandModalCharts(
         contID,
         expand_analysis_charts_climato,
-        tempRes
+        tempRes,
+        '',
+        undefined,
+        combineAxisResolvers(alwaysFloatAxis('yaxis'), alwaysFloatAxis('yaxis2')),
+        makeCaseKeyResolver(
+            `${tempRes}-chart-clim-variable`,
+            `${tempRes}-chart-clim-charts`
+        ),
+        ['year']
     );
     purgePlotlyChartExpandModal(contID);
 
@@ -120,6 +189,13 @@ function setAnalysisExpandModalClim(tempRes, contID) {
         });
 }
 
+
+const ANOM_DISALLOWED_TICK_UNITS = {
+    monthly: ['day', 'week'],
+    dekadal: ['day'],
+    seasonal: ['day', 'week', 'month']
+};
+
 function setAnalysisExpandModalAnom(tempRes, contID) {
     showModalDialog(`modal-expand-${contID}`);
     expandModalCharts(
@@ -127,7 +203,13 @@ function setAnalysisExpandModalAnom(tempRes, contID) {
         expand_analysis_charts_anomaly,
         tempRes,
         '',
-        anomalySignColorsModule
+        anomalySignColorsModule,
+        alwaysFloatAxis('yaxis'),
+        makeCaseKeyResolver(
+            `${tempRes}-anom-variable`,
+            `${tempRes}-chart-anom-type`
+        ),
+        ANOM_DISALLOWED_TICK_UNITS[tempRes] || []
     );
     purgePlotlyChartExpandModal(contID);
 
@@ -179,7 +261,7 @@ function setAnalysisExpandModalAnom(tempRes, contID) {
             expand_analysis_charts_anomaly(contChart, tempRes);
         });
 
-    // 
+    //
     $(`#${tempRes}-chart-anom-type`)
         .off('change.chartTsAnom')
         .on('change.chartTsAnom', function() {
@@ -231,7 +313,13 @@ function setAnalysisExpandModalDailyAnom(tempRes, contID) {
         expand_analysis_charts_anomaly,
         tempRes,
         '',
-        anomalySignColorsModule
+        anomalySignColorsModule,
+        alwaysFloatAxis('yaxis'),
+        makeCaseKeyResolver(
+            `${tempRes}-anom-variable`,
+            `${tempRes}-anom-parameters`,
+            `${tempRes}-chart-anom-type`
+        )
     );
     purgePlotlyChartExpandModal(contID);
 
@@ -255,11 +343,11 @@ function setAnalysisExpandModalDailyAnom(tempRes, contID) {
                 );
                 setAnalysisParamsDefDaily(tempRes, 'anom');
             }
-            // 
+            //
             expand_analysis_charts_anomaly(contChart, tempRes);
         });
 
-    // 
+    //
     $(`#${tempRes}-anom-parameters`)
         .off(`change.chartTsAnoma`)
         .on(`change.chartTsAnoma`, function() {
@@ -343,11 +431,26 @@ function setProbaPlotContainer(data, container) {
 
 function setAnalysisExpandModalProba(tempRes, contID) {
     showModalDialog(`modal-expand-${contID}`);
+    const probaCaseKeySelectors = [`${tempRes}-proba-variable`];
+    if (tempRes === 'daily') {
+        probaCaseKeySelectors.push(`${tempRes}-proba-parameters`);
+    }
+    probaCaseKeySelectors.push(`${tempRes}-chart-proba-plot-type`);
     expandModalCharts(
         contID,
         expand_analysis_charts_proba,
         tempRes,
-        '-plot'
+        '-plot',
+        undefined,
+        combineAxisResolvers(
+            alwaysFloatAxis('yaxis'),
+            parameterDrivenAxis(
+                'xaxis',
+                `${tempRes}-proba-variable`,
+                tempRes === 'daily' ? `${tempRes}-proba-parameters` : null
+            )
+        ),
+        makeCaseKeyResolver(...probaCaseKeySelectors)
     );
     purgePlotlyChartExpandModal(contID);
 
@@ -363,7 +466,7 @@ function setAnalysisExpandModalProba(tempRes, contID) {
         );
     }
 
-    // 
+    //
     const contChart = `container-chart-${contID}`;
 
     $(`#${tempRes}-proba-variable`)
@@ -380,11 +483,11 @@ function setAnalysisExpandModalProba(tempRes, contID) {
                 }
                 setAnalysisParamsDefDaily(tempRes, 'proba');
             }
-            // 
+            //
             expand_analysis_charts_proba(contChart, tempRes);
         });
 
-    // 
+    //
     if (tempRes === 'daily') {
         $(`#${tempRes}-proba-parameters`)
             .off(`change.chartTsProba`)
@@ -462,10 +565,26 @@ function setAnalysisExpandModalProba(tempRes, contID) {
 
 function setAnalysisExpandModalSeason(tempRes, contID) {
     showModalDialog(`modal-expand-${contID}`);
+    const seasonCaseKeySelectors = [`${tempRes}-tseries-variable`];
+    if (tempRes === 'daily') {
+        seasonCaseKeySelectors.push(`${tempRes}-tseries-parameters`);
+    }
+    seasonCaseKeySelectors.push(`${tempRes}-chart-season-plot-type`);
     expandModalCharts(
         contID,
         expand_analysis_charts_season,
-        tempRes
+        tempRes,
+        '',
+        undefined,
+        combineAxisResolvers(
+            yearIndexAxis('xaxis'),
+            parameterDrivenAxis(
+                'yaxis',
+                `${tempRes}-tseries-variable`,
+                tempRes === 'daily' ? `${tempRes}-tseries-parameters` : null
+            )
+        ),
+        makeCaseKeyResolver(...seasonCaseKeySelectors)
     );
     purgePlotlyChartExpandModal(contID);
 
@@ -481,7 +600,7 @@ function setAnalysisExpandModalSeason(tempRes, contID) {
         );
     }
 
-    // 
+    //
     const contChart = `container-chart-${contID}`;
 
     $(`#${tempRes}-tseries-variable`)
@@ -498,11 +617,11 @@ function setAnalysisExpandModalSeason(tempRes, contID) {
                 }
                 setAnalysisParamsDefDaily(tempRes, 'tseries');
             }
-            // 
+            //
             expand_analysis_charts_season(contChart, tempRes);
         });
 
-    // 
+    //
     if (tempRes === 'daily') {
         $(`#${tempRes}-tseries-parameters`)
             .off(`change.chartTsSeason`)
@@ -543,7 +662,21 @@ function setAnalysisExpandModalEnso(tempRes, contID) {
     expandModalCharts(
         contID,
         expand_analysis_charts_enso,
-        tempRes
+        tempRes,
+        '',
+        undefined,
+        alwaysFloatAxis('yaxis'),
+        makeCaseKeyResolver(
+            `${tempRes}-enso-indices`,
+            `${tempRes}-anom-tempres`,
+            `${tempRes}-anom-sstweek`,
+            `${tempRes}-anom-sstmonth`,
+            `${tempRes}-oni-indices`,
+            `${tempRes}-iod-sst`,
+            `${tempRes}-anom-ninotype`,
+            `${tempRes}-anom-ninoregion`,
+            `${tempRes}-disp-image-enso`
+        )
     );
 
     const contChart = `container-chart-${contID}`;
@@ -658,12 +791,28 @@ function setAnalysisExpandModalTelecon(tempRes, contID, cType) {
         'tseries': expand_analysis_telecon_tseries,
         'proba': expand_analysis_telecon_proba
     };
+    const axisKindResolvers = {
+        tseries: combineAxisResolvers(yearIndexAxis('xaxis'), alwaysFloatAxis('yaxis')),
+        proba: combineAxisResolvers(alwaysFloatAxis('xaxis'), alwaysFloatAxis('yaxis'))
+    };
+    const colorsModules = {
+        tseries: telecomTercileBarColorsModule,
+        proba: undefined
+    };
 
     showModalDialog(`modal-expand-${contID}`);
     expandModalCharts(
         contID,
         expandFunction[cType],
-        tempRes
+        tempRes,
+        '',
+        colorsModules[cType],
+        axisKindResolvers[cType],
+        makeCaseKeyResolver(
+            `${tempRes}-${cType}-variable`,
+            `${tempRes}-${cType}-clim-variable`,
+            `${tempRes}-${cType}-index-telecon`
+        )
     );
     purgePlotlyChartExpandModal(contID);
 
@@ -730,18 +879,26 @@ function setRainySeasonExpandModal(tempRes, chartType, contID) {
     };
 
     showModalDialog(`modal-expand-${contID}`);
+    const prefixID = `${tempRes}-${chartType}`;
+    const caseKeySelectors = [`${prefixID}-variable`];
+    if (chartType === 'series') {
+        caseKeySelectors.push(`${prefixID}-plot-type`);
+    }
+    const axisKindResolver = ['series', 'anom'].includes(chartType) ? yearIndexAxis('xaxis') : null;
     expandModalCharts(
         contID,
         expandFunction[chartType],
         tempRes,
         '',
-        colorsModule[chartType]
+        colorsModule[chartType],
+        axisKindResolver,
+        makeCaseKeyResolver(...caseKeySelectors)
     );
     purgePlotlyChartExpandModal(contID);
 
     const contChart = `container-chart-${contID}`;
-    const prefixID = `${tempRes}-${chartType}`;
 
+    
     setBoxDialog(
         `${prefixID}-rseason-def`,
         `${prefixID}-rseason-def-open`
@@ -790,7 +947,8 @@ function setCropSuitabilityExpandModal(tempRes, contID) {
         expand_agri_cropsuit_charts,
         tempRes,
         '',
-        categoricalMarkerColorsModule
+        categoricalMarkerColorsModule,
+        yearIndexAxis('xaxis')
     );
     purgePlotlyChartExpandModal(contID);
 

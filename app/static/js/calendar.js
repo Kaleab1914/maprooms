@@ -314,12 +314,17 @@ function setMonthsDaysCalendar(monthID, dayID, month0, day0, isStart) {
     const mon_id = $(`#${monthID}`);
     const day_id = $(`#${dayID}`);
 
-    for (let m = 0; m < months.length; m++) {
-        mon_id.append(
-            $('<option>')
-            .text(months[m])
-            .val(m + 1)
-        );
+   
+    const alreadyInitialized = mon_id.find('option').length > 0;
+
+    if (!alreadyInitialized) {
+        for (let m = 0; m < months.length; m++) {
+            mon_id.append(
+                $('<option>')
+                .text(months[m])
+                .val(m + 1)
+            );
+        }
     }
 
     mon_id
@@ -342,8 +347,10 @@ function setMonthsDaysCalendar(monthID, dayID, month0, day0, isStart) {
             day_id.val(v);
         });
 
-    mon_id.val(month0).trigger('change');
-    day_id.val(day0);
+    if (!alreadyInitialized) {
+        mon_id.val(month0).trigger('change');
+        day_id.val(day0);
+    }
 }
 
 function defineSeasonMonths(start, length, long = true) {
