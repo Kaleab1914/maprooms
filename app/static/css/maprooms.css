@@ -12,12 +12,108 @@ body {
     height: 100%;
 }
 
-.navbar-header img {
-    text-align: center;
-    max-width: 300px;
-    height: 40px;
-    padding: 0px;
-    margin-left: -5px;
+.navbar {
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.item-container {
+    margin-top: 0.35rem;
+}
+
+.navbar .container-fluid {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+}
+
+.navbar-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0.3rem 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    line-height: 1;
+}
+
+[data-bs-theme="dark"] .navbar-brand {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+[data-bs-theme="light"] .navbar-brand {
+    border-color: rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.navbar-brand img {
+    display: block;
+    max-height: 42px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.08));
+}
+
+.navbar-header > .navbar-brand + .navbar-brand,
+.navbar-header > .navbar-brand + .navbar-brand + .nav-link-path {
+    margin-left: 0.35rem;
+}
+
+#sei-logo {
+    max-width: 135px;
+    min-width: 90px;
+}
+
+.meteo-logo {
+    max-width: 220px;
+    min-width: 150px;
+}
+
+@media (max-width: 767.98px) {
+    .navbar-brand {
+        padding: 0.2rem 0.35rem;
+    }
+
+    #sei-logo {
+        max-width: 110px;
+        min-width: 75px;
+    }
+
+    .meteo-logo {
+        max-width: 170px;
+        min-width: 120px;
+    }
+}
+
+@media (max-width: 420px) {
+    .navbar-header {
+        gap: 0.35rem;
+    }
+
+    .navbar-brand {
+        padding: 0.18rem 0.28rem;
+    }
+
+    #sei-logo {
+        max-width: 86px;
+        min-width: 64px;
+    }
+
+    .meteo-logo {
+        max-width: 130px;
+        min-width: 94px;
+    }
 }
 
 .navbar-right li {
@@ -25,11 +121,121 @@ body {
     margin-right: 5px;
 }
 
+.navbar-nav {
+    flex-wrap: wrap;
+    row-gap: 0.35rem;
+}
+
+.nav-maproom,
+.navbar-right {
+    width: auto;
+}
+
 .nav-link-path {
     font-weight: bold;
     border: 1px solid #b6d0e3;
     border-radius: 15px;
     margin-right: 5px;
+    white-space: normal;
+    text-align: center;
+}
+
+.navbar-toggler {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 0.5rem;
+    padding: 0.35rem 0.6rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+@media (max-width: 991.98px) {
+    .navbar-header {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .nav-maproom,
+    .navbar-right {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .navbar-right {
+        margin-top: 0.15rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .navbar-header {
+        width: auto;
+        justify-content: flex-start;
+        flex: 1;
+    }
+
+    .navbar-toggler {
+        margin-left: auto;
+    }
+
+    .navbar-collapse {
+        width: 100%;
+    }
+
+    .nav-maproom,
+    .navbar-right {
+        justify-content: flex-start;
+        padding-left: 0.25rem;
+    }
+
+    .nav-maproom .nav-item,
+    .navbar-right li {
+        width: 100%;
+    }
+
+    .nav-link-path {
+        width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .navbar {
+        padding-top: 0.35rem;
+        padding-bottom: 0.35rem;
+    }
+
+    .navbar-header img {
+        max-width: 130px;
+        height: auto;
+    }
+
+    .navbar-header {
+        gap: 0.25rem;
+    }
+
+    .navbar-nav .nav-link {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.88rem;
+    }
+
+    .navbar-right {
+        justify-content: flex-start;
+    }
+
+    .navbar-right .nav-link,
+    .navbar-right .dropdown-toggle,
+    .navbar-right .btn {
+        font-size: 0.82rem;
+        padding: 0.3rem 0.45rem;
+    }
+
+    .navbar-toggler {
+        padding: 0.2rem 0.45rem;
+    }
+
+    .navbar-collapse .navbar-nav {
+        gap: 0.2rem;
+    }
 }
 
 #btn-theme-toggle {
