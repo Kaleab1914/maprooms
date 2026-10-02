@@ -1,56 +1,39 @@
 title: 
-    en: Disaster Risk Management
-    fr: Gestion des Risques de Catastrophe
+    en: Climate
+    fr: Climat
 description: 
     en: |
         <p>
-        The <strong>Disaster Risk Management Maproom</strong> integrates historical climate analysis, real-time observations, and forecast information to support a comprehensive understanding of disaster risks across time scales. 
+        The <strong>Climate Maproom</strong> enables users to access, analyze, and visualize climate information across the past, present, and future to support evidence-based decision-making. 
         </p>
         <p>
-        By analyzing historical climate patterns, users can identify areas that are vulnerable to recurring events such as droughts, floods, and heatwaves. 
+        Through its <strong>Climate Analysis</strong> products, users can explore historical climate conditions, variability, and trends using high-resolution datasets and a wide range of climate indicators.
         </p>
         <p>
-        Current monitoring products provide near-real-time information on evolving conditions, enabling early detection of emerging risks, while seasonal forecasts and longer-term outlooks help anticipate future hazards and their potential impacts.
+        The <strong>Climate Monitoring</strong> products provide near-real-time information on current climate conditions, allowing users to track rainfall, temperature, drought, and other climate-related phenomena as they evolve. 
+        </p>
+        <p>
+        Looking ahead, the <strong>Climate Prediction and Projection</strong> products offer access to seasonal climate forecasts and long-term climate change projections, helping users anticipate future conditions and plan accordingly.
         </p>
     fr: |
         <p>
-        La <strong>Maproom Gestion des Risques de Catastrophe</strong> intègre l’analyse des données climatiques historiques, les observations en temps réel et les informations prévisionnelles afin de permettre une compréhension globale des risques de catastrophe à différentes échelles temporelles.
+        La <strong>Maproom Climat</strong> permet aux utilisateurs d’accéder aux informations climatiques passées, présentes et futures, de les analyser et de les visualiser afin de soutenir une prise de décision fondée sur des données probantes.
         </p>
         <p>
-        Grâce à l’analyse des régimes climatiques historiques, les utilisateurs peuvent repérer les zones exposées à des phénomènes récurrents tels que les sécheresses, les inondations et les vagues de chaleur.
+        Grâce aux produits d’<strong>Analyse Climatique</strong>, les utilisateurs peuvent explorer les conditions climatiques historiques, leur variabilité et leurs tendances à partir de jeux de données à haute résolution et d’un large éventail d’indicateurs climatiques.
         </p>
         <p>
-        Les produits de suivi des conditions actuelles fournissent des informations en temps quasi réel, permettant ainsi de détecter rapidement les risques émergents. Par ailleurs, les prévisions saisonnières et les perspectives à plus long terme permettent d’anticiper les aléas futurs et leurs répercussions potentielles.
+        Les produits de <strong>Suivi Climatique</strong> fournissent des informations en temps quasi réel sur les conditions climatiques actuelles. Ils permettent de suivre l’évolution des précipitations, des températures, des sécheresses et d’autres phénomènes liés au climat.
         </p>
-type: navigation-page
+        <p>
+        Enfin, les produits de <strong>Prévision et de Projection Climatiques</strong> donnent accès aux prévisions climatiques saisonnières ainsi qu’aux projections à long terme du changement climatique. Ils aident ainsi les utilisateurs à anticiper les conditions futures et à planifier leurs actions en conséquence.
+        </p>
+type: navigation-card
 # icon_image from /app/static/images/card_icons
-icon_image: default-emi_drm.gif
+icon_image: default-emi_climate.gif
 
-maprooms:
-    - spi:
-        title:
-            en: SPI
-            fr: SPI
-        description:
-            en: The Standardized Precipitation Index is an indicator of extreme rainfall events, whether they are drought or excess rainfall.
-            fr: The Standardized Precipitation Index is an indicator of extreme rainfall events, whether they are drought or excess rainfall.
-        # icon_image from /app/drm/static/images
-        icon_image: default-emi_spi.gif
-    - ext_rainfall:
-        title:
-            en: Extreme Rainfall Analysis
-            fr: Extreme Rainfall Analysis
-        description:
-            en: The Maproom facilitates the exploration of the history of extreme monthly and seasonal rainfall characteristics.
-            fr: The Maproom facilitates the exploration of the history of extreme monthly and seasonal rainfall characteristics.
-        # icon_image from /app/drm/static/images
-        icon_image: default-emi_extrainfall.gif
-    - ext_temperature:
-        title:
-            en: Extreme Temperature Analysis
-            fr: Extreme Temperature Analysis
-        description:
-            en: The Maproom facilitates the exploration of the history of extreme monthly and seasonal minimum and maximum temperatures.
-            fr: The Maproom facilitates the exploration of the history of extreme monthly and seasonal minimum and maximum temperatures.
-        # icon_image from /app/drm/static/images
-        icon_image: default-emi_exttemp.gif
+components:
+    - analysis
+    - monitoring
+    - forecast
+    - projection
