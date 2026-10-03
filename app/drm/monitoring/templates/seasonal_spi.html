@@ -23,14 +23,17 @@
                 <div class="col-sm-12 col-map-container">
                     <div id="div-map-container" class="div-map-container">
                         {% call fmacros.create_map_control(pageText, urlArgs) %}
-                        {{ fmacrosMap.create_map_control_drm_analysis_spi("daily", pageText) }}
+                        {{ fmacrosMap.create_map_control_monitoring_spi("seasonal", pageText) }}
                         {% endcall %}
                     </div>
                 </div>
             </div>
             <div class="row justify-content-center">
                 <div class="col-sm-6">
-                    {{ fmacros.create_card_charts("div-chart-spi", pageText) }}
+                    {{ fmacros.create_card_charts("div-chart-raw", pageText) }}
+                </div>
+                <div class="col-sm-6">
+                    {{ fmacros.create_card_charts("div-chart-anom", pageText) }}
                 </div>
             </div>
         </div>
@@ -40,5 +43,5 @@
 {% endblock %}
 {% block javascript %}
 {% include "block-js.html" %}
-<script type="text/javascript" src="{{ url_for('drm_analysis.static', filename='js/spi.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('drm_monitoring.static', filename='js/seasonal_spi.js') }}"></script>
 {% endblock %}

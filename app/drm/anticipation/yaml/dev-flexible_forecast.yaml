@@ -1,0 +1,13 @@
+description:
+    en: test
+    fr: test
+# all about daily
+dataset:
+    rawdata:
+        dataset: ALL
+    dryday:
+        dataset: ALL
+    climatology:
+        dataset: ALL
+    anomaly:
+        dataset: ALL

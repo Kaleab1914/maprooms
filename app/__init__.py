@@ -39,7 +39,9 @@ from app.agriculture.analysis.index import agriculture_analysis
 
 from app.health.malaria.index import health_malaria
 
-from app.drm.index import drm
+from app.drm.analysis.index import drm_analysis
+from app.drm.anticipation.index import drm_anticipation
+from app.drm.monitoring.index import drm_monitoring
 
 from app.water.analysis.index import water_analysis
 from app.water.monitoring.index import water_monitoring
@@ -59,7 +61,9 @@ app.register_blueprint(agriculture_analysis)
 
 app.register_blueprint(health_malaria)
 
-app.register_blueprint(drm)
+app.register_blueprint(drm_analysis)
+app.register_blueprint(drm_monitoring)
+app.register_blueprint(drm_anticipation)
 
 app.register_blueprint(water_analysis)
 app.register_blueprint(water_monitoring)

@@ -1,0 +1,5 @@
+$(document).ready(function() {
+    $('[data-bs-toggle="tooltip"]').tooltip();
+    let map = createLeafletTileLayer('div-map-container', MTO_INIT);
+});
+
