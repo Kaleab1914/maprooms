@@ -2338,6 +2338,7 @@ function expand_agri_rseason_display_series(json, container) {
                 range: ylim.map(formatY),
                 tickvals: yticks.map(formatY),
                 ticktext: yticktext,
+                tickformat: isDateVariable ? '%b-%d' : '',
                 ticks: 'outside',
                 ticklen: 8,
                 title: {
@@ -2483,6 +2484,7 @@ function expand_agri_rseason_display_proba(json, container) {
             range: json.xrange.map(formatX),
             tickvals: json.xticks.map(formatX),
             ticktext: xticktext,
+            tickformat: isDateVariable ? '%b-%d' : '',
             ticks: 'outside',
             ticklen: 8,
             fixedrange: true,

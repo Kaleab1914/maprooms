@@ -37,3 +37,92 @@ colorbar_brk_invalid:
 week_prefix:
     en: Week of
     fr: Semaine du
+chart_info:
+    title:
+        en: Chart information
+        fr: Informations sur le graphique
+    close:
+        en: Close
+        fr: Fermer
+    no_chart:
+        en: The chart has not been displayed yet.
+        fr: Le graphique n'a pas encore été affiché.
+    no_info:
+        en: No information available for this chart.
+        fr: Aucune information disponible pour ce graphique.
+    location:
+        en: Location
+        fr: Localisation
+    longitude:
+        en: Longitude
+        fr: Longitude
+    latitude:
+        en: Latitude
+        fr: Latitude
+    subdivision_type:
+        administrative:
+            en: Administration type
+            fr: Type de division administrative
+        whatershed:
+            en: Watershed type
+            fr: Type de bassin versant
+    name:
+        en: Name
+        fr: Nom
+    data:
+        en: Data
+        fr: Données
+    dataset:
+        en: ENACTS dataset
+        fr: Jeu de données ENACTS
+    variable:
+        en: Variable
+        fr: Variable
+    season:
+        en: Season
+        fr: Saison
+    start_date:
+        en: Start date
+        fr: Date de début
+    end_date:
+        en: End date
+        fr: Date de fin
+    base_period:
+        en: Baseline period
+        fr: Période de référence
+    statistics:
+        en: Statistics
+        fr: Statistiques
+    mean:
+        en: Mean
+        fr: Moyenne
+    median:
+        en: Median
+        fr: Médiane
+    terciles:
+        en: Terciles
+        fr: Terciles
+    tercile_lower:
+        en: lower
+        fr: inférieur
+    tercile_upper:
+        en: upper
+        fr: supérieur
+    trend:
+        en: Trend
+        fr: Tendance
+    trend_equation:
+        en: Trend equation
+        fr: Équation de la tendance
+    r_squared:
+        en: Coefficient of determination
+        fr: Coefficient de détermination
+    trend_x:
+        en: 'x: year'
+        fr: 'x : année'
+    trend_y:
+        en: 'y:'
+        fr: 'y :'
+    trend_y_days:
+        en: days after
+        fr: jours après

@@ -426,6 +426,7 @@ function ajaxDisplayChart(endpoint, query, callback, container, storename = null
                 maproomDB.saveData(storename, json.data);
             }
             callback(json.data, container);
+            saveChartInfo(container, query, json.data);
         },
         beforeSend: () => {
             $(`#${container}`).append(spinner.el);

@@ -256,7 +256,55 @@ function isWhitishColor(color) {
     return luminance > 0.85;
 }
 
-function downloadPlotlyImageJPG(container) {
+
+function loadPlotlyExportLogo() {
+    return new Promise(resolve => {
+        const icon = new Image();
+        icon.onload = () => resolve(icon);
+        icon.onerror = () => resolve(null);
+        icon.src = `/static/images/${MTO_INIT.chartLogo || MTO_INIT.iconImage}`;
+    });
+}
+
+
+function getPlotlyExportLogoBox(icon, chart_height) {
+    
+    const height = Math.round(Math.min(64, Math.max(44, chart_height / 10)));
+    const pad = 8;
+    return {
+        x: pad,
+        y: pad,
+        width: Math.round(height * icon.naturalWidth / icon.naturalHeight),
+        height: height,
+        margin_top: pad + height + 12
+    };
+}
+
+
+function addPlotlyExportLogo(chart_url, icon, box, scale) {
+    return new Promise((resolve, reject) => {
+        const chart = new Image();
+        chart.onerror = reject;
+        chart.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = chart.naturalWidth;
+            canvas.height = chart.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(chart, 0, 0);
+            if (icon) {
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(icon,
+                    box.x * scale, box.y * scale,
+                    box.width * scale, box.height * scale);
+            }
+            resolve(canvas.toDataURL('image/jpeg', 0.95));
+        };
+        chart.src = chart_url;
+    });
+}
+
+async function downloadPlotlyImageJPG(container) {
+    const logo = await loadPlotlyExportLogo();
     var gd = document.getElementById(container);
     const plot_layout = gd.layout;
     const plot_layout_copy = makeCopy(plot_layout);
@@ -325,12 +373,25 @@ function downloadPlotlyImageJPG(container) {
             print_layout.margin = { b: 100 };
         }
     }
-    // to make the title not cut off when downloading the image
+   
     if (plot_layout.title && plot_layout.title.text) {
         print_layout.margin = deepMerge(print_layout.margin || {}, { t: 60 });
     }
 
-    // if (isWhitishColor(plot_layout.title?.font?.color)) {
+   
+    const logo_box = logo ?
+        getPlotlyExportLogoBox(logo, gd._fullLayout.height) :
+        null;
+    if (logo_box) {
+        const margin_t = print_layout.margin && print_layout.margin.t !== undefined ?
+            print_layout.margin.t :
+            gd._fullLayout.margin.t;
+        print_layout.margin = deepMerge(print_layout.margin || {}, {
+            t: Math.max(margin_t, logo_box.margin_top)
+        });
+    }
+
+   
     if (isWhitishColor(
             plot_layout.title && plot_layout.title.font ?
             plot_layout.title.font.color :
@@ -346,20 +407,27 @@ function downloadPlotlyImageJPG(container) {
     print_layout = deepMerge(print_layout, legend_color);
     gd.layout = deepMerge(plot_layout, print_layout);
 
-    Plotly.downloadImage(gd, {
-            filename: 'this_graph',
-            format: 'jpeg',
-            // width: 920,
-            // height: 450
-        })
+    
+    const scale = 3;
+    Plotly.toImage(gd, { format: 'png', width: null, height: null, scale: scale })
         .then(function(dataUrl) {
-
-            gd.layout = plot_layout_copy;
+            return addPlotlyExportLogo(dataUrl, logo, logo_box, scale);
+        })
+        .then(function(jpegUrl) {
+            const link = document.createElement('a');
+            link.href = jpegUrl;
+            link.download = 'this_graph.jpeg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         })
         .catch(function(error) {
             const msg = 'Error generating image';
             console.error(msg + ':', error);
             flashMessage(msg, 'error');
+        })
+        .finally(function() {
+            gd.layout = plot_layout_copy;
         });
 }
 

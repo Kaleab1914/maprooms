@@ -6,6 +6,8 @@ metServiceURL: https://www.ethiomet.gov.et/
 ## put the images under app/static/images
 iconImage: default-emi_favicon.png
 metLogo: default-emi_logo.png
+## logo on downloaded charts
+chartLogo: default-emi_emblem.png
 
 ## map lat/lon center
 mapCenterLON:  40.47985
