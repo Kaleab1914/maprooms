@@ -645,6 +645,7 @@ function queryParamsDrmAnalysisMap(time_res){
     }
 
     query.defThres = Number($(`#${time_res}-map-def-number-thres-val`).val().trim());
+    query.defSpell = parseInt($(`#${time_res}-map-def-spell-thres-val`).val().trim(),10);
 
     query.startYear = parseInt($(`#${tstep_id}-start-year`).val().trim(), 10);
     query.endYear = parseInt($(`#${tstep_id}-end-year`).val().trim(), 10);

@@ -1150,6 +1150,112 @@ function setAnalysisExpandModalDrmExtRain(tempRes, contID) {
         tempRes
     );
     purgePlotlyChartExpandModal(contID);
+    //
+    setAnalysisDateCalendarSeasonal(
+        tempRes, 'chart-proba', 'map', true
+    );
 
+    setAnalysisDateCalendarMonDay(tempRes, 'proba');
+
+    const contChart = `container-chart-${contID}`;
+
+    $(`#${tempRes}-proba-parameters`)
+        .off('change.drmExtRainExpandParameters')
+        .on('change.drmExtRainExpandParameters', function() {
+            const this_val = $(this).val();
+
+            if (this_val === 'TotRain') {
+                setVisibility(
+                    [],
+                    [
+                        `${tempRes}-proba-def-number`,
+                        `${tempRes}-proba-def-spell`
+                    ]
+                );
+            } else if (
+                ['NumWD', 'NumDD', 'RainInt'].includes(this_val)
+            ) {
+                setVisibility(
+                    [
+                        `${tempRes}-proba-def-number`
+                    ],
+                    [
+                        `${tempRes}-proba-def-spell`
+                    ]
+                );
+            } else {
+                setVisibility(
+                    [
+                        `${tempRes}-proba-def-number`,
+                        `${tempRes}-proba-def-spell`
+                    ],
+                    []
+                );
+            }
+
+            expand_analysis_charts_drmExtRain(contChart, tempRes);
+        });
+
+        $(`#${tempRes}-proba-parameters`).trigger('change');
+        
+
+}
+
+function setAnalysisExpandModalDrmExtRain_pdf(tempRes, contID) {
+    showModalDialog(`modal-expand-${contID}`);
+    expandModalCharts(
+        contID,
+        expand_analysis_charts_drmExtRain_pdf,
+        tempRes
+    );
+    purgePlotlyChartExpandModal(contID);
+    //
+    setAnalysisDateCalendarSeasonal(
+        tempRes, 'chart-pdf', 'map', true
+    );
+
+    setAnalysisDateCalendarMonDay(tempRes, 'pdf');
+
+    const contChart = `container-chart-${contID}`;
+
+    $(`#${tempRes}-pdf-parameters`)
+        .off('change.drmExtRainExpandParameters')
+        .on('change.drmExtRainExpandParameters', function() {
+            const this_val = $(this).val();
+
+            if (this_val === 'TotRain') {
+                setVisibility(
+                    [],
+                    [
+                        `${tempRes}-pdf-def-number`,
+                        `${tempRes}-pdf-def-spell`
+                    ]
+                );
+            } else if (
+                ['NumWD', 'NumDD', 'RainInt'].includes(this_val)
+            ) {
+                setVisibility(
+                    [
+                        `${tempRes}-pdf-def-number`
+                    ],
+                    [
+                        `${tempRes}-pdf-def-spell`
+                    ]
+                );
+            } else {
+                setVisibility(
+                    [
+                        `${tempRes}-pdf-def-number`,
+                        `${tempRes}-pdf-def-spell`
+                    ],
+                    []
+                );
+            }
+            
+            expand_analysis_charts_drmExtRain_pdf(contChart, tempRes);
+        });
+
+        $(`#${tempRes}-pdf-parameters`).trigger('change');
+        
 
 }

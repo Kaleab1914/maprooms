@@ -9,6 +9,7 @@ $(document).ready(function() {
     $('#div-map-time-navigation').removeClass('d-flex').addClass('d-none');
 
     setOffCanvasMapControlsDrmExtRain('daily');
+    //setOffCanvasMapControlsDrmExtRain_pdf('daily');
 
     ////////////
     // Modal Expand Charts
@@ -20,7 +21,28 @@ $(document).ready(function() {
     $('#btn-div-chart-cdf').on('click', () => {
         setAnalysisExpandModalDrmExtRain('daily', 'div-chart-cdf');
     });
+    $('#btn-div-chart-pdf').on('click', () => {
+        setAnalysisExpandModalDrmExtRain_pdf('daily', 'div-chart-pdf');
+    });
 
+    // for pdf
+
+    $('.daily-pdf-select2').select2({
+        minimumResultsForSearch: -1,
+        dropdownParent: $('#daily-drmExtRain-pdf-control')
+    });
+    $('#btn-div-chart-cdf').on('click', () => {
+        setAnalysisExpandModalDrmExtRain('daily', 'div-chart-cdf');
+    });
+    $('#btn-div-chart-pdf').on('click', () => {
+        setAnalysisExpandModalDrmExtRain_pdf('daily', 'div-chart-pdf');
+    });
+    // Preview chart
+    $('#daily-map-parameters')
+        .off('change.drmPreview')
+        .on('change.drmPreview', function() {
+            preview_drmExtRain_display_charts('daily');
+        });
 
     ////////////
     // initialize map

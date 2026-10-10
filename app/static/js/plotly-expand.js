@@ -3189,13 +3189,51 @@ function expand_analysis_query_drmExtRain(tempRes) {
         return query;
     }
 
+    query.chartType = 'proba';
     query.temporalRes = tempRes;
     query.dataset = DATA_SET.use;
+    query.variable = $(`#${tempRes}-map-variable`).val();
 
-    // 
+    // Selected start/end years.
+    query.startDate = analysis_query_format_date(
+        $(`#${tempRes}-chart-proba-startdate-calendar`).val(),
+        tempRes
+    );
+    query.endDate = analysis_query_format_date(
+        $(`#${tempRes}-chart-proba-enddate-calendar`).val(),
+        tempRes
+    );
+
+    query.dailyAnalysis = true;
+    query.minFrac = 1.0;
+
+    // Selected season dates.
+    query.startMonth = parseInt(
+        $(`#${tempRes}-proba-start-mon`).val(), 10
+    );
+    query.startDay = parseInt(
+        $(`#${tempRes}-proba-start-day`).val(), 10
+    );
+    query.endMonth = parseInt(
+        $(`#${tempRes}-proba-end-mon`).val(), 10
+    );
+    query.endDay = parseInt(
+        $(`#${tempRes}-proba-end-day`).val(), 10
+    );
+
+    // Selected rainfall statistic and its definitions.
+    query.seasParams = $(`#${tempRes}-proba-parameters`).val();
+    query.defThres = Number(
+        $(`#${tempRes}-proba-def-number-thres-val`).val().trim()
+    );
+    query.defSpell = parseInt(
+        $(`#${tempRes}-proba-def-spell-thres-val`).val().trim(),
+        10
+    );
 
     return query;
 }
+
 
 function expand_analysis_charts_drmExtRain(container_id, tempRes) {
     const query = expand_analysis_query_drmExtRain(tempRes);
@@ -3219,5 +3257,185 @@ function expand_analysis_display_drmExtRain(json, container) {
     divCont.empty();
     const theme = $('html').attr('data-bs-theme');
 
+    const data = [
+        {
+            x: json.cdf.smoothed.x,
+            y: json.cdf.smoothed.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Smoothed CDF',
+            line: { color: '#1e90ff', width: 4 }
+        },
+        {
+            x: json.cdf.empirical.x,
+            y: json.cdf.empirical.y,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Empirical CDF',
+            line: { color: 'red', width: 3 },
+            marker: { color: 'orange', size: 6 }
+        }
+    ];
+
+    let layout = {
+        xaxis: {
+            title: {
+                text: `${json.info.var.name} (${json.info.var.units})`
+            },
+            range: json.xrange,
+            tickvals: json.xticks,
+            unifiedhovertitle: {
+                text: json.info.var.name +
+                    ': %{x:.2f} ' +
+                    json.info.var.units
+            }
+        },
+        yaxis: {
+            title: { text: 'Cumulative probability (%)' },
+            range: [0, 100],
+            ticksuffix: '%'
+        },
+        showlegend: true,
+        hovermode: 'x unified',
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(expand_layout, layout);
+
+    purgePlotlyChart(container);
+    Plotly.newPlot(container, data, layout, {
+        responsive: true,
+        displaylogo: false
+    });
+    setPlotlyThemeColors(container);
+
+}
+function expand_analysis_query_drmExtRain_pdf(tempRes) {
+    let query = queryParamsSpatialAverage();
+    if (!query) {
+        return query;
+    }
+
+    query.chartType = 'pdf';
+    query.temporalRes = tempRes;
+    query.dataset = DATA_SET.use;
+    query.variable = $(`#${tempRes}-map-variable`).val();
+
+    // Selected start/end years.
+    query.startDate = analysis_query_format_date(
+        $(`#${tempRes}-chart-pdf-startdate-calendar`).val(),
+        tempRes
+    );
+    query.endDate = analysis_query_format_date(
+        $(`#${tempRes}-chart-pdf-enddate-calendar`).val(),
+        tempRes
+    );
+
+    query.dailyAnalysis = true;
+    query.minFrac = 1.0;
+
+    // Selected season dates.
+    query.startMonth = parseInt(
+        $(`#${tempRes}-pdf-start-mon`).val(), 10
+    );
+    query.startDay = parseInt(
+        $(`#${tempRes}-pdf-start-day`).val(), 10
+    );
+    query.endMonth = parseInt(
+        $(`#${tempRes}-pdf-end-mon`).val(), 10
+    );
+    query.endDay = parseInt(
+        $(`#${tempRes}-pdf-end-day`).val(), 10
+    );
+
+    // Selected rainfall statistic and its definitions.
+    query.seasParams = $(`#${tempRes}-pdf-parameters`).val();
+    query.defThres = Number(
+        $(`#${tempRes}-pdf-def-number-thres-val`).val().trim()
+    );
+    query.defSpell = parseInt(
+        $(`#${tempRes}-pdf-def-spell-thres-val`).val().trim(),
+        10
+    );
+
+    return query;
+}
+function expand_analysis_charts_drmExtRain_pdf(container_id, tempRes) {
+    const query = expand_analysis_query_drmExtRain_pdf(tempRes);
+    if (!query) {
+        return false;
+    }
+    if (checkQueryPointOutside(query, tempRes)) {
+        return false;
+    }
+
+    ajaxDisplayChart(
+        '/climate_analysis_proba',
+        query,
+        expand_analysis_display_drmExtRain_pdf,
+        container_id
+    );
+}
+
+function expand_analysis_display_drmExtRain_pdf(json, container) {
+    const divCont = $(`#${container}`);
+    divCont.empty();
+    const theme = $('html').attr('data-bs-theme');
+
+    const data = [
+        {
+            x: json.pdf.kde.x,
+            y: json.pdf.kde.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Kernel density',
+            line: { color: '#1e90ff', width: 4 },
+            hovertemplate:
+                '%{data.name}: %{y:.4f}<extra></extra>'
+        },
+        {
+            x: json.pdf.fitted.x,
+            y: json.pdf.fitted.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Fitted density',
+            line: { color: 'red', width: 3 },
+            hovertemplate:
+                '%{data.name}: %{y:.4f}<extra></extra>'
+        }
+    ];
+
+    let layout = {
+        xaxis: {
+            title: {
+                text: `${json.info.var.name} (${json.info.var.units})`
+            },
+            range: json.xrange,
+            tickvals: json.xticks,
+            unifiedhovertitle: {
+                text: json.info.var.name +
+                    ': %{x:.2f} ' +
+                    json.info.var.units
+            }
+        },
+        yaxis: {
+            title: { text: 'Probability Density Function (%)' },
+            rangemode: 'tozero'
+        },
+        showlegend: true,
+        hovermode: 'x unified',
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(expand_layout, layout);
+
+    purgePlotlyChart(container);
+    Plotly.newPlot(container, data, layout, {
+        responsive: true,
+        displaylogo: false
+    });
+    setPlotlyThemeColors(container);
 
 }

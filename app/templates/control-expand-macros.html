@@ -936,5 +936,161 @@
             {% endfor %}
         </select>
     </fieldset>
+
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_year.start }}</legend>
+        <div id="{{ tempRes }}-chart-proba-startdate" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Start date" style="width: 6.5em">
+            <input id="{{ tempRes }}-chart-proba-startdate-calendar" type="text" class="form-control">
+        </div>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_year.end }}</legend>
+        <div id="{{ tempRes }}-chart-proba-enddate" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="End date" style="width: 6.5em">
+            <input id="{{ tempRes }}-chart-proba-enddate-calendar" type="text" class="form-control">
+        </div>
+    </fieldset>
+
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_season.start }}</legend>
+        <div class="row w-auto">
+            <div class="col-auto me-0 pe-0">
+                <select id="{{ tempRes }}-proba-start-mon" class="form-select {{ tempRes }}-proba-select2" style="width: 150px;"></select>
+            </div>
+            <div class="col-auto ms-0 ps-1">
+                <select id="{{ tempRes }}-proba-start-day" class="form-select {{ tempRes }}-proba-select2"></select>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_season.end }}</legend>
+        <!--  -->
+        <div class="row w-auto">
+            <div class="col-auto me-0 pe-0">
+                <select id="{{ tempRes }}-proba-end-mon" class="form-select {{ tempRes }}-proba-select2" style="width: 150px;"></select>
+            </div>
+            <div class="col-auto ms-0 ps-1">
+                <select id="{{ tempRes }}-proba-end-day" class="form-select {{ tempRes }}-proba-select2"></select>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset id="{{ tempRes }}-proba-def-number" class="border border-secondary rounded-3 py-1">
+        <legend id="{{ tempRes }}-proba-def-number-thres-lab" class="legend-label">{{ pageText.definition.number.label }}</legend>
+        <div class="row w-auto">
+            <div id="{{ tempRes }}-proba-def-number-thres-txt" class="col-auto">
+                {{ pageText.definition.number.text }}
+            </div>
+            <div class="col-auto me-0 pe-0">
+                <input id="{{ tempRes }}-proba-def-number-thres-val" class="form-control text-center" type="text" value="{{ pageText.definition.number.value }}" size="3">
+            </div>
+            <div id="{{ tempRes }}-proba-def-number-thres-unit" class="col-auto ms-0 ps-1">
+                {{ pageText.definition.number.unit }}
+            </div>
+        </div>
+    </fieldset>
+    <fieldset id="{{ tempRes }}-proba-def-spell" class="border border-secondary rounded-3">
+        <legend id="{{ tempRes }}-proba-def-spell-thres-lab" class="legend-label">{{ pageText.definition.spell.label }}</legend>
+        <div class="row w-auto">
+            <div class="col-auto me-0 pe-0">
+                <input id="{{ tempRes }}-proba-def-spell-thres-val" class="form-control text-center" type="text" value="{{ pageText.definition.spell.value }}" size="4">
+            </div>
+            <div id="{{ tempRes }}-proba-def-spell-thres-txt" class="col-auto ms-0 ps-1">
+                {{ pageText.definition.spell.text }}
+            </div>
+        </div>
+    </fieldset>
+    <!--  -->
+    {# <fieldset id="{{ tempRes }}-chart-proba-plot-cdf" class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_ts_cdf.label }}</legend>
+        <div class="d-flex gap-3">
+            {% for key, value in pageText.opt_ts_cdf.type.items() %}
+            <label class="d-flex align-items-center">
+                <input type="checkbox" id="{{ tempRes }}-proba-plot-cdf-{{ key }}" class="{{ tempRes }}-proba-plot me-1" data-plot="cdf" value="{{ key }}" {% if ( key!='fitted' ) %} checked {% endif %}>
+                <span>{{ value }}</span>
+            </label>
+            {% endfor %}
+        </div>
+    </fieldset> #}
+    <!--  -->
+</div>
+{% endmacro %}
+
+<!--  -->
+{% macro create_expand_charts_drmExtRain_pdf(tempRes, pageText) %}
+<div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-drmExtRain-pdf-control">
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.label_statistics.params }}</legend>
+        <!--  -->
+        <select id="{{ tempRes }}-pdf-parameters" class="form-select {{ tempRes }}-pdf-select2" style="width: 300px;">
+            {% for key, value in pageText.parameters.items() %}
+            <option value="{{key}}">{{value.select}}</option>
+            {% endfor %}
+        </select>
+    </fieldset>
+
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_year.start }}</legend>
+        <div id="{{ tempRes }}-chart-pdf-startdate" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Start date" style="width: 6.5em">
+            <input id="{{ tempRes }}-chart-pdf-startdate-calendar" type="text" class="form-control">
+        </div>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_year.end }}</legend>
+        <div id="{{ tempRes }}-chart-pdf-enddate" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="End date" style="width: 6.5em">
+            <input id="{{ tempRes }}-chart-pdf-enddate-calendar" type="text" class="form-control">
+        </div>
+    </fieldset>
+
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_season.start }}</legend>
+        <div class="row w-auto">
+            <div class="col-auto me-0 pe-0">
+                <select id="{{ tempRes }}-pdf-start-mon" class="form-select {{ tempRes }}-pdf-select2" style="width: 150px;"></select>
+            </div>
+            <div class="col-auto ms-0 ps-1">
+                <select id="{{ tempRes }}-pdf-start-day" class="form-select {{ tempRes }}-pdf-select2"></select>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_season.end }}</legend>
+        <!--  -->
+        <div class="row w-auto">
+            <div class="col-auto me-0 pe-0">
+                <select id="{{ tempRes }}-pdf-end-mon" class="form-select {{ tempRes }}-pdf-select2" style="width: 150px;"></select>
+            </div>
+            <div class="col-auto ms-0 ps-1">
+                <select id="{{ tempRes }}-pdf-end-day" class="form-select {{ tempRes }}-pdf-select2"></select>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset id="{{ tempRes }}-pdf-def-number" class="border border-secondary rounded-3 py-1">
+        <legend id="{{ tempRes }}-pdf-def-number-thres-lab" class="legend-label">{{ pageText.definition.number.label }}</legend>
+        <div class="row w-auto">
+            <div id="{{ tempRes }}-pdf-def-number-thres-txt" class="col-auto">
+                {{ pageText.definition.number.text }}
+            </div>
+            <div class="col-auto me-0 pe-0">
+                <input id="{{ tempRes }}-pdf-def-number-thres-val" class="form-control text-center" type="text" value="{{ pageText.definition.number.value }}" size="3">
+            </div>
+            <div id="{{ tempRes }}-pdf-def-number-thres-unit" class="col-auto ms-0 ps-1">
+                {{ pageText.definition.number.unit }}
+            </div>
+        </div>
+    </fieldset>
+    <fieldset id="{{ tempRes }}-pdf-def-spell" class="border border-secondary rounded-3">
+        <legend id="{{ tempRes }}-pdf-def-spell-thres-lab" class="legend-label">{{ pageText.definition.spell.label }}</legend>
+        <div class="row w-auto">
+            <div class="col-auto me-0 pe-0">
+                <input id="{{ tempRes }}-pdf-def-spell-thres-val" class="form-control text-center" type="text" value="{{ pageText.definition.spell.value }}" size="4">
+            </div>
+            <div id="{{ tempRes }}-pdf-def-spell-thres-txt" class="col-auto ms-0 ps-1">
+                {{ pageText.definition.spell.text }}
+            </div>
+        </div>
+    </fieldset>
+
+    <!--  -->
 </div>
 {% endmacro %}
