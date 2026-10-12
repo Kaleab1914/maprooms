@@ -1111,6 +1111,11 @@ function setAnalysisExpandModalSPEI(tempRes, contID) {
             }, 30);
         });
 
+    $(`#${tempRes}-chart-spei-distr`)
+        .off('change.chartTsSpei')
+        .on('change.chartTsSpei', function() {
+            expand_analysis_charts_spei_ts(contChart, tempRes);
+        });
 
     // update chart
     $(`#plotly-replot-${contID}`)
