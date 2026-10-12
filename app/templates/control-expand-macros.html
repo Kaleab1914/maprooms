@@ -892,6 +892,14 @@
         </select>
     </fieldset>
     <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_ts_spei.distr_label }}</legend>
+        <select id="{{ tempRes }}-chart-spei-distr" class="form-select {{ tempRes }}-spei-select2" style="width: 150px;">
+            {% for key, value in pageText.opt_ts_spei.distr_function.items() %}
+            <option value="{{key}}">{{value}}</option>
+            {% endfor %}
+        </select>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">{{ pageText.opt_ts_spei.date_label.start }}</legend>
         <div id="{{ tempRes }}-chart-spei-startdate" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Start date" style="width: 8.0em">
             <input id="{{ tempRes }}-chart-spei-startdate-calendar" type="text" class="form-control">
@@ -913,14 +921,6 @@
                 {{ pageText.opt_ts_spei.units }}
             </div>
         </div>
-    </fieldset>
-    <fieldset class="border border-secondary rounded-3 py-1">
-        <legend class="legend-label">{{ pageText.opt_ts_spei.distr_label }}</legend>
-        <select id="{{ tempRes }}-chart-spei-distr" class="form-select {{ tempRes }}-spei-select2" style="width: 150px;">
-            {% for key, value in pageText.opt_ts_spei.distr_function.items() %}
-            <option value="{{key}}">{{value}}</option>
-            {% endfor %}
-        </select>
     </fieldset>
 </div>
 {% endmacro %}
