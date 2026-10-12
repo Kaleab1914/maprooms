@@ -2018,7 +2018,6 @@ function preview_monitoring_display_spei_dial(json, container) {
         'height': '100%',
         'object-fit': 'cover'
     });
-    console.log(json)
 }
 
 ///////
@@ -2083,7 +2082,7 @@ function preview_analysis_display_spei_ts(json, container) {
     divCont.empty();
     const theme = $('html').attr('data-bs-theme');
 
-    console.log(json)
+    // console.log(json)
 }
 
 ///////

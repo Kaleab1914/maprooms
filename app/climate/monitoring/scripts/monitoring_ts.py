@@ -70,13 +70,13 @@ def climate_monitoring_dial_spei(params):
 def spei_dial_classification(spei):
     spei_class = {
         'definition': [
-            {'color': '#14713d', 'label': 'Extremely', 'score': 0, 'state': 'Extremely Wet'},
-            {'color': '#3cb371', 'label': 'Severely', 'score': 1, 'state': 'Severely Wet'},
-            {'color': '#98fb98', 'label': 'Moderately', 'score': 2, 'state': 'Moderately Wet'},
+            {'color': '#b22222', 'label': 'Extremely', 'score': 0, 'state': 'Extremely Dry'},
+            {'color': '#d2691e', 'label': 'Severely', 'score': 1, 'state': 'Severely Dry'},
+            {'color': '#f5deb3', 'label': 'Moderately', 'score': 2, 'state': 'Moderately Dry'},
             {'color': '#f5f5f5', 'label': 'Normal', 'score': 3, 'state': 'Near Normal'},
-            {'color': '#f5deb3', 'label': 'Moderately', 'score': 4, 'state': 'Moderately Dry'},
-            {'color': '#d2691e', 'label': 'Severely', 'score': 5, 'state': 'Severely Dry'},
-            {'color': '#b22222', 'label': 'Extremely', 'score': 6, 'state': 'Extremely Dry'}
+            {'color': '#98fb98', 'label': 'Moderately', 'score': 4, 'state': 'Moderately Wet'},
+            {'color': '#3cb371', 'label': 'Severely', 'score': 5, 'state': 'Severely Wet'},
+            {'color': '#14713d', 'label': 'Extremely', 'score': 6, 'state': 'Extremely Wet'}
         ]
     }
 
@@ -109,8 +109,8 @@ def spei_dial_classification(spei):
     spei_class['left_text'] = obs_date
     s = spei['info']['var']['type'].upper()
     spei_class['right_text'] = f'{s} {tscale}-{txt}'
-    spei_class['left_title'] = 'Wet'
-    spei_class['right_title'] = 'Dry'
+    spei_class['left_title'] = 'Dry'
+    spei_class['right_title'] = 'Wet'
     return spei_class
 
 def get_monitoring_ts_spei(params):
