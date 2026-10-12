@@ -1657,7 +1657,7 @@ function expand_analysis_display_enso(json, container) {
                 mirror: true,
                 title: {
                     text: json.ylab,
-                    font: { size: 13 }
+                    // font: { size: 13 }
                 }
             },
             // 
@@ -3077,13 +3077,6 @@ function expand_analysis_display_spei_ts(json, container) {
     const divCont = $(`#${container}`);
     divCont.empty();
 
-    // const json = expand_analysis_format_anomaly(json_input);
-    // if (json === null) {
-    //     return false;
-    // }
-
-    // console.log(json)
-
     const xaxisHoverText = json.time.map((t) => {
         return formatPlotlyHoverDate(
             t, json.info.time_res,
@@ -3092,93 +3085,176 @@ function expand_analysis_display_spei_ts(json, container) {
         );
     });
 
-    var defColors = {
-        negative: '#fd7e14',
-        positive: '#198754',
-        other: '#6c757d'
-    }
+    const last_time = json.time[json.time.length - 1];
+    const breaks = [-5, ...json.info.spei_breaks, 5];
+    const fillColors = [
+        'rgba(178,34,34,0.8)', // #b22222
+        'rgba(210,105,30,0.8)', // #d2691e
+        'rgba(245,222,179,0.8)', // #f5deb3
+        'rgba(245,245,245,0.8)', // #f5f5f5
+        'rgba(152,251,152,0.8)', // #98fb98
+        'rgba(60,179,113,0.8)', // #3cb371
+        'rgba(20,113,61,0.8)' // #14713d
+    ];
 
-    const barColors = json.values.map(value => {
-        if (value > 0) {
-            return defColors.positive;
-        } else if (value < 0) {
-            return defColors.negative;
-        } else {
-            return defColors.other;
-        }
+    const shapes = fillColors.map((color, i) => ({
+        type: 'rect',
+        xref: 'paper',
+        x0: 0,
+        x1: 1,
+        yref: 'y',
+        y0: breaks[i],
+        y1: breaks[i + 1],
+        fillcolor: color,
+        line: { width: 0 },
+        layer: 'below'
+    }));
+
+    json.yticks.forEach(y => shapes.push({
+        type: 'line',
+        xref: 'paper',
+        x0: 0,
+        x1: 1,
+        yref: 'y',
+        y0: y,
+        y1: y,
+        line: {
+            color: 'lightgray',
+            width: 1,
+            dash: 'dot'
+        },
+        layer: 'below'
+    }));
+
+    shapes.push({
+        type: 'line',
+        xref: 'paper',
+        x0: 0,
+        x1: 1,
+        yref: 'y',
+        y0: 0,
+        y1: 0,
+        line: {
+            color: 'gray',
+            width: 1,
+            dash: 'solid'
+        },
+        layer: 'below'
     });
 
-    const barWidths = json.time.map(
-        t => getAnomalyBarWidthMs(t, json.info.time_res, json.info)
-    );
-    const hasCustomBarWidths = barWidths.every(w => Number.isFinite(w) && w > 0);
+    const categories = json.info.spei_class;
+    const annotations = [
+        { text: categories[6], y: 2.25, x: 0.012, xanchor: 'left' },
+        { text: categories[5], y: 1.75, x: 0.012, xanchor: 'left' },
+        { text: categories[4], y: 1.25, x: 0.012, xanchor: 'left' },
+        { text: categories[2], y: -1.25, x: 0.988, xanchor: 'right' },
+        { text: categories[1], y: -1.75, x: 0.988, xanchor: 'right' },
+        { text: categories[0], y: -2.25, x: 0.988, xanchor: 'right' }
+    ].map(label => ({
+        ...label,
+        text: `<b>${label.text}</b>`,
+        xref: 'paper',
+        yref: 'y',
+        showarrow: false,
+        align: label.xanchor,
+        font: {
+            family: 'Arial, Helvetica, sans-serif',
+            // size: 12,
+            color: 'black'
+        },
+        bgcolor: 'rgba(255,255,255,0)',
+        borderpad: 0
+    }));
 
     const data = [{
+        type: 'scatter',
+        mode: 'lines',
         x: json.time,
         y: json.values,
         name: json.info.var.name,
-        units: json.info.var.units,
-        type: 'bar',
-        ...(hasCustomBarWidths ? { width: applyMinimumAnomalyBarWidths(json.time, barWidths) } : {}),
-        marker: {
-            color: barColors,
-            line: {
-                width: 0
-            }
+        line: {
+            color: 'black',
+            width: 1.5
         },
+        connectgaps: false,
         customdata: xaxisHoverText,
         hovertemplate: 'Date: %{customdata}<br> %{data.name}: %{y:.1f} <extra></extra>'
     }];
 
-    var layout = {
+    const spei_rangeslider = {
+        visible: true,
+        thickness: 0.04,
+        borderwidth: 1,
+        bordercolor: 'gray',
+        bgcolor: 'lightgray'
+    };
+
+    const layout = {
+        width: getChartWidth(container),
+        height: getChartHeight(container),
+        autosize: true,
+        margin: { t: 10, b: 50, l: 80, r: 20 },
+        paper_bgcolor: 'white',
+        plot_bgcolor: 'white',
+
+        shapes,
+        annotations,
+
         xaxis: {
             type: 'date',
-            showline: true,
-            showgrid: true,
-            gridwidth: 0.3,
-            griddash: 'dot',
-            rangeslider: plotly_rangeslider,
+            range: [json.time[0], last_time],
+            rangeslider: spei_rangeslider,
+            automargin: true,
+            showgrid: false,
+            zeroline: false,
             ticks: 'outside',
-            ticklen: 8,
+            ticklen: 6,
+            gridcolor: 'lightgray',
+            showline: true,
+            linecolor: 'black',
+            linewidth: 1,
+            mirror: true,
         },
         yaxis: {
             range: json.yrange,
             tickvals: json.yticks,
+            tickmode: 'array',
             ticks: 'outside',
-            ticklen: 8,
+            ticklen: 6,
             fixedrange: true,
+            showgrid: false,
+            zeroline: false,
+            gridcolor: 'lightgray',
             showline: true,
-            showgrid: true,
-            gridwidth: 0.3,
-            griddash: 'dot',
+            linecolor: 'black',
+            linewidth: 1,
+            mirror: true,
             title: {
                 text: json.info.var.name,
-            },
-        },
-        width: getChartWidth(container),
-        height: getChartHeight(container)
+                // font: { size: 13 }
+            }
+        }
     };
 
-    layout = deepMerge(setPlotlyColors(), layout);
-    layout = deepMerge(expand_layout, layout);
-    layout.xaxis.rangeslider.bgcolor = defColors.positive;
+    const spei_config = {
+        responsive: true,
+        displaylogo: false,
+        displayModeBar: false
+    };
 
     purgePlotlyChart(container);
     Plotly.newPlot(
         container,
         data,
         layout,
-        plotly_config
+        spei_config
     );
+    resizePlotlyChart(container);
 
     //// add range selector
-    const last_date = new Date(json.time[json.time.length - 1]);
-    // const ranges = ['1Y', '5Y', '10Y', 'ALL'];
+    const last_date = new Date(last_time);
     const ranges = ['1Y', '5Y', '10Y', '15Y', '20Y', '30Y', 'ALL'];
-    addRangeselector(container, ranges, last_date, 'date');
-
-    setPlotlyThemeColors(container);
-    resizePlotlyChart(container);
+    addRangeselector(container, ranges, last_date);
 }
 
 ///////

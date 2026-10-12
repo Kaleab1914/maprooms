@@ -79,4 +79,9 @@ $(document).ready(function() {
     $('#select-region-name').on('change', () => {
         mapClickLayersSpatialAverage(preview_monitoring_display_charts_1, 'seasonal', map);
     });
+
+    // 
+    $('#btn-theme-toggle').on('click', () => {
+        preview_monitoring_charts_spei_dial('seasonal', 'div-chart-spei');
+    });
 });
