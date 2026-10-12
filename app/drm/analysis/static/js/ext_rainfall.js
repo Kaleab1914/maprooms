@@ -16,32 +16,32 @@ $(document).ready(function() {
 
     $('.daily-proba-select2').select2({
         minimumResultsForSearch: -1,
-        dropdownParent: $('#daily-drmExtRain-control')
+        dropdownParent: $('#daily-drmExt-cdf-control')
     });
     $('#btn-div-chart-cdf').on('click', () => {
-        setAnalysisExpandModalDrmExtRain('daily', 'div-chart-cdf');
+        setAnalysisExpandModalDrmExt_cdf('daily', 'div-chart-cdf');
     });
     $('#btn-div-chart-pdf').on('click', () => {
-        setAnalysisExpandModalDrmExtRain_pdf('daily', 'div-chart-pdf');
+        setAnalysisExpandModalDrmExt_pdf('daily', 'div-chart-pdf');
     });
 
     // for pdf
 
     $('.daily-pdf-select2').select2({
         minimumResultsForSearch: -1,
-        dropdownParent: $('#daily-drmExtRain-pdf-control')
+        dropdownParent: $('#daily-drmExt-pdf-control')
     });
     $('#btn-div-chart-cdf').on('click', () => {
-        setAnalysisExpandModalDrmExtRain('daily', 'div-chart-cdf');
+        setAnalysisExpandModalDrmExt_cdf('daily', 'div-chart-cdf');
     });
     $('#btn-div-chart-pdf').on('click', () => {
-        setAnalysisExpandModalDrmExtRain_pdf('daily', 'div-chart-pdf');
+        setAnalysisExpandModalDrmExt_pdf('daily', 'div-chart-pdf');
     });
     // Preview chart
     $('#daily-map-parameters')
         .off('change.drmPreview')
         .on('change.drmPreview', function() {
-            preview_drmExtRain_display_charts('daily');
+            preview_drmExt_display_charts('daily');
         });
 
     ////////////
@@ -61,13 +61,13 @@ $(document).ready(function() {
 
     ///////////
     // display preview time series on click on map, or select polygon
-    mapClickLayersSpatialAverage(preview_drmExtRain_display_charts, 'daily', map);
+    mapClickLayersSpatialAverage(preview_drmExt_display_charts, 'daily', map);
 
     $('#select-country-region').on('change', () => {
-        mapClickLayersSpatialAverage(preview_drmExtRain_display_charts, 'daily', map);
+        mapClickLayersSpatialAverage(preview_drmExt_display_charts, 'daily', map);
     });
 
     $('#select-region-name').on('change', () => {
-        mapClickLayersSpatialAverage(preview_drmExtRain_display_charts, 'daily', map);
+        mapClickLayersSpatialAverage(preview_drmExt_display_charts, 'daily', map);
     });
 });

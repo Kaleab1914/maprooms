@@ -629,6 +629,16 @@ function queryParamsDrmAnalysisMap(time_res){
     query.dailyAnalysis = true;
     query.minFrac = 1.0;
     query.seasParams = $(`#${time_res}-map-parameters`).val();
+    
+    // Force it to use max_temperature or min_temperature for temperature variable 
+    if (['max_temperature', 'min_temperature'].includes(query.variable)) {
+        const selectedVariable = query.variable;
+        query.variable = 'temperature';
+
+        if (query.seasParams === 'seasAvg') {
+            query.seasParams = selectedVariable === 'max_temperature' ? 'MaxTemp' : 'MinTemp';
+        }
+    }
 
     query.startMonth = parseInt($(`#${tstep_id}-start-mon`).val(), 10);
     query.startDay = parseInt($(`#${tstep_id}-start-day`).val(), 10);
@@ -644,8 +654,12 @@ function queryParamsDrmAnalysisMap(time_res){
         query.probaUnit = $(`#${time_res}-map-climato-probaUnit`).val();
     }
 
+    if (query.variable === 'rainfall') {
+        query.defSpell = parseInt($(`#${time_res}-map-def-spell-thres-val`).val().trim(),10);
+    };
+
     query.defThres = Number($(`#${time_res}-map-def-number-thres-val`).val().trim());
-    query.defSpell = parseInt($(`#${time_res}-map-def-spell-thres-val`).val().trim(),10);
+
 
     query.startYear = parseInt($(`#${tstep_id}-start-year`).val().trim(), 10);
     query.endYear = parseInt($(`#${tstep_id}-end-year`).val().trim(), 10);

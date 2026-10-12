@@ -40,7 +40,7 @@ function preview_monitoring_display_charts_1(tempRes) {
     preview_analysis_charts_anomaly(tempRes, 'div-chart-anom');
 }
 
-function preview_drmExtRain_display_charts(tempRes) {
+function preview_drmExt_display_charts(tempRes) {
     preview_drm_charts_cdf(tempRes, 'div-chart-cdf');
     preview_drm_charts_pdf(tempRes, 'div-chart-pdf');
 }
@@ -2098,6 +2098,7 @@ function preview_drm_query_cdf(tempRes) {
     query.temporalRes = tempRes;
     query.dataset = DATA_SET.use;
     query.variable = $(`#${tempRes}-map-variable`).val();
+    query.map_variable = query.variable;
 
     query.dailyAnalysis = true;
     query.minFrac = 1.0;
@@ -2111,9 +2112,9 @@ function preview_drm_query_cdf(tempRes) {
     query.defThres = Number($(`#${tempRes}-map-def-number-thres-val`).val().trim());
     if (query.variable === 'rainfall') {
         query.defSpell = parseInt($(`#${tempRes}-map-def-spell-thres-val`).val().trim(), 10);
-    } else {
-        query.defTempBase = Number($(`#${tempRes}-map-def-spell-thres-val`).val().trim());
-    }
+    } //else {
+      //  query.defTempBase = Number($(`#${tempRes}-map-def-spell-thres-val`).val().trim());
+    //}
 
     const dates = preview_analysis_query_temporal(
         query.dataset,
@@ -2126,6 +2127,17 @@ function preview_drm_query_cdf(tempRes) {
         const list_pars = PARAMS_ORDER;
         if (!list_pars.includes(query.seasParams)) {
             query.seasParams = list_pars[0];
+        }
+    }
+
+    if (['max_temperature', 'min_temperature'].includes(query.variable)) {
+        const selectedVariable = query.variable; 
+        query.variable = 'temperature';
+
+
+        if (query.seasParams === 'seasAvg') {
+            query.seasParams = selectedVariable === 'max_temperature'
+                ? 'MaxTemp' : 'MinTemp';
         }
     }
 
@@ -2329,11 +2341,18 @@ function preview_drm_display_pdf(json, container) {
         },
         yaxis: {
             rangemode: 'tozero',
+            // ticksuffix: '%',
             fixedrange: true,
             showline: true,
             showgrid: true,
             gridwidth: 0.5,
-            gridcolor: 'lightgray'
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            }
         },
         showlegend: false,
         hovermode: 'x unified',

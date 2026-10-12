@@ -32,13 +32,13 @@
                 <div class="col-sm-6">
                     {{ fmacros.create_card_charts("div-chart-cdf", pageText) }}
                     {% call fmacros.create_modal_expand_charts("div-chart-cdf", pageText) %}
-                    {{ fmacrosExp.create_expand_charts_drmExtRain("daily", pageText) }}
+                    {{ fmacrosExp.create_expand_charts_drmExt_cdf("daily", pageText) }}
                     {% endcall %}
                 </div>
                 <div class="col-sm-6">
                     {{ fmacros.create_card_charts("div-chart-pdf", pageText) }}
                     {% call fmacros.create_modal_expand_charts("div-chart-pdf", pageText) %}
-                    {{ fmacrosExp.create_expand_charts_drmExtRain_pdf("daily", pageText) }}
+                    {{ fmacrosExp.create_expand_charts_drmExt_pdf("daily", pageText) }}
                     {% endcall %}
                 </div>
             </div>

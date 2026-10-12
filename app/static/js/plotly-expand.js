@@ -3183,7 +3183,7 @@ function expand_analysis_display_spei_ts(json, container) {
 
 ///////
 
-function expand_analysis_query_drmExtRain(tempRes) {
+function expand_analysis_query_drmExt_cdf(tempRes) {
     let query = queryParamsSpatialAverage();
     if (!query) {
         return query;
@@ -3193,6 +3193,7 @@ function expand_analysis_query_drmExtRain(tempRes) {
     query.temporalRes = tempRes;
     query.dataset = DATA_SET.use;
     query.variable = $(`#${tempRes}-map-variable`).val();
+    query.map_variable = query.variable;
 
     // Selected start/end years.
     query.startDate = analysis_query_format_date(
@@ -3226,17 +3227,32 @@ function expand_analysis_query_drmExtRain(tempRes) {
     query.defThres = Number(
         $(`#${tempRes}-proba-def-number-thres-val`).val().trim()
     );
-    query.defSpell = parseInt(
-        $(`#${tempRes}-proba-def-spell-thres-val`).val().trim(),
-        10
-    );
+    if (query.variable === 'rainfall') {
+        query.defSpell = parseInt($(`#${tempRes}-proba-def-spell-thres-val`).val().trim(),10);
+    };
+
+    //
+    if (
+        ['max_temperature', 'min_temperature']
+            .includes(query.variable)
+    ) {
+        const selectedVariable = query.variable;
+        query.variable = 'temperature';
+
+        if (query.seasParams === 'seasAvg') {
+            query.seasParams =
+                selectedVariable === 'max_temperature'
+                    ? 'MaxTemp'
+                    : 'MinTemp';
+        }
+    }
 
     return query;
 }
 
 
-function expand_analysis_charts_drmExtRain(container_id, tempRes) {
-    const query = expand_analysis_query_drmExtRain(tempRes);
+function expand_analysis_charts_drmExt_cdf(container_id, tempRes) {
+    const query = expand_analysis_query_drmExt_cdf(tempRes);
     if (!query) {
         return false;
     }
@@ -3247,12 +3263,12 @@ function expand_analysis_charts_drmExtRain(container_id, tempRes) {
     ajaxDisplayChart(
         '/climate_analysis_proba',
         query,
-        expand_analysis_display_drmExtRain,
+        expand_analysis_display_drmExt_cdf,
         container_id
     );
 }
 
-function expand_analysis_display_drmExtRain(json, container) {
+function expand_analysis_display_drmExt_cdf(json, container) {
     const divCont = $(`#${container}`);
     divCont.empty();
     const theme = $('html').attr('data-bs-theme');
@@ -3311,7 +3327,7 @@ function expand_analysis_display_drmExtRain(json, container) {
     setPlotlyThemeColors(container);
 
 }
-function expand_analysis_query_drmExtRain_pdf(tempRes) {
+function expand_analysis_query_drmExt_pdf(tempRes) {
     let query = queryParamsSpatialAverage();
     if (!query) {
         return query;
@@ -3321,6 +3337,7 @@ function expand_analysis_query_drmExtRain_pdf(tempRes) {
     query.temporalRes = tempRes;
     query.dataset = DATA_SET.use;
     query.variable = $(`#${tempRes}-map-variable`).val();
+    query.map_variable = query.variable;
 
     // Selected start/end years.
     query.startDate = analysis_query_format_date(
@@ -3354,15 +3371,32 @@ function expand_analysis_query_drmExtRain_pdf(tempRes) {
     query.defThres = Number(
         $(`#${tempRes}-pdf-def-number-thres-val`).val().trim()
     );
-    query.defSpell = parseInt(
-        $(`#${tempRes}-pdf-def-spell-thres-val`).val().trim(),
-        10
-    );
+
+    if (query.variable === 'rainfall') {
+        query.defSpell = parseInt($(`#${tempRes}-proba-def-spell-thres-val`).val().trim(),10);
+    };
+
+    //
+    if (
+        ['max_temperature', 'min_temperature']
+            .includes(query.variable)
+    ) {
+        const selectedVariable = query.variable;
+        query.variable = 'temperature';
+
+        if (query.seasParams === 'seasAvg') {
+            query.seasParams =
+                selectedVariable === 'max_temperature'
+                    ? 'MaxTemp'
+                    : 'MinTemp';
+        }
+    }
 
     return query;
 }
-function expand_analysis_charts_drmExtRain_pdf(container_id, tempRes) {
-    const query = expand_analysis_query_drmExtRain_pdf(tempRes);
+
+function expand_analysis_charts_drmExt_pdf(container_id, tempRes) {
+    const query = expand_analysis_query_drmExt_pdf(tempRes);
     if (!query) {
         return false;
     }
@@ -3373,12 +3407,12 @@ function expand_analysis_charts_drmExtRain_pdf(container_id, tempRes) {
     ajaxDisplayChart(
         '/climate_analysis_proba',
         query,
-        expand_analysis_display_drmExtRain_pdf,
+        expand_analysis_display_drmExt_pdf,
         container_id
     );
 }
 
-function expand_analysis_display_drmExtRain_pdf(json, container) {
+function expand_analysis_display_drmExt_pdf(json, container) {
     const divCont = $(`#${container}`);
     divCont.empty();
     const theme = $('html').attr('data-bs-theme');
@@ -3420,7 +3454,7 @@ function expand_analysis_display_drmExtRain_pdf(json, container) {
             }
         },
         yaxis: {
-            title: { text: 'Probability Density Function (%)' },
+            title: { text: 'Density' },
             rangemode: 'tozero'
         },
         showlegend: true,
@@ -3439,3 +3473,6 @@ function expand_analysis_display_drmExtRain_pdf(json, container) {
     setPlotlyThemeColors(container);
 
 }
+
+///////
+

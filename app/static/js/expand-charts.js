@@ -1142,11 +1142,11 @@ function setAnalysisDistributionSPEI(tempRes, analysis) {
     }
 }
 
-function setAnalysisExpandModalDrmExtRain(tempRes, contID) {
+function setAnalysisExpandModalDrmExt_cdf(tempRes, contID) {
     showModalDialog(`modal-expand-${contID}`);
     expandModalCharts(
         contID,
-        expand_analysis_charts_drmExtRain,
+        expand_analysis_charts_drmExt_cdf,
         tempRes
     );
     purgePlotlyChartExpandModal(contID);
@@ -1158,13 +1158,21 @@ function setAnalysisExpandModalDrmExtRain(tempRes, contID) {
     setAnalysisDateCalendarMonDay(tempRes, 'proba');
 
     const contChart = `container-chart-${contID}`;
+    $(`#plotly-replot-${contID}`)
+        .off('click.drmExtReplot')
+        .on('click.drmExtReplot', () => {
+            expand_analysis_charts_drmExt_cdf(
+                contChart,
+                tempRes
+            );
+        });
 
     $(`#${tempRes}-proba-parameters`)
-        .off('change.drmExtRainExpandParameters')
-        .on('change.drmExtRainExpandParameters', function() {
+        .off('change.drmExtExpandParameters')
+        .on('change.drmExtExpandParameters', function() {
             const this_val = $(this).val();
 
-            if (this_val === 'TotRain') {
+            if (['TotRain', 'seasAvg'].includes(this_val)) {
                 setVisibility(
                     [],
                     [
@@ -1173,7 +1181,7 @@ function setAnalysisExpandModalDrmExtRain(tempRes, contID) {
                     ]
                 );
             } else if (
-                ['NumWD', 'NumDD', 'RainInt'].includes(this_val)
+                ['NumWD', 'NumDD', 'RainInt', 'NumCD', 'NumHD'].includes(this_val)
             ) {
                 setVisibility(
                     [
@@ -1193,7 +1201,7 @@ function setAnalysisExpandModalDrmExtRain(tempRes, contID) {
                 );
             }
 
-            expand_analysis_charts_drmExtRain(contChart, tempRes);
+            expand_analysis_charts_drmExt_cdf(contChart, tempRes);
         });
 
         $(`#${tempRes}-proba-parameters`).trigger('change');
@@ -1201,11 +1209,11 @@ function setAnalysisExpandModalDrmExtRain(tempRes, contID) {
 
 }
 
-function setAnalysisExpandModalDrmExtRain_pdf(tempRes, contID) {
+function setAnalysisExpandModalDrmExt_pdf(tempRes, contID) {
     showModalDialog(`modal-expand-${contID}`);
     expandModalCharts(
         contID,
-        expand_analysis_charts_drmExtRain_pdf,
+        expand_analysis_charts_drmExt_pdf,
         tempRes
     );
     purgePlotlyChartExpandModal(contID);
@@ -1217,13 +1225,21 @@ function setAnalysisExpandModalDrmExtRain_pdf(tempRes, contID) {
     setAnalysisDateCalendarMonDay(tempRes, 'pdf');
 
     const contChart = `container-chart-${contID}`;
+    $(`#plotly-replot-${contID}`)
+    .off('click.drmExtReplot')
+    .on('click.drmExtReplot', () => {
+        expand_analysis_charts_drmExt_cdf(
+            contChart,
+            tempRes
+        );
+    });
 
     $(`#${tempRes}-pdf-parameters`)
-        .off('change.drmExtRainExpandParameters')
-        .on('change.drmExtRainExpandParameters', function() {
+        .off('change.drmExtExpandParameters')
+        .on('change.drmExtExpandParameters', function() {
             const this_val = $(this).val();
 
-            if (this_val === 'TotRain') {
+            if (['TotRain', 'seasAvg'].includes(this_val)) {
                 setVisibility(
                     [],
                     [
@@ -1232,7 +1248,7 @@ function setAnalysisExpandModalDrmExtRain_pdf(tempRes, contID) {
                     ]
                 );
             } else if (
-                ['NumWD', 'NumDD', 'RainInt'].includes(this_val)
+                ['NumWD', 'NumDD', 'RainInt', 'NumCD', 'NumHD'].includes(this_val)
             ) {
                 setVisibility(
                     [
@@ -1252,7 +1268,7 @@ function setAnalysisExpandModalDrmExtRain_pdf(tempRes, contID) {
                 );
             }
             
-            expand_analysis_charts_drmExtRain_pdf(contChart, tempRes);
+            expand_analysis_charts_drmExt_pdf(contChart, tempRes);
         });
 
         $(`#${tempRes}-pdf-parameters`).trigger('change');

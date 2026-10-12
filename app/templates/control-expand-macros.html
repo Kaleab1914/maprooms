@@ -925,8 +925,8 @@
 </div>
 {% endmacro %}
 <!--  -->
-{% macro create_expand_charts_drmExtRain(tempRes, pageText) %}
-<div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-drmExtRain-control">
+{% macro create_expand_charts_drmExt_cdf(tempRes, pageText, variable="rainfall") %}
+<div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-drmExt-cdf-control">
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">{{ pageText.label_statistics.params }}</legend>
         <!--  -->
@@ -974,20 +974,27 @@
         </div>
     </fieldset>
 
+    <!--  -->
+    {% set definition = pageText.definition.number
+        if variable == "rainfall"
+        else pageText.definition %}
+
     <fieldset id="{{ tempRes }}-proba-def-number" class="border border-secondary rounded-3 py-1">
-        <legend id="{{ tempRes }}-proba-def-number-thres-lab" class="legend-label">{{ pageText.definition.number.label }}</legend>
+        <legend id="{{ tempRes }}-proba-def-number-thres-lab" class="legend-label">{{ definition.label }}</legend>
         <div class="row w-auto">
             <div id="{{ tempRes }}-proba-def-number-thres-txt" class="col-auto">
-                {{ pageText.definition.number.text }}
+                {{ definition.text }}
             </div>
             <div class="col-auto me-0 pe-0">
-                <input id="{{ tempRes }}-proba-def-number-thres-val" class="form-control text-center" type="text" value="{{ pageText.definition.number.value }}" size="3">
+                <input id="{{ tempRes }}-proba-def-number-thres-val" class="form-control text-center" type="text" value="{{ definition.value }}" size="3">
             </div>
             <div id="{{ tempRes }}-proba-def-number-thres-unit" class="col-auto ms-0 ps-1">
-                {{ pageText.definition.number.unit }}
+                {{ definition.unit }}
             </div>
         </div>
     </fieldset>
+    <!-- if rainfall only, show spell definition -->
+    {% if variable == "rainfall" %}
     <fieldset id="{{ tempRes }}-proba-def-spell" class="border border-secondary rounded-3">
         <legend id="{{ tempRes }}-proba-def-spell-thres-lab" class="legend-label">{{ pageText.definition.spell.label }}</legend>
         <div class="row w-auto">
@@ -999,25 +1006,15 @@
             </div>
         </div>
     </fieldset>
-    <!--  -->
-    {# <fieldset id="{{ tempRes }}-chart-proba-plot-cdf" class="border border-secondary rounded-3 py-1">
-        <legend class="legend-label">{{ pageText.opt_ts_cdf.label }}</legend>
-        <div class="d-flex gap-3">
-            {% for key, value in pageText.opt_ts_cdf.type.items() %}
-            <label class="d-flex align-items-center">
-                <input type="checkbox" id="{{ tempRes }}-proba-plot-cdf-{{ key }}" class="{{ tempRes }}-proba-plot me-1" data-plot="cdf" value="{{ key }}" {% if ( key!='fitted' ) %} checked {% endif %}>
-                <span>{{ value }}</span>
-            </label>
-            {% endfor %}
-        </div>
-    </fieldset> #}
+    {% endif %}
+
     <!--  -->
 </div>
 {% endmacro %}
 
 <!--  -->
-{% macro create_expand_charts_drmExtRain_pdf(tempRes, pageText) %}
-<div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-drmExtRain-pdf-control">
+{% macro create_expand_charts_drmExt_pdf(tempRes, pageText, variable="rainfall") %}
+<div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-drmExt-pdf-control">
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">{{ pageText.label_statistics.params }}</legend>
         <!--  -->
@@ -1064,21 +1061,26 @@
             </div>
         </div>
     </fieldset>
+    {% set definition = pageText.definition.number
+        if variable == "rainfall"
+        else pageText.definition %}
 
     <fieldset id="{{ tempRes }}-pdf-def-number" class="border border-secondary rounded-3 py-1">
-        <legend id="{{ tempRes }}-pdf-def-number-thres-lab" class="legend-label">{{ pageText.definition.number.label }}</legend>
+        <legend id="{{ tempRes }}-pdf-def-number-thres-lab" class="legend-label">{{ definition.label }}</legend>
         <div class="row w-auto">
             <div id="{{ tempRes }}-pdf-def-number-thres-txt" class="col-auto">
-                {{ pageText.definition.number.text }}
+                {{ definition.text }}
             </div>
             <div class="col-auto me-0 pe-0">
-                <input id="{{ tempRes }}-pdf-def-number-thres-val" class="form-control text-center" type="text" value="{{ pageText.definition.number.value }}" size="3">
+                <input id="{{ tempRes }}-pdf-def-number-thres-val" class="form-control text-center" type="text" value="{{ definition.value }}" size="3">
             </div>
             <div id="{{ tempRes }}-pdf-def-number-thres-unit" class="col-auto ms-0 ps-1">
-                {{ pageText.definition.number.unit }}
+                {{ definition.unit }}
             </div>
         </div>
     </fieldset>
+
+    {% if variable == "rainfall" %}
     <fieldset id="{{ tempRes }}-pdf-def-spell" class="border border-secondary rounded-3">
         <legend id="{{ tempRes }}-pdf-def-spell-thres-lab" class="legend-label">{{ pageText.definition.spell.label }}</legend>
         <div class="row w-auto">
@@ -1090,6 +1092,7 @@
             </div>
         </div>
     </fieldset>
+    {% endif %}
 
     <!--  -->
 </div>
