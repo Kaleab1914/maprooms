@@ -709,7 +709,7 @@ function queryParamsDrmAnalysisMapSPI(time_res) {
     
     query.dataset = DATA_SET.use;
     query.map_variable = $(`#${time_res}-map-variable`).val() ?? 'rainfall';
-    query.variable = DATA_SET.variables[query.map_variable][0];
+    query.variable = DATA_SET.variables[query.map_variable];
     //query.variable = 'rainfall';
     
     query.mapType = 'rawdata';

@@ -52,6 +52,7 @@
 <script>
 const DATA_SET = JSON.parse('{{ pageText.dataset | tojson }}');
 const SEAS_LABELS = JSON.parse('{{ pageText.opt_dates | tojson }}');
+const OPT_SPEI = JSON.parse('{{ pageText.opt_ts_spei | tojson }}');
 </script>
 <script type="text/javascript" src="{{ url_for('climate_monitoring.static', filename='js/seasonal.js') }}"></script>
 {% endblock %}

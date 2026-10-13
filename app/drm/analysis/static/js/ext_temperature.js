@@ -9,6 +9,7 @@ $(document).ready(function() {
     $('#div-map-time-navigation').removeClass('d-flex').addClass('d-none');
 
     setOffCanvasMapControlsDrmExtTemp('daily');
+    refreshSpatialAverage('daily');
 
     ////////////
     // Modal Expand Charts

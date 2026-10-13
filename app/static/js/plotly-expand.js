@@ -3326,7 +3326,6 @@ function expand_analysis_query_drmExt_cdf(tempRes) {
     return query;
 }
 
-
 function expand_analysis_charts_drmExt_cdf(container_id, tempRes) {
     const query = expand_analysis_query_drmExt_cdf(tempRes);
     if (!query) {
@@ -3376,6 +3375,20 @@ function expand_analysis_display_drmExt_cdf(json, container) {
             },
             range: json.xrange,
             tickvals: json.xticks,
+            ticks: 'outside',
+            ticklen: 8,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                tickvals: createTicksMinor(json.xticks),
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            },
             unifiedhovertitle: {
                 text: json.info.var.name +
                     ': %{x:.2f} ' +
@@ -3385,7 +3398,20 @@ function expand_analysis_display_drmExt_cdf(json, container) {
         yaxis: {
             title: { text: 'Cumulative probability (%)' },
             range: [0, 100],
-            ticksuffix: '%'
+            ticks: 'outside',
+            ticklen: 8,
+            ticksuffix: '%',
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            },
         },
         showlegend: true,
         hovermode: 'x unified',
@@ -3449,7 +3475,7 @@ function expand_analysis_query_drmExt_pdf(tempRes) {
     );
 
     if (query.variable === 'rainfall') {
-        query.defSpell = parseInt($(`#${tempRes}-proba-def-spell-thres-val`).val().trim(),10);
+        query.defSpell = parseInt($(`#${tempRes}-pdf-def-spell-thres-val`).val().trim(),10);
     };
 
     //
@@ -3493,13 +3519,15 @@ function expand_analysis_display_drmExt_pdf(json, container) {
     divCont.empty();
     const theme = $('html').attr('data-bs-theme');
 
+    const xlab = json.info.labels.pdf.x;
+    const ylab = json.info.labels.pdf.y;
     const data = [
         {
             x: json.pdf.kde.x,
             y: json.pdf.kde.y,
             type: 'scatter',
             mode: 'lines',
-            name: 'Kernel density',
+            name: 'Kernel Density Estimation',
             line: { color: '#1e90ff', width: 4 },
             hovertemplate:
                 '%{data.name}: %{y:.4f}<extra></extra>'
@@ -3509,29 +3537,60 @@ function expand_analysis_display_drmExt_pdf(json, container) {
             y: json.pdf.fitted.y,
             type: 'scatter',
             mode: 'lines',
-            name: 'Fitted density',
+            name: 'Fitted PDF',
             line: { color: 'red', width: 3 },
             hovertemplate:
                 '%{data.name}: %{y:.4f}<extra></extra>'
         }
     ];
 
+    const ymax = Math.max(
+        ...json.pdf.kde.y,
+        ...json.pdf.fitted.y
+    );
+
     let layout = {
         xaxis: {
-            title: {
-                text: `${json.info.var.name} (${json.info.var.units})`
-            },
+            // title: {
+            //     text: `${json.info.var.name} (${json.info.var.units})`
+            // },
             range: json.xrange,
-            tickvals: json.xticks,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            },
+            title: {
+                text: xlab
+            },
             unifiedhovertitle: {
                 text: json.info.var.name +
                     ': %{x:.2f} ' +
                     json.info.var.units
-            }
+            },
         },
         yaxis: {
-            title: { text: 'Density' },
-            rangemode: 'tozero'
+            title: { text: ylab },
+            range: [0, ymax + 0.002],
+            ticks: 'outside',
+            ticklen: 8,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            },
         },
         showlegend: true,
         hovermode: 'x unified',

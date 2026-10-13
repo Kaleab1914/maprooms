@@ -9,6 +9,7 @@ $(document).ready(function() {
     $('#div-map-time-navigation').removeClass('d-flex').addClass('d-none');
 
     setOffCanvasMapControlsDrmExtRain('daily');
+    refreshSpatialAverage('daily');
     //setOffCanvasMapControlsDrmExtRain_pdf('daily');
 
     ////////////

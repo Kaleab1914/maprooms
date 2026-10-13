@@ -1233,7 +1233,7 @@ function setAnalysisExpandModalDrmExt_pdf(tempRes, contID) {
     $(`#plotly-replot-${contID}`)
     .off('click.drmExtReplot')
     .on('click.drmExtReplot', () => {
-        expand_analysis_charts_drmExt_cdf(
+        expand_analysis_charts_drmExt_pdf(
             contChart,
             tempRes
         );

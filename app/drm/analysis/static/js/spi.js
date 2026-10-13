@@ -1,66 +1,71 @@
 $(document).ready(function() {
     $('[data-bs-toggle="tooltip"]').tooltip();
-    let map = createLeafletTileLayer('div-map-container', MTO_INIT);
 
-    // offcanvas map controls
+    const map = createLeafletTileLayer('div-map-container', MTO_INIT);
+    const map_options = {};
+
+    // Initialize cotrol
     setOffCanvasMapControlDrmSpiAnalysis('seasonal');
 
-    // Expand chart
-
+    // Expanded chart
     $('.seasonal-spei-select2').select2({
         minimumResultsForSearch: -1,
         dropdownParent: $('#seasonal-spei-control')
     });
 
-    $('#btn-div-chart-spi').on('click', () => {
-        setAnalysisExpandModalSPEI('seasonal', 'div-chart-spi');
-    });
-
-
-    // Preview chart
-    $('#daily-map-parameters')
-        .off('change.drmPreview')
-        .on('change.drmPreview', function() {
-            preview_drmExt_display_charts('seasonal');
+    $('#btn-div-chart-spi')
+        .off('click.drmSpiExpand')
+        .on('click.drmSpiExpand', () => {
+            setAnalysisExpandModalSPEI('seasonal', 'div-chart-spi');
         });
 
+    function refreshSpi() {
+        displayDrmAnalysisMapSPI('seasonal', map_options, map);
+        preview_drmSpi_display_charts('seasonal');
+    }
 
-    ////////////
+    // Refresh 
+    $('#map-control-offcanvas-dataselect')
+        .on('hidden.bs.offcanvas', refreshSpi);
+
+    $('#map-control-redraw').on('click', refreshSpi);
+
+    // Refresh preview 
+    $('#seasonal-map-date-length')
+        .off('change.drmSpiPreview')
+        .on('change.drmSpiPreview', () => {
+            preview_drmSpi_display_charts('seasonal');
+        });
+
+    // Map date navigation next preview
     $('#input-time-navigation').on('blur', async () => {
-        const ret = await setMapDatesNavInput('seasonal');
-        if (ret) {
-            displayDrmAnalysisMapSPI('seasonal', map_options, map);
+        const valid = await setMapDatesNavInput('seasonal');
+        if (valid) {
+            refreshSpi();
         }
     });
 
     $('#prev-time-navigation').on('click', async () => {
-        const ret = await setMapDatesNavPrev('seasonal');
-        if (ret) {
-            displayDrmAnalysisMapSPI('seasonal', map_options, map);
+        const valid = await setMapDatesNavPrev('seasonal');
+        if (valid) {
+            refreshSpi();
         }
     });
 
     $('#next-time-navigation').on('click', async () => {
-        const ret = await setMapDatesNavNext('seasonal');
-        if (ret) {
-            displayDrmAnalysisMapSPI('seasonal', map_options, map);
+        const valid = await setMapDatesNavNext('seasonal');
+        if (valid) {
+            refreshSpi();
         }
     });
 
-
-    // INitialize map
-    const map_options = {};
+    // Initial map
     displayDrmAnalysisMapSPI('seasonal', map_options, map);
-    //displayDrmAnalysisMapSPI('seasonal');
 
-    // display map when offcanvas hidden
-    $('#map-control-offcanvas-dataselect').on('hidden.bs.offcanvas', () => {
-        displayDrmAnalysisMapSPI('seasonal', map_options, map);
-    });
-
-    // 
-    $('#map-control-redraw').on('click', () => {
-        displayDrmAnalysisMapSPI('seasonal', map_options, map);
-    });
+    // Preview on map-point clicks
+    mapClickLayersSpatialAverage(
+        preview_drmSpi_display_charts,
+        'seasonal',
+        map
+    );
 });
-
