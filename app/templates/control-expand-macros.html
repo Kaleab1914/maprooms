@@ -925,8 +925,8 @@
 </div>
 {% endmacro %}
 <!--  -->
-{% macro create_expand_charts_drmExtRain(tempRes, pageText) %}
-<div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-drmExtRain-control">
+{% macro create_expand_charts_drmExt_cdf(tempRes, pageText, variable="rainfall") %}
+<div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-drmExt-cdf-control">
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">{{ pageText.label_statistics.params }}</legend>
         <!--  -->
@@ -936,5 +936,164 @@
             {% endfor %}
         </select>
     </fieldset>
+
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_year.start }}</legend>
+        <div id="{{ tempRes }}-chart-proba-startdate" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Start date" style="width: 6.5em">
+            <input id="{{ tempRes }}-chart-proba-startdate-calendar" type="text" class="form-control">
+        </div>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_year.end }}</legend>
+        <div id="{{ tempRes }}-chart-proba-enddate" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="End date" style="width: 6.5em">
+            <input id="{{ tempRes }}-chart-proba-enddate-calendar" type="text" class="form-control">
+        </div>
+    </fieldset>
+
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_season.start }}</legend>
+        <div class="row w-auto">
+            <div class="col-auto me-0 pe-0">
+                <select id="{{ tempRes }}-proba-start-mon" class="form-select {{ tempRes }}-proba-select2" style="width: 150px;"></select>
+            </div>
+            <div class="col-auto ms-0 ps-1">
+                <select id="{{ tempRes }}-proba-start-day" class="form-select {{ tempRes }}-proba-select2"></select>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_season.end }}</legend>
+        <!--  -->
+        <div class="row w-auto">
+            <div class="col-auto me-0 pe-0">
+                <select id="{{ tempRes }}-proba-end-mon" class="form-select {{ tempRes }}-proba-select2" style="width: 150px;"></select>
+            </div>
+            <div class="col-auto ms-0 ps-1">
+                <select id="{{ tempRes }}-proba-end-day" class="form-select {{ tempRes }}-proba-select2"></select>
+            </div>
+        </div>
+    </fieldset>
+
+    <!--  -->
+    {% set definition = pageText.definition.number
+        if variable == "rainfall"
+        else pageText.definition %}
+
+    <fieldset id="{{ tempRes }}-proba-def-number" class="border border-secondary rounded-3 py-1">
+        <legend id="{{ tempRes }}-proba-def-number-thres-lab" class="legend-label">{{ definition.label }}</legend>
+        <div class="row w-auto">
+            <div id="{{ tempRes }}-proba-def-number-thres-txt" class="col-auto">
+                {{ definition.text }}
+            </div>
+            <div class="col-auto me-0 pe-0">
+                <input id="{{ tempRes }}-proba-def-number-thres-val" class="form-control text-center" type="text" value="{{ definition.value }}" size="3">
+            </div>
+            <div id="{{ tempRes }}-proba-def-number-thres-unit" class="col-auto ms-0 ps-1">
+                {{ definition.unit }}
+            </div>
+        </div>
+    </fieldset>
+    <!-- if rainfall only, show spell definition -->
+    {% if variable == "rainfall" %}
+    <fieldset id="{{ tempRes }}-proba-def-spell" class="border border-secondary rounded-3">
+        <legend id="{{ tempRes }}-proba-def-spell-thres-lab" class="legend-label">{{ pageText.definition.spell.label }}</legend>
+        <div class="row w-auto">
+            <div class="col-auto me-0 pe-0">
+                <input id="{{ tempRes }}-proba-def-spell-thres-val" class="form-control text-center" type="text" value="{{ pageText.definition.spell.value }}" size="4">
+            </div>
+            <div id="{{ tempRes }}-proba-def-spell-thres-txt" class="col-auto ms-0 ps-1">
+                {{ pageText.definition.spell.text }}
+            </div>
+        </div>
+    </fieldset>
+    {% endif %}
+
+    <!--  -->
+</div>
+{% endmacro %}
+
+<!--  -->
+{% macro create_expand_charts_drmExt_pdf(tempRes, pageText, variable="rainfall") %}
+<div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-drmExt-pdf-control">
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.label_statistics.params }}</legend>
+        <!--  -->
+        <select id="{{ tempRes }}-pdf-parameters" class="form-select {{ tempRes }}-pdf-select2" style="width: 300px;">
+            {% for key, value in pageText.parameters.items() %}
+            <option value="{{key}}">{{value.select}}</option>
+            {% endfor %}
+        </select>
+    </fieldset>
+
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_year.start }}</legend>
+        <div id="{{ tempRes }}-chart-pdf-startdate" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Start date" style="width: 6.5em">
+            <input id="{{ tempRes }}-chart-pdf-startdate-calendar" type="text" class="form-control">
+        </div>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_year.end }}</legend>
+        <div id="{{ tempRes }}-chart-pdf-enddate" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="End date" style="width: 6.5em">
+            <input id="{{ tempRes }}-chart-pdf-enddate-calendar" type="text" class="form-control">
+        </div>
+    </fieldset>
+
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_season.start }}</legend>
+        <div class="row w-auto">
+            <div class="col-auto me-0 pe-0">
+                <select id="{{ tempRes }}-pdf-start-mon" class="form-select {{ tempRes }}-pdf-select2" style="width: 150px;"></select>
+            </div>
+            <div class="col-auto ms-0 ps-1">
+                <select id="{{ tempRes }}-pdf-start-day" class="form-select {{ tempRes }}-pdf-select2"></select>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.opt_season.label_season.end }}</legend>
+        <!--  -->
+        <div class="row w-auto">
+            <div class="col-auto me-0 pe-0">
+                <select id="{{ tempRes }}-pdf-end-mon" class="form-select {{ tempRes }}-pdf-select2" style="width: 150px;"></select>
+            </div>
+            <div class="col-auto ms-0 ps-1">
+                <select id="{{ tempRes }}-pdf-end-day" class="form-select {{ tempRes }}-pdf-select2"></select>
+            </div>
+        </div>
+    </fieldset>
+    {% set definition = pageText.definition.number
+        if variable == "rainfall"
+        else pageText.definition %}
+
+    <fieldset id="{{ tempRes }}-pdf-def-number" class="border border-secondary rounded-3 py-1">
+        <legend id="{{ tempRes }}-pdf-def-number-thres-lab" class="legend-label">{{ definition.label }}</legend>
+        <div class="row w-auto">
+            <div id="{{ tempRes }}-pdf-def-number-thres-txt" class="col-auto">
+                {{ definition.text }}
+            </div>
+            <div class="col-auto me-0 pe-0">
+                <input id="{{ tempRes }}-pdf-def-number-thres-val" class="form-control text-center" type="text" value="{{ definition.value }}" size="3">
+            </div>
+            <div id="{{ tempRes }}-pdf-def-number-thres-unit" class="col-auto ms-0 ps-1">
+                {{ definition.unit }}
+            </div>
+        </div>
+    </fieldset>
+
+    {% if variable == "rainfall" %}
+    <fieldset id="{{ tempRes }}-pdf-def-spell" class="border border-secondary rounded-3">
+        <legend id="{{ tempRes }}-pdf-def-spell-thres-lab" class="legend-label">{{ pageText.definition.spell.label }}</legend>
+        <div class="row w-auto">
+            <div class="col-auto me-0 pe-0">
+                <input id="{{ tempRes }}-pdf-def-spell-thres-val" class="form-control text-center" type="text" value="{{ pageText.definition.spell.value }}" size="4">
+            </div>
+            <div id="{{ tempRes }}-pdf-def-spell-thres-txt" class="col-auto ms-0 ps-1">
+                {{ pageText.definition.spell.text }}
+            </div>
+        </div>
+    </fieldset>
+    {% endif %}
+
+    <!--  -->
 </div>
 {% endmacro %}

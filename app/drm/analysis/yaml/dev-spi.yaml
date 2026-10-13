@@ -20,7 +20,319 @@ description:
         <p>Un clic sur la carte affiche une série chronologique locale correspondant au point de grille de 0,0375˚ sélectionné. Les utilisateurs peuvent également choisir de calculer la moyenne spatiale du SPI sur des districts, des régions ou des pays, soit en cliquant sur la carte, soit en sélectionnant le nom d’une unité administrative dans la liste déroulante, après avoir choisi le niveau administratif souhaité. Les utilisateurs peuvent également limiter la série chronologique à une période plus courte à l’aide du menu de la barre de contrôle.</p>
         <p>À noter que les barres des séries chronologiques ont une largeur d’un mois, quelle que soit la durée du SPI choisie, afin d’en faciliter la lecture. Le SPI d’une saison donnée est représenté au niveau du dernier mois de cette saison. Par exemple, si la durée du SPI est de 4 mois, le SPI de septembre à décembre 2016 est représenté en décembre 2016.</p></p>
 
+years_range:
+    start_year: 1981
+    end_year: 2024
+    min_year: 30
+    
 dataset:
-    use: ALL
-    variables: 
-        precip: [precip]
+    use: MON
+    variables:
+        rainfall: [precip]
+        rain_seas: [precip]
+        spi_mon: [precip]
+        spei_mon: [precip, et0]
+        spi_seas: [precip]
+        spei_seas: [precip, et0]
+
+variables:
+    label:
+        en: Variable
+        fr: Variable
+    select:
+        rain_seas:
+            en: Seasonal Rainfall Total
+            fr: Cumul de Précipitations Saisonnières
+        anom_seas:
+            en: Seasonal Rainfall Anomaly
+            fr: Anomalie de Précipitations Saisonnières
+        anom_per_seas:
+            en: Seasonal Rainfall Anomaly in Percent
+            fr: Anomalie de Précipitations Saisonnières en Pourcentage
+        spi_seas:
+            en: Standard Precipitation Index (SPI)
+            fr: Indice de Précipitations Standardisé (SPI)
+        spei_seas:
+            en: Standardized Precipitation Evapotranspiration Index (SPEI)
+            fr: Indice Standardisé de Précipitation et d’Évapotranspiration (SPEI)
+
+opt_season:
+    label_year:
+        start:
+            en: Start year
+            fr: Début année
+        end:
+            en: End year
+            fr: Fin année
+    season_ts:
+        start:
+            en: Season start month
+            fr: Mois début de saison
+        length:
+            en: Season length
+            fr: Longueur saison
+        unit:
+            en: months
+            fr: mois
+    season_map:
+        start:
+            en: Start month
+            fr: Mois de début
+        length:
+            en: Length
+            fr: Longueur
+opt_map:
+    label_season:
+        en: Season
+        fr: Saison
+    label_year:
+        en: Years
+        fr: Années
+    start_date:
+        en: Start
+        fr: Début
+    end_date:
+        en: End
+        fr: Fin
+    min_year:
+        en: Minimum number of years
+        fr: Nombre minimum d'années
+    disp_year:
+        en: Display year
+        fr: Afficher année
+
+parameters:
+    TotRain:
+        select:
+            en: Total rainfall
+            fr: Cumul de précipitations
+        unit:
+            en: mm
+            fr: mm
+        value: 500
+        dtype: float
+    NumWD:
+        select:
+            en: Number of wet days
+            fr: Nombre des jours de pluies
+        unit:
+            en: days
+            fr: jours
+        value: 30
+        dtype: integer
+    NumDD:
+        select:
+            en: Number of dry days
+            fr: Nombre des jours secs
+        unit:
+            en: days
+            fr: jours
+        value: 30
+        dtype: integer
+    RainInt:
+        select:
+            en: Rainfall intensity
+            fr: Intensité des pluies
+        unit:
+            en: mm/day
+            fr: mm/jour
+        value: 10
+        dtype: float
+    NumDS:
+        select:
+            en: Number of dry spells
+            fr: Nombre de périodes sèches
+        unit:
+            en: spells
+            fr: périodes
+        value: 3
+        dtype: integer
+    NumWS:
+        select:
+            en: Number of wet spells
+            fr: Nombre de périodes pluvieuses
+        unit:
+            en: spells
+            fr: périodes
+        value: 3
+        dtype: integer
+
+parameters_order: [TotRain, NumWD, NumDD, RainInt, NumDS, NumWS]
+
+definition:
+    number:
+        label:
+            en: Wet/Dry day definition
+            fr: Définition d'un jour pluvieux/sec
+        text:
+            en: Rainfall amount above/below
+            fr: Cumul de précipitations au-dessus/en-dessous de
+        unit: 
+            en: mm/day
+            fr: mm/jour
+        value: 1
+    spell:
+        label:
+            en: Wet/Dry spell definition
+            fr: Définition de périodes pluvieuses/sèches
+        text:
+            en: continuous wet/dry days
+            fr: jours pluvieux/secs de suite
+        value: 7
+
+label_statistics:
+    params:
+        en: Seasonal statistics
+        fr: Statistique saisonnières
+    stats:
+        en: Yearly seasonal statistics
+        fr: Statistiques saisonnières annuelles
+seasonal_statistics:
+        stdev:
+            en: Standard deviation
+            fr: Écart type
+        cv:
+            en: Coefficient of variation
+            fr: Coefficient de variation
+        probExc:
+            en: Probability of exceeding
+            fr: Probabilité de dépassement
+        probNoExc:
+            en: Probability of non-exceeding
+            fr: Probabilité de non-dépassement
+probabilities:
+    thres:
+        en: Threshold
+        fr: Seuil
+    unit:
+        en: Probability units
+        fr: Unités de probabilité
+    select:
+        perc:
+            en: Percentage
+            fr: Pourcentage
+        frac:
+            en: Fraction
+            fr: Fraction
+
+
+opt_ts_df:
+    label:
+        en: Display
+        fr: Afficher
+    select:
+        cdf: 
+            en: Cumulative Distribution Function (CDF)
+            fr: Fonction de Répartition (CDF)
+        pdf: 
+            en: Probability Density Function (PDF)
+            fr: Fonction de Densité de Probabilité (PDF)
+
+opt_ts_cdf:
+    label:
+        en: CDF Chart
+        fr: Graphique de CDF
+    type:
+        empirical:
+            en: Empirical
+            fr: Empirique
+        smoothed:
+            en: Smoothed
+            fr: Lissée
+        fitted:
+            en: Theoretical
+            fr: Théorique
+opt_ts_pdf:
+    label:
+        en: PDF Chart
+        fr: Graphique de PDF
+    type:
+        histogram:
+            en: Histogram
+            fr: Histogramme
+        density:
+            en: Density (KDE)
+            fr: Densité (KDE)
+        fitted:
+            en: Theoretical
+            fr: Théorique
+opt_js_data:
+    cdf: [empirical, smoothed, fitted]
+    pdf: [histogram, density, fitted]
+opt_ts_seasplot:
+    label:
+        en: Plot type
+        fr: Type de graphique
+    select:
+        bar:
+            en: Bar
+            fr: Barre
+        line:
+            en: Line
+            fr: Ligne
+        lpoint:
+            en: Line + Points
+            fr: Ligne + Points
+opt_ts_seaslines:
+    label:
+        en: Display
+        fr: Afficher
+    type:
+        mean:
+            en: Mean
+            fr: Moyenne
+        median:
+            en: Median
+            fr: Médiane
+        terciles:
+            en: Terciles
+            fr: Terciles
+        trend:
+            en: Trend
+            fr: Tendance
+
+opt_ts_spei:
+    date_label:
+        start:
+            en: Start year
+            fr: Début année
+        end:
+            en: End year
+            fr: Fin année
+    spei_label:
+        en: Compute
+        fr: Calculer
+    spei_type:
+        spi: 
+            en: SPI - Standardized Precipitation Index
+            fr: SPI - Indice de Précipitations Standardisé
+        spei:
+            en: SPEI - Standardized Precipitation Evapotranspiration Index
+            fr: SPEI - Indice Standardisé de Précipitation et d’Évapotranspiration
+    spei_variable:
+        spi: spi_seas
+        spei: spei_seas
+    time_scale:
+        en: Time scales
+        fr: Échelles de temps
+    units:
+        en: months
+        fr: mois
+    distr_label:
+        en: Distribution
+        fr: Distribution
+    distr_function:
+        gamma:
+            en: Gamma
+            fr: Gamma
+        peasron3:
+            en: Pearson Type III
+            fr: Pearson Type III
+        llogistic:
+            en: log-Logistic
+            fr: log-Logistic
+        zscore:
+            en: Z-Score
+            fr: Z-Score
+
+

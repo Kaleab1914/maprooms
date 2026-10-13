@@ -29,3 +29,153 @@ dataset:
         anom_mon: [precip]
         anom_per_mon: [precip]
         spi_mon: [precip]
+        spei_mon: [precip, et0]
+
+variables:
+    label:
+        en: Variable
+        fr: Variable
+    select:
+        spi_mon:
+            en: Standard Precipitation Index (SPI)
+            fr: Indice de Précipitations Standardisé (SPI)
+        spei_mon:
+            en: Standardized Precipitation Evapotranspiration Index (SPEI)
+            fr: Indice Standardisé de Précipitation et d’Évapotranspiration (SPEI)
+        rain_mon:
+            en: Monthly Rainfall Total
+            fr: Cumul de Précipitations Mensuelles
+        anom_mon:
+            en: Monthly Rainfall Anomaly
+            fr: Anomalie de Précipitations Mensuelles
+        anom_per_mon:
+            en: Monthly Rainfall Anomaly in Percent
+            fr: Anomalie de Précipitations Mensuelles en Pourcentage
+
+
+opt_dates:
+    label:
+        en: Date
+        fr: Date
+    month:
+        en: Month of
+        fr: Mois du
+
+opt_ts_raw:
+    label_date:
+        start:
+            en: Start
+            fr: Début
+        end:
+            en: End
+            fr: Fin
+    label_series:
+        en: Display
+        fr: Afficher
+    series:
+        one:
+            en: One serie
+            fr: Une série
+        years:
+            en: Each year
+            fr: Chaque année
+    start_mon:
+        en: Start month
+        fr: Début mois
+
+opt_ts_raw_plot:
+    label:
+        en: Plot type
+        fr: Type de graphique
+    select:
+        bar:
+            en: Bar
+            fr: Barre
+        line:
+            en: Line
+            fr: Ligne
+        lpoint:
+            en: Line + Points
+            fr: Ligne + Points
+
+opt_anomaly:
+    label:
+        en: Anomaly
+        fr: Anomalie
+    select:
+        difference:
+            en: Deviation from mean
+            fr: Écart par rapport à la moyenne
+        standardized:
+            en: Standardized anomaly
+            fr: Anomalie standardisée
+        percentage:
+            en: Percentage of mean
+            fr: Pourcentage de la moyenne
+
+opt_ts_anom:
+    label_date:
+        start:
+            en: Start
+            fr: Début
+        end:
+            en: End
+            fr: Fin
+    label_series:
+        en: Display
+        fr: Afficher
+    series:
+        one:
+            en: One serie
+            fr: Une série
+        tstep:
+            en: By month
+            fr: Par mois
+    label_tstep:
+        en: Month
+        fr: Mois
+
+opt_ts_spei:
+    date_label:
+        start:
+            en: Start date
+            fr: Début date
+        end:
+            en: End date
+            fr: Fin date
+    spei_label:
+        en: Compute
+        fr: Calculer
+    spei_type:
+        spi: 
+            en: SPI - Standardized Precipitation Index
+            fr: SPI - Indice de Précipitations Standardisé
+        spei:
+            en: SPEI - Standardized Precipitation Evapotranspiration Index
+            fr: SPEI - Indice Standardisé de Précipitation et d’Évapotranspiration
+    spei_variable:
+        spi: spi_mon
+        spei: spei_mon
+    time_scale:
+        en: Time scales
+        fr: Échelles de temps
+    units:
+        en: month
+        fr: mois
+    distr_label:
+        en: Distribution
+        fr: Distribution
+    distr_function:
+        gamma:
+            en: Gamma
+            fr: Gamma
+        peasron3:
+            en: Pearson Type III
+            fr: Pearson Type III
+        llogistic:
+            en: log-Logistic
+            fr: log-Logistic
+        zscore:
+            en: Z-Score
+            fr: Z-Score
+

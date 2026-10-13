@@ -921,7 +921,70 @@
 <!--  -->
 {% macro create_map_control_drm_analysis_spi(tempRes, pageText) %}
 <div class="container">
-    test spi
+    {% set tstepID = tempRes ~ '-map-date' %}
+
+    <select id="{{ tempRes }}-map-variable" hidden>
+        <option value="rainfall" selected>Rainfall</option>
+    </select>
+    <!--  -->
+    <fieldset class="border border-secondary rounded-3">
+        <legend class="legend-label">{{ pageText.opt_map.label_date }}</legend>
+        {% if tempRes == 'seasonal'%}
+        <div class="container-fluid">
+            <div class="row gx-1">
+                <div class="col-md-9">
+                    {{ pageText.opt_season.season_map.start }}
+                </div>
+                <div class="col-md-3">
+                    {{ pageText.opt_season.season_map.length }}
+                </div>
+            </div>
+            <div class="row gx-1">
+                <div id="{{ tstepID }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Date" class="col-md-9">
+                    <input id="{{ tstepID }}-calendar" type="text" class="form-control">
+                </div>
+                <div id="div-{{ tstepID }}-length" class="col-md-3">
+                    <select id="{{ tstepID }}-length" class="form-select form-select2-nosearch"></select>
+                </div>
+            </div>
+        </div>
+        <div id="{{ tempRes }}-season-months" class="d-flex justify-content-center">
+        </div>
+        {% else %}
+        <div id="{{ tstepID }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Date">
+            <input id="{{ tstepID }}-calendar" type="text" class="form-control">
+        </div>
+        {% endif %}
+    </fieldset>
+    <fieldset id="div-{{ tempRes }}-base-period" class="border border-secondary rounded-3">
+        <legend class="legend-label">{{ pageText.base_period_modal.label }}</legend>
+        <div class="w-100">
+            {% set dialogID = tempRes ~ '-base-period' %}
+            <div class="row p-0 m-0">
+                <div class="col-sm-4 d-flex justify-content-end text-end align-items-center pe-1 m-0">
+                    {{ pageText.base_period_dialog.start_year }}
+                </div>
+                <div class="col-sm-2 p-0 m-0">
+                    <input id="{{ dialogID }}-start" class="form-control text-center px-0" type="text" value="{{ pageText.base_period.start_year }}">
+                </div>
+                <div class="col-sm-4 d-flex justify-content-end text-end align-items-center pe-1 m-0">
+                    {{ pageText.base_period_dialog.end_year }}
+                </div>
+                <div class="col-sm-2 p-0 m-0">
+                    <input id="{{ dialogID }}-end" class="form-control text-center px-0" type="text" value="{{ pageText.base_period.end_year }}">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-10 d-flex justify-content-end align-items-center text-end pe-1 me-0">
+                    {{ pageText.base_period_dialog.min_year }}
+                </div>
+                <div class="col-sm-2 ps-0 ms-0">
+                    <input id="{{ dialogID }}-min" class="form-control text-center px-0" type="text" value="{{ pageText.base_period.min_year }}">
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
 </div>
 {% endmacro %}
 <!--  -->

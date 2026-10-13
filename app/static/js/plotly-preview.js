@@ -40,11 +40,14 @@ function preview_monitoring_display_charts_1(tempRes) {
     preview_analysis_charts_anomaly(tempRes, 'div-chart-anom');
 }
 
-function preview_drmExtRain_display_charts(tempRes) {
+function preview_drmExt_display_charts(tempRes) {
     preview_drm_charts_cdf(tempRes, 'div-chart-cdf');
     preview_drm_charts_pdf(tempRes, 'div-chart-pdf');
 }
 
+function preview_drmSpi_display_charts(tempRes) {
+    preview_drm_charts_spi(tempRes, 'div-chart-spi');
+}
 ///////////////////
 
 function analysis_query_format_date(date, temp_res) {
@@ -2095,11 +2098,55 @@ function preview_drm_query_cdf(tempRes) {
     if (!query) {
         return query;
     }
+    const tstepId = `${tempRes}-map-date`;
 
     query.temporalRes = tempRes;
     query.dataset = DATA_SET.use;
+    query.variable = $(`#${tempRes}-map-variable`).val();
+    query.map_variable = query.variable;
 
-    return query;
+    query.dailyAnalysis = true;
+    query.minFrac = 1.0;
+
+    query.startMonth = parseInt($(`#${tstepId}-start-mon`).val(), 10);
+    query.startDay = parseInt($(`#${tstepId}-start-day`).val(), 10);
+    query.endMonth = parseInt($(`#${tstepId}-end-mon`).val(), 10);
+    query.endDay = parseInt($(`#${tstepId}-end-day`).val(), 10);
+
+    query.seasParams = $(`#${tempRes}-map-parameters`).val();
+    query.defThres = Number($(`#${tempRes}-map-def-number-thres-val`).val().trim());
+    if (query.variable === 'rainfall') {
+        query.defSpell = parseInt($(`#${tempRes}-map-def-spell-thres-val`).val().trim(), 10);
+    } //else {
+      //  query.defTempBase = Number($(`#${tempRes}-map-def-spell-thres-val`).val().trim());
+    //}
+
+    const dates = preview_analysis_query_temporal(
+        query.dataset,
+        tempRes,
+        query.variable,
+        30
+    );
+
+    if (query.temporalRes === 'daily') {
+        const list_pars = PARAMS_ORDER;
+        if (!list_pars.includes(query.seasParams)) {
+            query.seasParams = list_pars[0];
+        }
+    }
+
+    if (['max_temperature', 'min_temperature'].includes(query.variable)) {
+        const selectedVariable = query.variable; 
+        query.variable = 'temperature';
+
+
+        if (query.seasParams === 'seasAvg') {
+            query.seasParams = selectedVariable === 'max_temperature'
+                ? 'MaxTemp' : 'MinTemp';
+        }
+    }
+
+    return Object.assign({}, query, dates);
 }
 
 function preview_drm_charts_cdf(tempRes, contID) {
@@ -2125,4 +2172,326 @@ function preview_drm_display_cdf(json, container) {
     divCont.empty();
     const theme = $('html').attr('data-bs-theme');
 
+    const data = [{
+            x: json.cdf.smoothed.x,
+            y: json.cdf.smoothed.y,
+            mode: 'lines',
+            name: 'Smoothed CDF',
+            units: '%',
+            line: {
+                color: '#1e90ff',
+                width: 4
+            },
+            hovertemplate: '%{data.name}: %{y:.1f} %{data.units} <extra></extra>'
+        },
+        {
+            x: json.cdf.empirical.x,
+            y: json.cdf.empirical.y,
+            mode: 'lines+markers',
+            name: 'Empirical CDF',
+            units: '%',
+            line: {
+                color: 'red',
+                width: 3
+            },
+            marker: {
+                color: 'orange',
+                line: {
+                    color: 'red',
+                    width: 1
+                },
+                size: 6
+            },
+            hovertemplate: '%{data.name}: %{y:.1f} %{data.units} <extra></extra>'
+        }
+    ];
+
+    var layout = {
+        xaxis: {
+            range: json.xrange,
+            tickvals: json.xticks,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                tickvals: createTicksMinor(json.xticks),
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            },
+            unifiedhovertitle: {
+                text: json.info.var.name +
+                    ': %{x:.2f} ' +
+                    json.info.var.units
+            }
+        },
+        yaxis: {
+            range: [0, 100],
+            ticksuffix: '%',
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            }
+        },
+        showlegend: false,
+        hovermode: 'x unified',
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(preview_layout, layout);
+    layout.margin.l = 40;
+
+    const config = {
+        displayModeBar: false,
+        responsive: true
+    };
+
+    purgePlotlyChart(container);
+    Plotly.newPlot(
+        container,
+        data,
+        layout,
+        config
+    );
+
+    setPlotlyThemeColors(container);
+
 }
+
+///////
+
+function preview_drm_query_pdf(tempRes) {
+    return preview_drm_query_cdf(tempRes);
+}
+
+function preview_drm_charts_pdf(tempRes, contID) {
+    const query = preview_drm_query_pdf(tempRes);
+    if (!query) {
+        return false;
+    }
+    if (checkQueryPointOutside(query, tempRes)) {
+        flashMessage(JS_TEXT.point_outside, 'error');
+        return false;
+    }
+
+    ajaxDisplayChart(
+        '/climate_analysis_proba',
+        query,
+        preview_drm_display_pdf,
+        contID
+    );
+}
+
+
+function preview_drm_display_pdf(json, container) {
+    const divCont = $(`#${container}`);
+    divCont.empty();
+    const theme = $('html').attr('data-bs-theme');
+
+    const data = [
+        {
+            x: json.pdf.kde.x,
+            y: json.pdf.kde.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Kernel density',
+            line: { color: '#1e90ff', width: 4 },
+            hovertemplate:
+                '%{data.name}: %{y:.4f}<extra></extra>'
+        },
+        {
+            x: json.pdf.fitted.x,
+            y: json.pdf.fitted.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Fitted density',
+            line: { color: 'red', width: 3 },
+            hovertemplate:
+                '%{data.name}: %{y:.4f}<extra></extra>'
+        }
+    ];
+
+    var layout = {
+        xaxis: {
+            range: json.xrange,
+            tickvals: json.xticks,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                tickvals: createTicksMinor(json.xticks),
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            },
+            unifiedhovertitle: {
+                text: json.info.var.name +
+                    ': %{x:.2f} ' +
+                    json.info.var.units
+            }
+        },
+        yaxis: {
+            rangemode: 'tozero',
+            // ticksuffix: '%',
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            }
+        },
+        showlegend: false,
+        hovermode: 'x unified',
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(preview_layout, layout);
+    layout.margin.l = 40;
+
+    const config = {
+        displayModeBar: false,
+        responsive: true
+    };
+
+    purgePlotlyChart(container);
+    Plotly.newPlot(
+        container,
+        data,
+        layout,
+        config
+    );
+
+    setPlotlyThemeColors(container);
+
+}
+
+///////
+function preview_drm_query_spi(tempRes) {
+    return preview_monitoring_query_spei_ts(tempRes);
+}
+
+function preview_drm_charts_spi(tempRes, contID) {
+    const query = preview_drm_query_spi(tempRes);
+    if (!query) {
+        return false;
+    }
+
+    if (checkQueryPointOutside(query, tempRes)) {
+        flashMessage(JS_TEXT.point_outside, 'error');
+        return false;
+    }
+
+    return ajaxDisplayChart(
+        '/climate_monitoring_spei_tseries',
+        query,
+        preview_drm_display_spi,
+        contID
+    );
+}
+
+function preview_drm_display_spi(json, container) {
+    const divCont = $(`#${container}`);
+    divCont.empty();
+
+    const xaxisHoverText = json.time.map((t) => {
+        return formatPlotlyHoverDate(
+            t, json.info.time_res,
+            json.info.seas_len,
+            json.info.seas_daily
+        );
+    });
+
+    var defColors = {
+        negative: '#fd7e14',
+        positive: '#198754',
+        other: '#6c757d'
+    };
+
+    const barColors = json.values.map(value => {
+        if (value > 0) {
+            return defColors.positive;
+        } else if (value < 0) {
+            return defColors.negative;
+        } else {
+            return defColors.other;
+        }
+    });
+
+    const data = [{
+        x: json.time,
+        y: json.values,
+        name: json.info.var.name,
+        units: json.info.var.units,
+        type: 'bar',
+        marker: {
+            color: barColors,
+            line: {
+                width: 0
+            }
+        },
+        customdata: xaxisHoverText,
+        hovertemplate:
+            'Date: %{customdata}<br> %{data.name}: %{y:.1f} %{data.units} <extra></extra>'
+    }];
+
+    var layout = {
+        xaxis: {
+            type: 'date',
+            tickformat: '%Y',
+            tickangle: 0,
+            dtick: xaxisPlotlyLabelYears(json.time),
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.3,
+            griddash: 'dot'
+        },
+        yaxis: {
+            range: json.yrange,
+            tickvals: json.yticks,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.3,
+            griddash: 'dot'
+        }
+    };
+
+    layout = deepMerge(setPlotlyColors(), layout);
+
+    const config = {
+        displayModeBar: false,
+        responsive: true
+    };
+
+    purgePlotlyChart(container);
+    Plotly.newPlot(
+        container,
+        data,
+        deepMerge(preview_layout, layout),
+        config
+    );
+
+    setPlotlyThemeColors(container);
+}
+
+

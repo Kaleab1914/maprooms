@@ -1147,14 +1147,136 @@ function setAnalysisDistributionSPEI(tempRes, analysis) {
     }
 }
 
-function setAnalysisExpandModalDrmExtRain(tempRes, contID) {
+function setAnalysisExpandModalDrmExt_cdf(tempRes, contID) {
     showModalDialog(`modal-expand-${contID}`);
     expandModalCharts(
         contID,
-        expand_analysis_charts_drmExtRain,
+        expand_analysis_charts_drmExt_cdf,
         tempRes
     );
     purgePlotlyChartExpandModal(contID);
+    //
+    setAnalysisDateCalendarSeasonal(
+        tempRes, 'chart-proba', 'map', true
+    );
 
+    setAnalysisDateCalendarMonDay(tempRes, 'proba');
+
+    const contChart = `container-chart-${contID}`;
+    $(`#plotly-replot-${contID}`)
+        .off('click.drmExtReplot')
+        .on('click.drmExtReplot', () => {
+            expand_analysis_charts_drmExt_cdf(
+                contChart,
+                tempRes
+            );
+        });
+
+    $(`#${tempRes}-proba-parameters`)
+        .off('change.drmExtExpandParameters')
+        .on('change.drmExtExpandParameters', function() {
+            const this_val = $(this).val();
+
+            if (['TotRain', 'seasAvg'].includes(this_val)) {
+                setVisibility(
+                    [],
+                    [
+                        `${tempRes}-proba-def-number`,
+                        `${tempRes}-proba-def-spell`
+                    ]
+                );
+            } else if (
+                ['NumWD', 'NumDD', 'RainInt', 'NumCD', 'NumHD'].includes(this_val)
+            ) {
+                setVisibility(
+                    [
+                        `${tempRes}-proba-def-number`
+                    ],
+                    [
+                        `${tempRes}-proba-def-spell`
+                    ]
+                );
+            } else {
+                setVisibility(
+                    [
+                        `${tempRes}-proba-def-number`,
+                        `${tempRes}-proba-def-spell`
+                    ],
+                    []
+                );
+            }
+
+            expand_analysis_charts_drmExt_cdf(contChart, tempRes);
+        });
+
+        $(`#${tempRes}-proba-parameters`).trigger('change');
+        
+
+}
+
+function setAnalysisExpandModalDrmExt_pdf(tempRes, contID) {
+    showModalDialog(`modal-expand-${contID}`);
+    expandModalCharts(
+        contID,
+        expand_analysis_charts_drmExt_pdf,
+        tempRes
+    );
+    purgePlotlyChartExpandModal(contID);
+    //
+    setAnalysisDateCalendarSeasonal(
+        tempRes, 'chart-pdf', 'map', true
+    );
+
+    setAnalysisDateCalendarMonDay(tempRes, 'pdf');
+
+    const contChart = `container-chart-${contID}`;
+    $(`#plotly-replot-${contID}`)
+    .off('click.drmExtReplot')
+    .on('click.drmExtReplot', () => {
+        expand_analysis_charts_drmExt_pdf(
+            contChart,
+            tempRes
+        );
+    });
+
+    $(`#${tempRes}-pdf-parameters`)
+        .off('change.drmExtExpandParameters')
+        .on('change.drmExtExpandParameters', function() {
+            const this_val = $(this).val();
+
+            if (['TotRain', 'seasAvg'].includes(this_val)) {
+                setVisibility(
+                    [],
+                    [
+                        `${tempRes}-pdf-def-number`,
+                        `${tempRes}-pdf-def-spell`
+                    ]
+                );
+            } else if (
+                ['NumWD', 'NumDD', 'RainInt', 'NumCD', 'NumHD'].includes(this_val)
+            ) {
+                setVisibility(
+                    [
+                        `${tempRes}-pdf-def-number`
+                    ],
+                    [
+                        `${tempRes}-pdf-def-spell`
+                    ]
+                );
+            } else {
+                setVisibility(
+                    [
+                        `${tempRes}-pdf-def-number`,
+                        `${tempRes}-pdf-def-spell`
+                    ],
+                    []
+                );
+            }
+            
+            expand_analysis_charts_drmExt_pdf(contChart, tempRes);
+        });
+
+        $(`#${tempRes}-pdf-parameters`).trigger('change');
+        
 
 }

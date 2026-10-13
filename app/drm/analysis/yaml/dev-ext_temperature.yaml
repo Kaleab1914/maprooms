@@ -118,6 +118,13 @@ variables:
             fr: Température Minimale
             
 opt_season:
+    label_year:
+        start:
+            en: Start year
+            fr: Début année
+        end:
+            en: End year
+            fr: Fin année
     label_season:
         start:
             en: Start season

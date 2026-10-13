@@ -50,6 +50,7 @@
 {% include "block-js.html" %}
 <script>
 const DATA_SET = JSON.parse('{{ pageText.dataset | tojson }}');
+const OPT_SPEI = JSON.parse('{{ pageText.opt_ts_spei | tojson }}');
 </script>
 <script>
 const DATE_LAB = JSON.parse('{{ pageText.opt_dates | tojson }}');

@@ -32,11 +32,14 @@
                 <div class="col-sm-6">
                     {{ fmacros.create_card_charts("div-chart-cdf", pageText) }}
                     {% call fmacros.create_modal_expand_charts("div-chart-cdf", pageText) %}
-                    {{ fmacrosExp.create_expand_charts_drmExtRain("daily", pageText) }}
+                    {{ fmacrosExp.create_expand_charts_drmExt_cdf("daily", pageText) }}
                     {% endcall %}
                 </div>
                 <div class="col-sm-6">
                     {{ fmacros.create_card_charts("div-chart-pdf", pageText) }}
+                    {% call fmacros.create_modal_expand_charts("div-chart-pdf", pageText) %}
+                    {{ fmacrosExp.create_expand_charts_drmExt_pdf("daily", pageText) }}
+                    {% endcall %}
                 </div>
             </div>
         </div>
@@ -49,6 +52,8 @@
 <script>
 const PARAMS_LIST = JSON.parse('{{ pageText.parameters | tojson }}');
 const PARAMS_DEF = JSON.parse('{{ pageText.definition | tojson }}');
+const PARAMS_ORDER = JSON.parse('{{ pageText.parameters_order | tojson }}');
+
 </script>
 <script type="text/javascript" src="{{ url_for('drm_analysis.static', filename='js/ext_rainfall.js') }}"></script>
 {% endblock %}
