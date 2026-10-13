@@ -725,8 +725,8 @@ function setOffCanvasMapControlsDrmExtRain(tempRes) {
     setAnalysisDateCalendarMonDay(tempRes, 'map-date');
     //
     $(`#${tempRes}-map-parameters`)
-        .off('change.drmRainRainParameters')
-        .on('change.drmRainRainParameters', function() {
+        .off('change.drmExtRainParameters')
+        .on('change.drmExtRainParameters', function() {
             const this_val= $(this).val();
 
             if (this_val==='TotRain'){
@@ -777,7 +777,20 @@ function setOffCanvasMapControlsDrmExtRain(tempRes) {
         });
         
     $(`#${tempRes}-map-statistics`).trigger('change');
-            //
 
+}
+
+//////////////
+function setOffCanvasMapControlDrmSpiAnalysis(tempRes) {
+    // setNamesCalendar(
+    //     `${tempRes}-map-date`, tempRes
+    // );
+    setDateCalendar(`${tempRes}-map-date`,`${tempRes}-map-variable`,DATA_SET.use,tempRes);
+    setAnalysisSeasonLengthMap(tempRes);
+    //setClimateSeasonMonthsTelecon(tempRes);
+    setAnalysisSeasonMonths(tempRes, 'rawdata');
+    adjustSelect2Height(`${tempRes}-map-date-length`, false);
+    refreshSpatialAverage(tempRes, true);
+    setMonitoringColorbar('spi_seas');
 
 }

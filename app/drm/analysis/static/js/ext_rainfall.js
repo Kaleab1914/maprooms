@@ -37,6 +37,7 @@ $(document).ready(function() {
     $('#btn-div-chart-pdf').on('click', () => {
         setAnalysisExpandModalDrmExt_pdf('daily', 'div-chart-pdf');
     });
+    
     // Preview chart
     $('#daily-map-parameters')
         .off('change.drmPreview')

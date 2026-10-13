@@ -674,7 +674,6 @@ function queryParamsDrmAnalysisMap(time_res){
     return query;
 }
 
-////////////
 
 function displayDrmAnalysisMap(time_res, options, map) {
     const query = queryParamsDrmAnalysisMap(time_res);
@@ -702,3 +701,74 @@ function displayDrmAnalysisMap(time_res, options, map) {
 }
 
 ////////////
+
+function queryParamsDrmAnalysisMapSPI(time_res) {
+    let query = new Object();
+    query.temporalRes = time_res;
+    //query.temporalRes = 'seasonal';
+    
+    query.dataset = DATA_SET.use;
+    query.map_variable = $(`#${time_res}-map-variable`).val() ?? 'rainfall';
+    query.variable = DATA_SET.variables[query.map_variable][0];
+    //query.variable = 'rainfall';
+    
+    query.mapType = 'rawdata';
+    const tstep_id = `${time_res}-map-date`;
+    const bp_id = `${time_res}-base-period`;
+
+    query.analysis = 'spi';
+    query.distribution = 'gamma';
+    query.map_variable = 'spi_seas';
+
+    //query.seasStart = parseInt($(`#${tstep_id}-calendar`).val(), 10);
+    query.seasLength = parseInt($(`#${tstep_id}-length`).val(), 10);
+    query.timeScale = query.seasLength;
+    query.timeRes = 'monthly';
+
+    query.startYear = parseInt($(`#${bp_id}-start`).val(), 10);
+    query.endYear = parseInt($(`#${bp_id}-end`).val(), 10);
+    query.minYear = parseInt($(`#${bp_id}-min`).val(), 10);
+
+    const colorbar = colorbarGetData();
+    if (!colorbar) {
+        return false;
+    }
+    query.colorbar = colorbar;
+
+    // const date = $(`#${time_res}-map-date-calendar`).val();
+    // query.Date = formatSeasonDate(date);
+    // //query.Date = formatSeasonDate(date, query.seasLength, true);
+    // const date = $(`#${time_res}-map-date-calendar`).val();
+    // query.Date = formatSeasonDate(date, query.seasLength, isStart = false);
+
+    const date = $(`#${tstep_id}-calendar`).val();
+
+    query.seasStart = Number(date.split('-')[1]);
+    query.Date = formatSeasonDate(date, query.seasLength, true); 
+    return query;
+
+}
+
+function displayDrmAnalysisMapSPI(time_res, options, map) {
+    const query = queryParamsDrmAnalysisMapSPI(time_res);
+    if (!query) {
+        return false;
+    }
+
+    const endpoint = createEndpoint(
+        'climate_monitoring',
+        'climate_monitoring_map'
+    );
+
+    const request = ajaxLeafletMap(
+        endpoint,
+        query,
+        displayRasterImage,
+        options,
+        map
+    );
+
+    updateAnalysisMapDate(time_res, query, map);
+
+    return request;
+}

@@ -45,6 +45,9 @@ function preview_drmExt_display_charts(tempRes) {
     preview_drm_charts_pdf(tempRes, 'div-chart-pdf');
 }
 
+function preview_drmSpi_display_charts(tempRes) {
+    preview_drm_charts_spi(tempRes, 'div-chart-spi');
+}
 ///////////////////
 
 function analysis_query_format_date(date, temp_res) {
@@ -2380,3 +2383,40 @@ function preview_drm_display_pdf(json, container) {
 
 }
 
+///////
+function preview_drm_query_spi(tempRes) {
+    let query = queryParamsSpatialAverage();
+    if (!query) {
+        return query;
+    }
+    const tstepId = `${tempRes}-map-date`;
+    query.temporalRes = tempRes;
+    query.dataset = DATA_SET.use;
+
+
+}
+
+function preview_drm_charts_spi(tempRes, contID) {
+    const query = preview_drm_display_spi(tempRes);
+    if (!query) {
+        return false;
+    }
+    if (checkQueryPointOutside(query, tempRes)) {
+        flashMessage(JS_TEXT.point_outside, 'error');
+        return false;
+    }
+
+    ajaxDisplayChart(
+        '/climate_monitoring_spei_tseries',
+        query,
+        preview_analysis_display_spei_ts,
+        contID
+    );
+
+}
+
+function preview_drm_display_spi(json, container) {
+    const divCont = $(`#${container}`);
+    divCont.empty();
+    const theme = $('html').attr('data-bs-theme');
+}
