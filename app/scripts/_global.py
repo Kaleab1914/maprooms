@@ -14,9 +14,6 @@ if not os.path.exists(GLOBAL_CONFIG['app_cache']):
 GLOBAL_CONFIG['users_data'] = os.path.join(config.MAPROOMS_DATA_DIR, 'users_data')
 if not os.path.exists(GLOBAL_CONFIG['users_data']):
     os.makedirs(GLOBAL_CONFIG['users_data'])
-GLOBAL_CONFIG['shp_dir'] = os.path.join(config.MAPROOMS_DATA_DIR, 'shp')
-if not os.path.exists(GLOBAL_CONFIG['shp_dir']):
-    os.makedirs(GLOBAL_CONFIG['shp_dir'])
 
 yaml_dir = os.path.join(app_dir, 'yaml')
 met_file = os.path.join(yaml_dir, 'nmhs-info.yaml')
@@ -24,6 +21,11 @@ GLOBAL_CONFIG['metInfo'] = load_yaml_file(met_file)
 
 config_data_file = os.path.join(yaml_dir, 'datasets-config.yaml')
 GLOBAL_CONFIG.update(load_yaml_file(config_data_file))
+
+# GLOBAL_CONFIG['shp_dir'] = os.path.join(config.MAPROOMS_DATA_DIR, 'shp')
+GLOBAL_CONFIG['shp_dir'] = GLOBAL_CONFIG['geom_layers']['shp_dir']
+if not os.path.exists(GLOBAL_CONFIG['shp_dir']):
+    os.makedirs(GLOBAL_CONFIG['shp_dir'])
 
 GLOBAL_CONFIG['blank_icon'] = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
 

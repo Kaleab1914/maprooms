@@ -535,3 +535,5 @@ soilgrids:
     chunks:
         lat: 50
         lon: 50
+geom_layers:
+    shp_dir: /home/enacts/SHP
