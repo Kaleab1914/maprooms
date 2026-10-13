@@ -3,12 +3,13 @@
 {% block head %}
 {{ super() }}
 <style>
-    .card-description {
+    /*    .card-description {
         height: 90vh;
     }
     .card-description-tab {
         max-height: 78vh;
     }
+*/
 </style>
 {% endblock %}
 {% block content %}
@@ -28,20 +29,26 @@
                     </div>
                 </div>
             </div>
-            <div class="row justify-content-center">
-                <div class="col-sm-6">
-                    {{ fmacros.create_card_charts("div-chart-raw", pageText) }}
-                    {% call fmacros.create_modal_expand_charts("div-chart-raw", pageText) %}
-                    {{ fmacrosExp.create_expand_charts_raw("seasonal", pageText, urlArgs) }}
-                    {% endcall %}
-                </div>
-                <div class="col-sm-6">
-                    {{ fmacros.create_card_charts("div-chart-anom", pageText) }}
-                    {% call fmacros.create_modal_expand_charts("div-chart-anom", pageText) %}
-                    {{ fmacrosExp.create_expand_charts_anom("seasonal", pageText, fmacros, urlArgs) }}
-                    {% endcall %}
-                </div>
-            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-sm-4">
+            {{ fmacros.create_card_charts("div-chart-spei", pageText) }}
+            {% call fmacros.create_modal_expand_charts("div-chart-spei", pageText) %}
+            {{ fmacrosExp.create_expand_charts_spei("seasonal", pageText) }}
+            {% endcall %}
+        </div>
+        <div class="col-sm-4">
+            {{ fmacros.create_card_charts("div-chart-raw", pageText) }}
+            {% call fmacros.create_modal_expand_charts("div-chart-raw", pageText) %}
+            {{ fmacrosExp.create_expand_charts_raw("seasonal", pageText, urlArgs) }}
+            {% endcall %}
+        </div>
+        <div class="col-sm-4">
+            {{ fmacros.create_card_charts("div-chart-anom", pageText) }}
+            {% call fmacros.create_modal_expand_charts("div-chart-anom", pageText) %}
+            {{ fmacrosExp.create_expand_charts_anom("seasonal", pageText, fmacros, urlArgs) }}
+            {% endcall %}
         </div>
     </div>
     {{ fmacros.create_modal_matplotlib(pageText) }}
@@ -52,6 +59,7 @@
 <script>
 const DATA_SET = JSON.parse('{{ pageText.dataset | tojson }}');
 const SEAS_LABELS = JSON.parse('{{ pageText.opt_dates | tojson }}');
+const OPT_SPEI = JSON.parse('{{ pageText.opt_ts_spei | tojson }}');
 </script>
 <script type="text/javascript" src="{{ url_for('climate_monitoring.static', filename='js/seasonal.js') }}"></script>
 {% endblock %}
