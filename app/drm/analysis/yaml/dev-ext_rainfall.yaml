@@ -68,7 +68,7 @@ years_range:
 dataset:
     use: ALL
     variables:
-        precip: [precip]
+        rainfall: [precip]
         
 variables:
     label:
