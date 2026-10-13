@@ -19,6 +19,7 @@ dataset:
         anom_seas: [precip]
         anom_per_seas: [precip]
         spi_seas: [precip]
+        spei_seas: [precip, et0]
 
 variables:
     label:
@@ -37,6 +38,9 @@ variables:
         spi_seas:
             en: Standard Precipitation Index (SPI)
             fr: Indice de Précipitations Standardisé (SPI)
+        spei_seas:
+            en: Standardized Precipitation Evapotranspiration Index (SPEI)
+            fr: Indice Standardisé de Précipitation et d’Évapotranspiration (SPEI)
 
 opt_dates:
     label:
@@ -140,3 +144,47 @@ opt_ts_raw_plot:
         lpoint:
             en: Line + Points
             fr: Ligne + Points
+
+opt_ts_spei:
+    date_label:
+        start:
+            en: Start year
+            fr: Début année
+        end:
+            en: End year
+            fr: Fin année
+    spei_label:
+        en: Compute
+        fr: Calculer
+    spei_type:
+        spi: 
+            en: SPI - Standardized Precipitation Index
+            fr: SPI - Indice de Précipitations Standardisé
+        spei:
+            en: SPEI - Standardized Precipitation Evapotranspiration Index
+            fr: SPEI - Indice Standardisé de Précipitation et d’Évapotranspiration
+    spei_variable:
+        spi: spi_seas
+        spei: spei_seas
+    time_scale:
+        en: Time scales
+        fr: Échelles de temps
+    units:
+        en: months
+        fr: mois
+    distr_label:
+        en: Distribution
+        fr: Distribution
+    distr_function:
+        gamma:
+            en: Gamma
+            fr: Gamma
+        peasron3:
+            en: Pearson Type III
+            fr: Pearson Type III
+        llogistic:
+            en: log-Logistic
+            fr: log-Logistic
+        zscore:
+            en: Z-Score
+            fr: Z-Score

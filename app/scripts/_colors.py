@@ -155,14 +155,13 @@ COLORS_MAPROOM['tercile_enso'] = {
 
 COLORS_MAPROOM['spi_colors'] = {
     'colors': [
-        '#B12126',
-        '#CF661C',
-        '#F8DDB3',
-        '#FEFFFF',
-        '#FEFFFF',
-        '#99F99C',
-        '#3DB272',
-        '#157040',
+        '#b22222',
+        '#d2691e',
+        '#f5deb3',
+        '#f5f5f5',
+        '#98fb98',
+        '#3cb371',
+        '#14713d',
     ],
     'ext': ['#420305', '#033d1f'],
 }

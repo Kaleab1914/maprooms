@@ -108,14 +108,17 @@ function preview_analysis_query_anomaly(tempRes) {
     let ts_len = 10;
     const tstepId = `${tempRes}-map-date`;
     if (tempRes === 'seasonal') {
+        query.seasLength = parseInt($(`#${tstepId}-length`).val(), 10);
         const map_type = $(`#${tempRes}-map-type`).val();
         const seas_start = $(`#${tstepId}-calendar`).val();
         if (map_type === 'climatology') {
             query.seasStart = parseInt(seas_start, 10);
         } else {
             query.seasStart = parseInt(seas_start.slice(5, 7), 10);
+            if (['spi_seas', 'spei_seas'].includes(query.map_variable)) {
+                query.seasStart = query.seasStart - query.seasLength + 1;
+            }
         }
-        query.seasLength = parseInt($(`#${tstepId}-length`).val(), 10);
         if (URL_ARGS.component === 'monitoring') {
             query.fullYearTS = false;
             ts_len = 30;
@@ -2021,7 +2024,6 @@ function preview_monitoring_display_spei_dial(json, container) {
         'height': '100%',
         'object-fit': 'cover'
     });
-    console.log(json)
 }
 
 ///////
@@ -2086,7 +2088,7 @@ function preview_analysis_display_spei_ts(json, container) {
     divCont.empty();
     const theme = $('html').attr('data-bs-theme');
 
-    console.log(json)
+    // console.log(json)
 }
 
 ///////
