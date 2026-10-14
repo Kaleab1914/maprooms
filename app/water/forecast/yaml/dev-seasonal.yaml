@@ -1,11 +1,11 @@
 description:
     en: test
     fr: test
-# all about seasonal data
+
 dataset:
-    precip:
-        dataset: ALL
-    tmax:
-        dataset: ALL
-    tmin:
-        dataset: ALL
+    use: ALL
+    variables:
+        precip: [precip]
+        tmean: [tmin, tmax]
+        tmax: [tmax]
+        tmin: [tmin]
