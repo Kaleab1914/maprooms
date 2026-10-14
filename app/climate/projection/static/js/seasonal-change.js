@@ -5,5 +5,7 @@ $(document).ready(function() {
 
     let map = createLeafletTileLayer('div-map-container', MTO_INIT);
 
+    setOffCanvasMapControlSeasonalProjection('seasonal');
 
+    
 });
