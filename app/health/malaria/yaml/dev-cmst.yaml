@@ -1,6 +1,24 @@
 description:
-    en: test
-    fr: test
+    en: |
+
+        <h4>Seasonal Climatic Suitability for Malaria Transmission</h4>
+        <p>
+        This map shows the number of months suitable for malaria transmission, based on climatological averages. Suitability is defined as the coincidence of precipitation accumulation greater than 80 mm, mean temperature between 18°C and 32°C, and relative humidity greater than 60%.
+        </p>
+        <p>
+        Temperature, precipitation and relative humidity are factors of mosquito development time as well as an indicator of Plasmodium parasite development within the mosquito vectors (Grover-Kopec et al., 2006).
+        </p>
+
+    fr: |
+
+        <h4>Conditions climatiques saisonnières favorables à la transmission du paludisme</h4>
+        <p>
+        Cette carte indique le nombre de mois favorables à la transmission du paludisme, sur la base des moyennes climatologiques. Les conditions sont considérées comme favorables lorsque les trois critères suivants sont réunis : un cumul de précipitations supérieur à 80 mm, une température moyenne comprise entre 18 °C et 32 °C et une humidité relative supérieure à 60 %.
+        </p>
+        <p>
+        La température, les précipitations et l'humidité relative influencent la durée de développement des moustiques et constituent également des indicateurs du développement du parasite Plasmodium au sein des moustiques vecteurs (Grover-Kopec et al., 2006).
+        </p>
+
 # all about daily
 dataset:
     rawdata:
