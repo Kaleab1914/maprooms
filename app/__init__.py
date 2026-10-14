@@ -26,6 +26,7 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
 
 ####
+from app.admin.index import admin_bp
 from app.auth.index import auth
 from app.dst_api.index import dst_api
 from app.misc.index import misc
@@ -48,6 +49,7 @@ from app.water.monitoring.index import water_monitoring
 from app.water.forecast.index import water_forecast
 from app.water.projection.index import water_projection
 
+app.register_blueprint(admin_bp)
 app.register_blueprint(auth)
 app.register_blueprint(dst_api)
 app.register_blueprint(misc)

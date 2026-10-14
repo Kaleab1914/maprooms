@@ -1,18 +1,29 @@
-from flask import (Blueprint, render_template,
-                   request, g, flash, session)
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    g,
+    flash,
+    session
+)
 from flask import current_app as app
+
 import json
 from functools import wraps
 from datetime import datetime as dt
 from datetime import timedelta
 
-from app.scripts._global import GLOBAL_CONFIG, selected_language
+from app.scripts._global import (
+    GLOBAL_CONFIG,
+    selected_language
+)
 from app.scripts._cache import cache
-from app.scripts.maproom_items import (load_maproom_items,
-                                       load_navigation_items,
-                                       load_maproom_page_text,
-                                       data_info_coverage,
-                                       _url_args_nav_path)
+from app.scripts.maproom_items import (
+    load_maproom_items,
+    load_navigation_items,
+    load_maproom_page_text,
+    _url_args_nav_path
+)
 from .scripts import *
 
 auth = Blueprint(
@@ -45,17 +56,21 @@ def render_template_main(error_login):
 def render_template_user(user_page, dataUser):
     page_contorl = page_control_musers()
     mapNav = load_navigation_items([user_page])
-    pageText = load_maproom_page_text(['auth', user_page], 'user')
+    pageText = load_maproom_page_text(
+        ['auth', user_page], 'user'
+    )
     pageText['user_page'] = user_page
-    return render_template(f'{user_page}.html',
-                           dataUser = dataUser,
-                           langUser=GLOBAL_CONFIG['language'],
-                           metInfo = GLOBAL_CONFIG['metInfo'],
-                           dataInfo=g.dataInfoCoverage,
-                           mapNav=mapNav,
-                           pageText=pageText,
-                           pageCtrl = page_contorl,
-                           pageType='user')
+    return render_template(
+        f'{user_page}.html',
+        dataUser = dataUser,
+        langUser=GLOBAL_CONFIG['language'],
+        metInfo = GLOBAL_CONFIG['metInfo'],
+        dataInfo=g.dataInfoCoverage,
+        mapNav=mapNav,
+        pageText=pageText,
+        pageCtrl = page_contorl,
+        pageType='user'
+    )
 
 def login_required(f):
     @wraps(f)
@@ -75,8 +90,10 @@ _dataUser = {}
 def set_languages_user():
     lang_code = request.args.get('lang_code')
     selected_language(lang_code)
-    use_page = request.args.get('user_page')
-    return render_template_user(use_page, _dataUser[use_page])
+    user_page = request.args.get('user_page')
+    return render_template_user(
+        user_page, _dataUser[user_page]
+    )
 
 @auth.route('/users_management')
 @login_required
