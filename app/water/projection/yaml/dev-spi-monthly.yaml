@@ -1,11 +1,97 @@
 description:
-    en: test
-    fr: test
+    en: |
+        <h4>Monthly SPI</h4>
+        <p>
+        The Standardized Precipitation Index is an indicator of extreme rainfall events, whether they are drought or excess rainfall.
+        </p>
+        <p>
+        The SPI map displays the standard rainfall index of the most recent month of rainfall (using 1981 to the latest complete year as base period). The SPI (McKee 1993) is the number of standard deviations that observed cumulative rainfall deviates from the climatological average. To compute the index, a long-term time series of rainfall accumulations over months are used to estimate an appropriate probability density function. The analyses shown here are based on the Pearson Type III distribution (i.e., 3-parameter gamma) as suggested by Guttman (1999). The associated cumulative probability distribution is then estimated and subsequently transformed to a normal distribution. The result is the SPI, which can be interpreted as a probability using the standard normal distrubtion (i.e., users can expect the SPI be within one standard deviation about 68% of the time, two standard deviations about 95% of the time, etc.) The analyses shown here utilize the FORTRAN code made available by Guttman (1999).
+        </p>
+        <p>
+        In months when it rains too little, the gamma distribution can not fit and a dry mask is applied.
+        </p>
+        <p>
+        Clicking on the map will pop-up a local time series at the 0.05˚ gridbox clicked. Users can also choose to spatially average the SPI over Districts, Regions or Countries, by clicking on the map or picking an administrative name in the drop-down list, once having chosen which level of administration. Users can also focus the time series on a small time period by using the menu in the Control Bar.
+        </p>
+
+    fr: |
+        <h4>Monthly SPI</h4>
+        <p>
+        The Standardized Precipitation Index is an indicator of extreme rainfall events, whether they are drought or excess rainfall.
+        </p>
+        <p>
+        The SPI map displays the standard rainfall index of the most recent month of rainfall (using 1981 to the latest complete year as base period). The SPI (McKee 1993) is the number of standard deviations that observed cumulative rainfall deviates from the climatological average. To compute the index, a long-term time series of rainfall accumulations over months are used to estimate an appropriate probability density function. The analyses shown here are based on the Pearson Type III distribution (i.e., 3-parameter gamma) as suggested by Guttman (1999). The associated cumulative probability distribution is then estimated and subsequently transformed to a normal distribution. The result is the SPI, which can be interpreted as a probability using the standard normal distrubtion (i.e., users can expect the SPI be within one standard deviation about 68% of the time, two standard deviations about 95% of the time, etc.) The analyses shown here utilize the FORTRAN code made available by Guttman (1999).
+        </p>
+        <p>
+        In months when it rains too little, the gamma distribution can not fit and a dry mask is applied.
+        </p>
+        <p>
+        Clicking on the map will pop-up a local time series at the 0.05˚ gridbox clicked. Users can also choose to spatially average the SPI over Districts, Regions or Countries, by clicking on the map or picking an administrative name in the drop-down list, once having chosen which level of administration. Users can also focus the time series on a small time period by using the menu in the Control Bar.
+        </p>
+
 
 dataset:
-    rawdata:
-        dataset: CLM
-    climatology:
-        dataset: CLM
-    anomaly:
-        dataset: CLM
+    historical:
+        dataset: HIST
+    projection:
+        dataset: PROJ
+
+
+regional_models:
+    CLMcom-CCLM4:
+        label: CLMcom-CCLM4
+        value: ".CLMcom-CCLM4-8-17_v1"
+        gcm:
+            - CNRM-CM5
+            - EC-EARTH
+
+    SMHI-RCA4:
+        label: SMHI-RCA4
+        value: ".SMHI-RCA4_v1"
+        gcm:
+            - CNRM-CM5
+
+GCM:
+    CNRM-CM5:
+        label: CNRM-CERFACS-CNRM-CM5
+        value: ".CNRM-CERFACS-CNRM-CM5_r1i1p1"
+
+    EC-EARTH:
+        label: ICHEC-EC-EARTH
+        value: ".ICHEC-EC-EARTH_r12i1p1"
+
+scenarios:
+    Hist:
+        label: Hist
+        value: Hist
+
+    SSP2:
+        label: SSP2
+        value: SSP2
+
+    SSP8:
+        label: SSP8
+        value: SSP8
+
+
+opt_inputs:
+    regional_models:
+        label: Regional climate model
+        default: CLMcom-CCLM4
+    GCM:
+        label: Global climate model
+        default: CNRM-CM5
+    scenarios:
+        label: Scenario
+        default: Hist
+    time_period:
+        label: SPI time period
+
+time_period:
+    start:
+        label: Start year
+        value: 1951
+    end:
+        label: End year
+        value: 2100
+

@@ -1,7 +1,66 @@
 description:
-    en: test
-    fr: test
+    en: |
+        <h4> Monthly Forecast </h4>
+        <p>
+        Calibrated subseasonal precipitation forecasts in real time, expressed as tercile categories, from the Subseasonal eXperiment (SubX) or SubC.
+        </p>
+        <p>
+        The default map shows the latest forecast for the upcoming one-month target period, as the probability of the dominant tercile category. Previous forecasts can be viewed through the control bar menu. New forecasts are issued weekly on Fridays.
+        </p>
+        <p>
+        When navigating to a forecast whose target period is in the past, a smaller side map shows a verification of the forecast as the observed tercile values according to the training period used for forecast calibration. Before May 1, 2021, the climatological period is 1999-2014; after May 1, 2021, the climatological period is 1999-2016.
+        </p>
+        <p>
+        Clicking on the forecast map shows, for the selected grid box, the probabilities for the three forecast categories (Below-, Near- and Above-Normal).
+        </p>
+        <p>
+        The probabilistic forecasts shown here are obtained from the statistical calibration of three models (NCEP CFSv2, NCEP GEFS, and NOAA/ESRL FIM HYCOM, each run on Wednesdays) from the SubC database, which are combined with equal weight to form multi-model ensemble precipitation tercile probability forecasts. Individual model forecasts are calibrated separately for each point, start and lead using Extended Logistic Regressions (ELR; Vigaud et al., 2017) based on the historical performance of each model. They thus provide reliable intra-seasonal climate information for a wide range of climate risks of concern to decision-making communities, for which subseasonal forecasts are particularly well suited.
+        </p>
+        <p>
+        Subseasonal-to-seasonal forecasting techniques are still under development. This Maproom shows the type of experimental forecast information currently being created at these time scales in real time.
+        </p>
 
+        <h6> References: </h6>
+        <ul>
+        <li>
+        Pegion, K. et al. 2019: The Subseasonal Experiment (SubX): A multi-model subseasonal prediction experiment. Bull. Amer. Meteor. Soc., 100, 2043–2060.
+        </li>
+        <li>
+        Vigaud, N., A.W. Robertson, and M.K. Tippett, 2017: Multimodel Ensembling of Subseasonal Precipitation Forecasts over North America. Mon. Wea. Rev., 145, 3913–3928
+        </li>
+        </ul>
+
+    fr: |
+        <h4> Prévisions probabilistiques sur un mois </h4>
+        <p>
+        Prévisions sous-saisonnières des précipitations en temps réel, calibrées et exprimées en catégories de terciles, issues du projet Subseasonal eXperiment (SubX).
+        </p>
+        <p>
+        La carte affiche par défaut la prévision la plus récente pour la prochaine période cible d'un mois, sous forme de probabilité de la catégorie de tercile dominante. Les prévisions précédentes peuvent être consultées dans le menu de la barre de contrôle. De nouvelles prévisions sont émises chaque semaine, le vendredi.
+        </p>
+        <p>
+        Lorsqu'une prévision dont la période cible est passée est sélectionnée, une petite carte latérale permet de vérifier la prévision en affichant les catégories de terciles observées, définies selon la période d'apprentissage utilisée pour la calibration de la prévision. Avant le 1er mai 2021, la période climatologique est 1999-2014 ; après le 1er mai 2021, elle est 1999-2016.
+        </p>
+        <p>
+        Un clic sur la carte des prévisions affiche, pour la maille sélectionnée, les probabilités des trois catégories de prévision (inférieure, proche et supérieure à la normale).
+        </p>
+        <p>
+        Les prévisions probabilistes présentées ici sont obtenues par calibration statistique de trois modèles (NCEP CFSv2, NCEP GEFS et NOAA/ESRL FIM HYCOM, chacun exécuté le mercredi) issus de la base de données SubC. Ces modèles sont combinés avec une pondération égale pour produire des prévisions probabilistes des terciles de précipitations à partir d'un ensemble multimodèle. Les prévisions de chaque modèle sont calibrées séparément pour chaque point, date d'initialisation et échéance, au moyen de régressions logistiques étendues (ELR ; Vigaud et al., 2017), en fonction des performances historiques de chaque modèle. Elles fournissent ainsi des informations climatiques intra-saisonnières fiables concernant un large éventail de risques climatiques qui intéressent les décideurs et pour lesquels les prévisions sous-saisonnières sont particulièrement adaptées.
+        </p>
+        <p>
+        Les techniques de prévision aux échelles sous-saisonnières à saisonnières sont encore en cours de développement. Ce Maproom présente le type d'informations de prévision expérimentales actuellement produites en temps réel à ces échelles temporelles.
+        </p>
+
+        <h6> Références : </h6>
+        <ul>
+        <li>
+        Pegion, K. et al. 2019: The Subseasonal Experiment (SubX): A multi-model subseasonal prediction experiment. Bull. Amer. Meteor. Soc., 100, 2043–2060.
+        </li>
+        <li>
+        Vigaud, N., A.W. Robertson, and M.K. Tippett, 2017: Multimodel Ensembling of Subseasonal Precipitation Forecasts over North America. Mon. Wea. Rev., 145, 3913–3928
+        </li>
+        </ul>
+        
 dataset:
     use: ALL
     variables:

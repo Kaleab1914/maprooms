@@ -1,6 +1,52 @@
 description:
-    en: test
-    fr: test
+    en: |
+        <h4> Flexible Seasonal Forecast </h4>
+        <p>
+        This seasonal forecasting system consists of probabilistic precipitation and temperature seasonal forecasts based on the full estimate of the probability distribution.
+        </p>
+        <p>
+        Probabilistic seasonal forecasts from multi-model ensembles through the use of statistical recalibration, based on the historical performance of those models, provide reliable information to a wide range of climate risk and decision making communities, as well as the forecast community. The flexibility of the full probability distributions allows to deliver interactive maps and point-wise distributions that become relevant to user-determined needs.
+        </p>
+        <p>
+        The default map shows globally the seasonal precipitation forecast probability (colors between 0 and 1) of exceeding the 50th percentile of the distribution from historical climatology. The historical climatology used is 1982-2010 up to the forecast issued in August 2021, and is 1991-2020 from the forecast issued in September 2021. The forecast shown is the latest forecast made (e.g. Dec 2025) for the next season to come (e.g. Jan-Mar 2026). Four different seasons are forecasted and it is also possible to consult forecasts made previously. The forecasts are directly computed from the extended logistic regression model as probabilities of exceeding (or non-exceeding) of every 5th percentile of the climatological distribution. The specific quantile (in steps of 5 percentile points) can then be selected. The user can also specify a quantitative value in physical units (here seasonal total precipitation in mm) for probability of exceeding or non-exceeding. The final probability maps are smoothed spatially with a 9×9 point Gaussian smoother.
+        </p>
+        <p>
+        Clicking on a point on the map will show the local probability of exceeding and probability distribution of the forecast (green) together with the climatological distribution (black).
+        </p>
+        <p>
+        The distribution of seasonal rainfall may often rightfully be approximated by a normal distribution, especially when considering only years when it actually rained. But there can be a significant number of years in the sample when rainfall is 0. This translates in situations where the probability of rainfall to be just above 0 is less than 100%, which are represented in by the vertical lines at 0mm in the distributions graphs.
+        </p>
+
+        <h5>Colors Scales</h5>
+
+        <p>
+        Color scales are colors indicating that the distribution of the forecast tends towards drier (shades of brown) or wetter (shades of blue) conditions than normal (moccasin).
+        </p>
+
+    fr: |
+        <h4> Prévisions saisonnières flexibles </h4>
+        <p>
+        Ce système de prévision saisonnière fournit des prévisions probabilistes des précipitations et des températures saisonnières fondées sur une estimation complète de la distribution de probabilité.
+        </p>
+        <p>
+        Les prévisions saisonnières probabilistes issues d'ensembles multimodèles, recalibrées statistiquement selon les performances historiques de ces modèles, fournissent des informations fiables aux communautés concernées par les risques climatiques, aux décideurs ainsi qu'aux prévisionnistes. La flexibilité des distributions de probabilité complètes permet de proposer des cartes interactives et des distributions pour chaque point, adaptées aux besoins définis par les utilisateurs.
+        </p>
+        <p>
+        La carte affiche par défaut, à l'échelle mondiale, la probabilité prévue que les précipitations saisonnières dépassent le 50e percentile de la distribution climatologique historique (couleurs correspondant à des probabilités comprises entre 0 et 1). La période climatologique de référence est 1982-2010 jusqu'à la prévision émise en août 2021, puis 1991-2020 à partir de la prévision émise en septembre 2021. La prévision affichée est la plus récente (par exemple, décembre 2025) pour la prochaine saison à venir (par exemple, janvier-mars 2026). Des prévisions sont disponibles pour quatre saisons différentes, et il est également possible de consulter les prévisions précédentes. Les prévisions sont calculées directement à partir du modèle de régression logistique étendue sous forme de probabilités de dépassement ou de non-dépassement des percentiles de la distribution climatologique, par pas de 5 points de percentile. L'utilisateur peut ensuite sélectionner le quantile souhaité selon ces mêmes pas. Il peut également définir une valeur numérique en unités physiques (ici, le cumul saisonnier des précipitations en mm) pour obtenir la probabilité de dépassement ou de non-dépassement de ce seuil. Les cartes de probabilités finales sont lissées spatialement à l'aide d'un filtre gaussien de 9 × 9 points.
+        </p>
+        <p>
+        Un clic sur un point de la carte affiche la probabilité locale de dépassement et la distribution de probabilité de la prévision (en vert), ainsi que la distribution climatologique (en noir).
+        </p>
+        <p>
+        La distribution des précipitations saisonnières peut souvent être approximée de manière appropriée par une distribution normale, en particulier lorsque seules les années ayant enregistré des précipitations sont prises en compte. Toutefois, l'échantillon peut comporter un nombre important d'années sans précipitations. Dans ce cas, la probabilité que les précipitations soient strictement supérieures à 0 est inférieure à 100 %, ce qui est représenté par les lignes verticales à 0 mm dans les graphiques des distributions.
+        </p>
+
+        <h5>Échelles de couleurs</h5>
+
+        <p>
+        Les échelles de couleurs indiquent si la distribution de la prévision tend vers des conditions plus sèches (nuances de brun) ou plus humides (nuances de bleu) que la normale (couleur mocassin).
+        </p>
+
 
 dataset:
     use: ALL

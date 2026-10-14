@@ -1,11 +1,240 @@
 description:
-    en: test
-    fr: test
+    en: |
+        <h4>Seasonal Changes</h4>
+        <p>
+        Future changes in seasonal climate relative to a historical
+        climatological period. The climatological period is user-defined
+        and has the same duration in both historical and future periods.
+        Future projections are based on the selected climate scenario.
+        </p>
+        <p>
+        Users can select rainfall, minimum temperature or maximum
+        temperature, and different combinations of global climate models
+        (GCMs) and regional climate models (RCMs), to assess future seasonal
+        changes over the area of interest. Clicking on the map produces
+        a local yearly seasonal time series, frequency distribution
+        and trend of the selected variable.
+        </p>
+        <h5>Years, season and climatological period</h5>
+        <p>
+        Specify the historical and future start years and the duration
+        of the climatological period. This duration automatically
+        determines the end year for each period. Define the season
+        by selecting its start and end months, then select the model
+        combination and variable for the analysis.
+        </p>
+        <p>
+        <strong>Historical start year:</strong>
+        The first year of the historical climatological period.
+        </p>
+        <p>
+        <strong>Future start year:</strong>
+        The first year of the future climatological period.
+        </p>
+        <p>
+        <strong>Period:</strong>
+        The number of years used to calculate each climatology.
+        The default is 30 years. The same duration is used for both
+        periods, and each end year is calculated as the start year
+        plus the duration minus one.
+        </p>
+        <h5>Calculation of seasonal changes</h5>
+        <p>
+        The change statistic is calculated by subtracting the historical
+        climatological mean of the selected variable from its future
+        climatological mean:
+        </p>
+        <p>
+        <strong>Seasonal change = Future mean − Historical mean.</strong>
+        </p>
+        <h5>Spatial resolution</h5>
+        <p>
+        The analysis is performed and mapped at each 0.44° grid point.
+        Results can also be spatially averaged over grid points within
+        administrative boundaries to produce the time series graph.
+        </p>
+
+    fr: |
+        <h4>Changements saisonniers</h4>
+        <p>
+        Cette Maproom présente les changements futurs du climat saisonnier
+        par rapport à une période climatologique historique. La période
+        climatologique est définie par l’utilisateur et possède la même
+        durée pour les périodes historiques et futures. Les projections
+        futures reposent sur le scénario climatique sélectionné.
+        </p>
+        <p>
+        Les utilisateurs peuvent sélectionner les précipitations,
+        la température minimale ou la température maximale, ainsi que
+        différentes combinaisons de modèles climatiques globaux (GCM)
+        et régionaux (RCM), pour évaluer les changements saisonniers
+        futurs dans la zone d’intérêt. Un clic sur la carte affiche
+        une série chronologique saisonnière annuelle locale, une
+        distribution des fréquences et la tendance de la variable
+        sélectionnée.
+        </p>
+        <h5>Années, saison et période climatologique</h5>
+        <p>
+        Indiquez les années de début des périodes historiques et futures,
+        ainsi que la durée de la période climatologique. Cette durée
+        détermine automatiquement l’année de fin de chaque période.
+        Définissez la saison en sélectionnant ses mois de début et
+        de fin, puis choisissez la combinaison de modèles et la
+        variable à analyser.
+        </p>
+        <p>
+        <strong>Année de début historique :</strong>
+        La première année de la période climatologique historique.
+        </p>
+        <p>
+        <strong>Année de début future :</strong>
+        La première année de la période climatologique future.
+        </p>
+        <p>
+        <strong>Période :</strong>
+        Le nombre d’années utilisé pour calculer chaque climatologie.
+        La durée par défaut est de 30 ans. La même durée est utilisée
+        pour les deux périodes. Chaque année de fin correspond à
+        l’année de début, plus la durée, moins un.
+        </p>
+        <h5>Calcul des changements saisonniers</h5>
+        <p>
+        Le changement est calculé en soustrayant la moyenne climatologique
+        historique de la variable sélectionnée de sa moyenne
+        climatologique future :
+        </p>
+        <p>
+        <strong>Changement saisonnier = Moyenne future − Moyenne historique.</strong>
+        </p>
+        <h5>Résolution spatiale</h5>
+        <p>
+        L’analyse est réalisée et cartographiée à chaque point de grille
+        de 0,44°. Les résultats peuvent également être moyennés sur
+        les points de grille situés à l’intérieur des limites
+        administratives afin de produire le graphique de la série
+        chronologique.
+        </p>
 
 dataset:
-    rawdata:
-        dataset: CLM
-    climatology:
-        dataset: CLM
-    anomaly:
-        dataset: CLM
+    historical:
+        dataset: HIST
+    projection:
+        dataset: PROJ
+    variables:
+        rainfall: [precip]
+        min_temperature: [tmin]
+        max_temperature: [tmax]
+
+regional_models:
+    CLMcom-CCLM4:
+        label: CLMcom-CCLM4
+        value: ".CLMcom-CCLM4-8-17_v1"
+        gcm:
+            - CNRM-CM5
+            - EC-EARTH
+
+    SMHI-RCA4:
+        label: SMHI-RCA4
+        value: ".SMHI-RCA4_v1"
+        gcm:
+            - CNRM-CM5
+
+GCM:
+    CNRM-CM5:
+        label: CNRM-CERFACS-CNRM-CM5
+        value: ".CNRM-CERFACS-CNRM-CM5_r1i1p1"
+
+    EC-EARTH:
+        label: ICHEC-EC-EARTH
+        value: ".ICHEC-EC-EARTH_r12i1p1"
+
+scenarios:
+    SSP2:
+        label: SSP2
+        value: SSP2
+
+    SSP8:
+        label: SSP8
+        value: SSP8
+
+variables:
+    label:
+        en: Variable
+        fr: Variable
+    default: rainfall
+    select:
+        rainfall:
+            en: Rainfall
+            fr: Précipitations
+        min_temperature:
+            en: Minimum temperature
+            fr: Température minimale
+        max_temperature:
+            en: Maximum temperature
+            fr: Température maximale
+
+opt_inputs:
+    regional_models:
+        label:
+            en: Regional climate model
+            fr: Modèle climatique régional
+    GCM:
+        label:
+            en: Global climate model
+            fr: Modèle climatique global
+    scenarios:
+        label:
+            en: Scenario
+            fr: Scénario
+
+opt_season:
+    label:
+        en: Season
+        fr: Saison
+    season_map:
+        start:
+            en: Start month
+            fr: Mois de début
+        end:
+            en: End month
+            fr: Mois de fin
+
+
+climatological_period:
+    historical:
+        start_year: 1961
+    future:
+        start_year: 2006
+    length: 30
+
+opt_climatological_period:
+    label:
+        en: Climatological periods
+        fr: Périodes climatologiques
+    historical_start_year:
+        en: Historical start year
+        fr: Année de début historique
+    future_start_year:
+        en: Future start year
+        fr: Année de début future
+    length:
+        en: Period length
+        fr: Durée de la période
+    unit:
+        en: years
+        fr: ans
+
+distribution_change:
+    label:
+        en: Distribution change
+        fr: Changement de distribution
+    label_from:
+        en: From
+        fr: De
+    label_to:
+        en: To
+        fr: A
+    from: 0
+    to: 10
+    step: 1
+    dtype: integer
