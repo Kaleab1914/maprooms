@@ -57,10 +57,11 @@ body {
     background: rgba(255, 255, 255, 0.18);
 }
 
-.navbar-brand img {
+.navbar-brand .navbar-logo {
     display: block;
-    max-height: 42px;
+    height: 40px;
     width: auto;
+    max-width: 100%;
     object-fit: contain;
     filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.08));
 }
@@ -70,14 +71,18 @@ body {
     margin-left: 0.35rem;
 }
 
+.navbar-header>.navbar-brand.navbar-logo-link {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
 #sei-logo {
     max-width: 135px;
-    min-width: 90px;
 }
 
 .meteo-logo {
     max-width: 220px;
-    min-width: 150px;
 }
 
 @media (max-width: 767.98px) {
@@ -87,12 +92,10 @@ body {
 
     #sei-logo {
         max-width: 110px;
-        min-width: 75px;
     }
 
     .meteo-logo {
         max-width: 170px;
-        min-width: 120px;
     }
 }
 
@@ -107,12 +110,10 @@ body {
 
     #sei-logo {
         max-width: 86px;
-        min-width: 64px;
     }
 
     .meteo-logo {
         max-width: 130px;
-        min-width: 94px;
     }
 }
 
@@ -206,7 +207,6 @@ body {
 
     .navbar-header img {
         max-width: 130px;
-        height: auto;
     }
 
     .navbar-header {
