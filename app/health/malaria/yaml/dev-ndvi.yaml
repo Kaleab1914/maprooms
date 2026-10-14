@@ -1,7 +1,81 @@
 description:
-    en: test
-    fr: test
-# all about daily
+    en: |
+        <h4> Measures of Vegetation </h4>
+        <p>
+        This tool produces maps of estimated vegetation using data from NASA's MODIS sensor.
+        </p>
+        <p>
+        In some semi-arid regions of eastern Africa, precipitation has been found to have a 2-3 month lagged correlation with malaria incidence. Due to the lack of station data and because precipitation produces a delayed vegetation response, vegetation indices have been used as proxy measures to forecast malaria.
+        </p>
+        <p>
+        Two vegetation indices are provided: NDVI and EVI, in addition to reflectance values for the blue, red, near-infrared and middle-infrared channels. Each index is derived from data provided by the Moderate Resolution Imaging Spectroradiometer (MODIS), a key instrument aboard NASA's Terra and Aqua satellites.
+        </p>
+
+        <h5> NDVI </h5>
+        <p>
+        The Normalized Difference Vegetation Index (NDVI) is the difference between near-infrared (NIR) and red reflectances divided by their sum. The index provides information on healthy vegetation by examining differences in absorption and reflectance at these wavelengths. Healthy vegetation, such as forests, produces high NDVI values closer to 1, while sparse vegetation produces values close to 0.2.
+        </p>
+
+        <h5> EVI </h5>
+        <p>
+        The Enhanced Vegetation Index (EVI) is provided as a complementary index to NDVI. EVI is an optimized index designed to enhance the vegetation signal, with improved sensitivity in high-biomass regions and improved vegetation monitoring through a separation of the canopy background signal and a reduction in atmospheric influences.
+        </p>
+
+        <h5> Reflectance </h5>
+        <p>
+        By combining MIR, NIR and red wavelengths in a red-green-blue color space, reflectance images allow more robust and reliable qualitative discrimination between land surfaces with sparse vegetation and those without vegetation. Water bodies can also be accurately mapped. Users can follow the spatial and temporal dynamics of green vegetation and identify water bodies using the combination of MIR, NIR and red channels.
+        </p>
+        <p>
+        NDVI and EVI are useful for estimating the presence of vegetation, but are subject to intrinsic commission and omission errors that can lead to misrepresentation of land surfaces. To improve the retrieval of vegetation properties, reflectance values in the blue, red, near-infrared (NIR) and middle-infrared (MIR) channels can be used.
+        </p>
+
+        <h6> References: </h6>
+        <ul>
+        <li>
+        Ceccato, P., et al. (2007).
+        <a href="http://www.ajtmh.org/content/77/6_Suppl/61.full">Malaria stratification, climate, and epidemic early warning in Eritrea.</a>
+        American Journal of Tropical Medicine and Hygiene, 77(6 Suppl), 61–68.
+        </li>
+        </ul>
+
+    fr: |
+        <h4> Indicateurs de végétation </h4>
+        <p>
+        Cet outil produit des cartes d'estimation de la végétation à partir des données du capteur MODIS de la NASA.
+        </p>
+        <p>
+        Dans certaines régions semi-arides d'Afrique de l'Est, une corrélation a été observée entre les précipitations et l'incidence du paludisme, avec un décalage de 2 à 3 mois. En raison du manque de données provenant des stations et de la réponse différée de la végétation aux précipitations, les indices de végétation ont été utilisés comme indicateurs indirects pour prévoir le paludisme.
+        </p>
+        <p>
+        Deux indices de végétation sont proposés : le NDVI et l'EVI, ainsi que les valeurs de réflectance des bandes du bleu, du rouge, du proche infrarouge et de l'infrarouge moyen. Chaque indice est calculé à partir des données du spectroradiomètre imageur à résolution modérée (MODIS), un instrument majeur embarqué à bord des satellites Terra et Aqua de la NASA.
+        </p>
+
+        <h5> NDVI </h5>
+        <p>
+        L'indice de végétation par différence normalisée (NDVI) correspond à la différence entre les réflectances du proche infrarouge (NIR) et du rouge, divisée par leur somme. Cet indice fournit des informations sur la végétation en bonne santé en examinant les différences d'absorption et de réflectance à ces longueurs d'onde. Une végétation en bonne santé, comme les forêts, produit des valeurs élevées de NDVI, proches de 1, tandis qu'une végétation clairsemée produit des valeurs proches de 0,2.
+        </p>
+
+        <h5> EVI </h5>
+        <p>
+        L'indice de végétation amélioré (EVI) est proposé en complément du NDVI. Il s'agit d'un indice optimisé conçu pour renforcer le signal de la végétation, avec une sensibilité accrue dans les régions à forte biomasse et un meilleur suivi de la végétation grâce à la séparation du signal de fond du couvert végétal et à la réduction des effets atmosphériques.
+        </p>
+
+        <h5> Réflectance </h5>
+        <p>
+        En combinant les longueurs d'onde de l'infrarouge moyen (MIR), du proche infrarouge (NIR) et du rouge dans un espace colorimétrique rouge-vert-bleu, les images de réflectance permettent une distinction qualitative plus robuste et plus fiable entre les surfaces à végétation clairsemée et les surfaces dépourvues de végétation. Les plans d'eau peuvent également être cartographiés avec précision. Les utilisateurs peuvent suivre la dynamique spatiale et temporelle de la végétation verte et identifier les plans d'eau grâce à la combinaison des bandes MIR, NIR et rouge.
+        </p>
+        <p>
+        Le NDVI et l'EVI sont utiles pour estimer la présence de végétation, mais ils sont sujets à des erreurs intrinsèques de commission et d'omission pouvant entraîner une représentation incorrecte des surfaces. Pour améliorer l'estimation des propriétés de la végétation, les valeurs de réflectance des bandes du bleu, du rouge, du proche infrarouge (NIR) et de l'infrarouge moyen (MIR) peuvent être utilisées.
+        </p>
+
+        <h6> Références : </h6>
+        <ul>
+        <li>
+        Ceccato, P., et al. (2007).
+        <a href="http://www.ajtmh.org/content/77/6_Suppl/61.full">Malaria stratification, climate, and epidemic early warning in Eritrea.</a>
+        American Journal of Tropical Medicine and Hygiene, 77(6 Suppl), 61–68.
+        </li>
+        </ul>
 dataset:
     rawdata:
         dataset: ALL
@@ -11,3 +85,4 @@ dataset:
         dataset: ALL
     anomaly:
         dataset: ALL
+

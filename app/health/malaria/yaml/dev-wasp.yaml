@@ -1,6 +1,43 @@
 description:
-    en: test
-    fr: test
+    en: |
+
+        <h4> WASP 12-month </h4>
+        <p>
+        The 12-month Weighted Anomaly Standardization Precipitation (WASP) index provides a simple visual means of extreme rainfall events for the past 12 months, whether they are drought or excess rainfall.
+        </p>
+        <p>
+        To compute the WASP index, monthly precipitation departures from the long-term average are obtained and then standardized by dividing by the standard deviation of monthly precipitation. The standardized monthly anomalies are then weighted by multiplying by the fraction of the average annual precipitation for the given month. These weighted anomalies are then summed over a 12-month time period.
+        </p>
+        <p>
+        Clicking on the map will pop-up a local time series at the 0.05 gridbox clicked. Users can also choose to spatially average the WASP over administrative boundaries, by clicking on the map or picking an administrative name in the drop-down list, once having chosen which level of administration. Note that the color bars are placed on the last month of the corresponding 12-month WASP, ie that the bar on Mar 2017 represents Apr 2016 - Mar 2017 12-month WASP. Users can also focus the time series on a small time period by using the menu in the Control Bar.
+        </p>
+
+        <h6>References</h6>
+        <ul>
+        <li>
+        Lyon, B., and A. G. Barnston.ENSO and the spatial extent of interannual precipitation extremes in tropical land areas.Journal of Climate, 200518:5095-5109.
+        </li>
+        </ul>
+
+    fr: |
+        <h4> WASP sur 12 mois </h4>
+        <p>
+        L'indice WASP (Weighted Anomaly Standardization Precipitation) sur 12 mois permet de visualiser simplement les événements pluviométriques extrêmes des 12 derniers mois, qu'il s'agisse de sécheresse ou d'excès de précipitations.
+        </p>
+        <p>
+        Pour calculer l'indice WASP, les écarts des précipitations mensuelles par rapport à la moyenne à long terme sont calculés, puis standardisés en les divisant par l'écart-type des précipitations mensuelles. Les anomalies mensuelles standardisées sont ensuite pondérées en les multipliant par la part des précipitations annuelles moyennes correspondant au mois considéré. Ces anomalies pondérées sont ensuite additionnées sur une période de 12 mois.
+        </p>
+        <p>
+        Un clic sur la carte affiche une série temporelle locale pour la maille de 0,05° sélectionnée. Les utilisateurs peuvent également calculer la moyenne spatiale du WASP sur une unité administrative, en cliquant sur la carte ou en sélectionnant son nom dans la liste déroulante, après avoir choisi le niveau administratif souhaité. Les barres colorées sont positionnées sur le dernier mois de la période de 12 mois correspondante : par exemple, la barre de mars 2017 représente le WASP sur 12 mois d'avril 2016 à mars 2017. Les utilisateurs peuvent également limiter l'affichage de la série temporelle à une période plus courte à l'aide du menu de la barre de contrôle.
+        </p>
+
+        <h6>Références</h6>
+        <ul>
+        <li>
+        Lyon, B., and A. G. Barnston. ENSO and the spatial extent of interannual precipitation extremes in tropical land areas. Journal of Climate, 2005, 18:5095-5109.
+        </li>
+        </ul>
+
 # all about daily
 dataset:
     rawdata:

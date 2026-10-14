@@ -794,3 +794,80 @@ function setOffCanvasMapControlDrmSpiAnalysis(tempRes) {
     setMonitoringColorbar('spi_seas');
 
 }
+
+
+//////////////
+function setOffCanvasMapControlSeasonalProjection(tempRes) {
+    const prefix = `${tempRes}-seasonal-proj`;
+
+    $(`#${prefix}-regional-model`)
+        .off('change.seasonalProjection')
+        .on('change.seasonalProjection', function() {
+            const select = $(`#${prefix}-gcm`);
+            const previous = select.val();
+            const available = REGIONAL_MODELS[this.value].gcm;
+
+            select.empty();
+
+            available.forEach(key => {
+                select.append(new Option(GCM[key].label, key));
+            });
+
+            if (available.includes(previous)) {
+                select.val(previous);
+            }
+
+            select.trigger('change');
+        });
+
+    $(`#${prefix}-variable`)
+        .off('change.seasonalProjection')
+        .on('change.seasonalProjection', function() {
+            ['historical', 'future'].forEach(period => {
+                const container = `${prefix}-${period}-date`;
+                const selected = $(`#${container}-calendar`).val();
+                const year = selected
+                    ? selected.slice(0, 4)
+                    : CLIMATOLOGICAL_PERIOD[period].start_year;
+                const dataset = period === 'historical'
+                    ? DATA_SET.historical.dataset
+                    : DATA_SET.projection.dataset;
+
+                setDateCalendar(
+                    container, `${prefix}-variable`, dataset, tempRes,
+                    `${year}-01-01`, false, true, true
+                );
+            });
+        });
+
+    $(`#${prefix}-regional-model`).trigger('change');
+    $(`#${prefix}-variable`).trigger('change');
+}
+
+
+function setOffCanvasMapControlSpiProjection(tempRes) {
+    const prefix = `${tempRes}-spi-proj`;
+
+    $(`#${prefix}-regional-model`)
+        .off('change.spiProjection')
+        .on('change.spiProjection', function() {
+            const select = $(`#${prefix}-gcm`);
+            const previous = select.val();
+            const available = REGIONAL_MODELS[this.value].gcm;
+
+            select.empty();
+
+            available.forEach(key => {
+                select.append(new Option(GCM[key].label, key));
+            });
+
+            if (available.includes(previous)) {
+                select.val(previous);
+            }
+
+            select.trigger('change');
+        });
+
+    $(`#${prefix}-regional-model`).trigger('change');
+}
+

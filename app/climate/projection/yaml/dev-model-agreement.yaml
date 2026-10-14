@@ -1,11 +1,152 @@
 description:
-    en: test
-    fr: test
+    en: |
+        <h4>Model Agreement</h4>
+        <p>
+        The level of agreement on either positive or negative change
+        in a future time period with reference to the baseline
+        (historical period).
+        </p>
+        <p>
+        Model Agreement is calculated by first getting the changes
+        between the historical climatology and future climatology of
+        each individual model. The result is then compared with all
+        models to ascertain the agreement in the future change at
+        each grid point. Models can agree on a decrease, increase or
+        no change in the future under climate change. The results
+        are presented in terms of percent of models that agree on
+        a given change at each grid point.
+        </p>
+        <p>
+        Grid points with less than 10% of the models agreeing on
+        either positive or negative change are classified as having
+        no level of agreement. Points with between 15% and 45% of
+        models agreeing on a change are classified as having low
+        agreement. Points with between 45% and 75% of models agreeing
+        are classified as having medium agreement, while points
+        with more than 75% of models agreeing are classified as
+        having a high level of agreement.
+        </p>
+
+    fr: |
+        <h4>Accord entre modèles</h4>
+        <p>
+        Le niveau d’accord sur un changement positif ou négatif
+        pendant une période future, par rapport à la période de
+        référence historique.
+        </p>
+        <p>
+        L’accord entre modèles est calculé en déterminant d’abord
+        les changements entre la climatologie historique et la
+        climatologie future de chaque modèle. Les résultats sont
+        ensuite comparés entre tous les modèles afin de déterminer
+        leur accord sur le changement futur à chaque point de grille.
+        Les modèles peuvent s’accorder sur une diminution, une
+        augmentation ou une absence de changement dans le futur
+        sous l’effet du changement climatique. Les résultats sont
+        présentés sous forme de pourcentage de modèles qui
+        s’accordent sur un changement donné à chaque point de grille.
+        </p>
+        <p>
+        Les points de grille où moins de 10 % des modèles s’accordent
+        sur un changement positif ou négatif sont classés comme
+        ne présentant aucun niveau d’accord. Les points où entre
+        15 % et 45 % des modèles s’accordent sur un changement
+        présentent un accord faible. Ceux où entre 45 % et 75 %
+        des modèles s’accordent présentent un accord moyen.
+        Les points où plus de 75 % des modèles s’accordent
+        présentent un niveau d’accord élevé.
+        </p>
 
 dataset:
-    rawdata:
-        dataset: CLM
-    climatology:
-        dataset: CLM
-    anomaly:
-        dataset: CLM
+    historical:
+        dataset: HIST
+    projection:
+        dataset: PROJ
+    variables:
+        rainfall: [precip]
+        min_temperature: [tmin]
+        max_temperature: [tmax]
+
+variables:
+    label:
+        en: Variable
+        fr: Variable
+    select:
+        rainfall:
+            en: Rainfall
+            fr: Précipitations
+        min_temperature:
+            en: Minimum temperature
+            fr: Température minimale
+        max_temperature:
+            en: Maximum temperature
+            fr: Température maximale
+
+opt_season:
+    label:
+        en: Season
+        fr: Saison
+    season_map:
+        start:
+            en: Start month
+            fr: Mois de début
+        end:
+            en: End month
+            fr: Mois de fin
+
+scenarios:
+    SSP2:
+        label: SSP2
+        value: SSP2
+    SSP8:
+        label: SSP8
+        value: SSP8
+
+change_signal:
+    positive:
+        label:
+            en: Positive
+            fr: Positif
+        value: positive
+    negative:
+        label:
+            en: Negative
+            fr: Négatif
+        value: negative
+
+opt_inputs:
+    scenarios:
+        label:
+            en: Scenario
+            fr: Scénario
+        default: SSP2
+    change_signal:
+        label:
+            en: Change signal
+            fr: Signal de changement
+        default: positive
+
+climatological_period:
+    historical:
+        start_year: 1991
+    future:
+        start_year: 2041
+    length: 30
+
+opt_climatological_period:
+    label:
+        en: Climatological periods
+        fr: Périodes climatologiques
+    historical_start_year:
+        en: Historical start year
+        fr: Année de début historique
+    future_start_year:
+        en: Future start year
+        fr: Année de début future
+    length:
+        en: Period length
+        fr: Durée de la période
+    unit:
+        en: years
+        fr: ans
+        

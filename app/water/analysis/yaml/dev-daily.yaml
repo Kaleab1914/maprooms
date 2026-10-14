@@ -1,6 +1,6 @@
 description:
     en: |
-        <h4>Seasonal Climate Analysis</h4>
+        <h4>Daily Climate Analysis</h4>
         <p>
         The Maproom explores historical daily precipitation and temperatures by calculating simple seasonal statistics and the history of extreme.
         Rainfall time series and temperature time series (1981-2021) reconstructed from station observations, remote sensing and other proxies.

@@ -1,7 +1,178 @@
 instruction:
     en: |
         <h4>How to use this interactive map</h4>
-         <p>About map, charts, all buttons and commands</p>
+
+        <p>
+            <strong><i class="bi bi-layout-text-sidebar me-1" aria-hidden="true"></i> Map controls:</strong>
+            Choose the variable, date, season, or analysis settings available on this page.
+        </p>
+
+        <p>
+            <strong><i class="bi bi-stack me-1" aria-hidden="true"></i> Layers:</strong>
+            Choose the background map, display administrative boundaries,
+            and adjust layer styles and colors.
+        </p>
+
+        <p>
+            <strong><i class="bi bi-pencil-square me-1" aria-hidden="true"></i> Create Map with Maptlotlib:</strong>
+            Create a map based on the users requirement and settings.
+        </p>
+
+
+        <p>
+            <strong><i class="bi bi-save2 me-1" aria-hidden="true"></i> Save current map:</strong>
+            Download the current map as a PNG image.
+        </p>
+
+        <p>
+            <strong><i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i> Refresh/redraw map:</strong>
+            Redraw the map using the current settings.
+        </p>
+
+        <p>
+            <strong><i class="bi bi-layers-half me-1" aria-hidden="true"></i> Remove marker polygon :</strong>
+            Remove the selected point marker or clear the highlighted polygon.
+        </p>
+
+
+        <p>
+            <strong>Grid point, zone, or region:</strong>
+            Choose a spatial selection type from the map toolbar.
+            Click a point or polygon on the map, or select an administrative
+            area from the list, to update the available preview charts.
+        </p>
+
+        <p>
+            <strong>
+                <i class="bi bi-arrow-left-square-fill me-1" aria-hidden="true"></i>
+                <i class="bi bi-arrow-right-square-fill me-1" aria-hidden="true"></i>
+                Time navigation:
+            </strong>
+            Move to the previous or next period, or enter a date in the toolbar.
+            These controls appear on pages that support time navigation.
+        </p>
+
+        <p>
+            <strong><span aria-hidden="true">+ / −</span> Zoom:</strong>
+            Use the plus and minus buttons to zoom in or out.
+            Drag the location icon on the map or hit on a grid point or a location to move to another location.
+        </p>
+
+        <p>
+            <strong>
+                <span class="position-relative d-inline-block align-middle me-1"
+                      style="width: 1.25rem; height: 1.25rem;" aria-hidden="true">
+                    <i class="bi bi-circle position-absolute top-50 start-50 translate-middle fs-5"></i>
+                    <i class="bi bi-arrows-angle-expand position-absolute top-50 start-50 translate-middle"
+                       style="font-size: 0.65rem;"></i>
+                </span>
+                Expand chart:
+            </strong>
+            Open a larger chart with the analysis and display controls
+            available for that chart, there are more detailed information there.
+        </p>
+
+
+        <p>
+            <strong><i class="bi bi-info-circle me-1" aria-hidden="true"></i> Chart information:</strong>
+            View information about the data, configuration and settings used to produce the chart.
+        </p>
+
+        <p>
+            <strong><i class="bi bi-reception-2 me-1" aria-hidden="true"></i> Chart settings:</strong>
+            Edit the chart settings such as the title, the x label and ticks interval as well as for y, the chart colors and and font.
+        </p>
+
+        <p>
+            <strong><i class="bi bi-x-circle-fill me-1" aria-hidden="true"></i> Close:</strong>
+            Close the open control panel or chart window.
+        </p>
+
     fr: |
         <h4>Comment utiliser cette carte interactive</h4>
-        <p>A propos de la carte, des graphiques, toutes les boutons et commandes</p>
+
+        <p>
+            <strong><i class="bi bi-layout-text-sidebar me-1" aria-hidden="true"></i> Commandes de la carte :</strong>
+            Choisissez la variable, la date, la saison ou les paramètres d’analyse disponibles sur cette page.
+        </p>
+
+        <p>
+            <strong><i class="bi bi-stack me-1" aria-hidden="true"></i> Couches :</strong>
+            Choisissez le fond de carte, affichez les limites administratives
+            et ajustez les styles et les couleurs des couches.
+        </p>
+
+        <p>
+            <strong><i class="bi bi-pencil-square me-1" aria-hidden="true"></i> Créer une carte avec Maptlotlib :</strong>
+            Créez une carte selon les besoins et les paramètres de l’utilisateur.
+        </p>
+
+
+        <p>
+            <strong><i class="bi bi-save2 me-1" aria-hidden="true"></i> Enregistrer la carte actuelle :</strong>
+            Téléchargez la carte actuelle sous forme d’image PNG.
+        </p>
+
+        <p>
+            <strong><i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i> Actualiser/redessiner la carte :</strong>
+            Redessinez la carte en utilisant les paramètres actuels.
+        </p>
+
+        <p>
+            <strong><i class="bi bi-layers-half me-1" aria-hidden="true"></i> Supprimer le marqueur ou le polygone :</strong>
+            Supprimez le marqueur du point sélectionné ou effacez le polygone mis en évidence.
+        </p>
+
+
+        <p>
+            <strong>Point de grille, zone ou région :</strong>
+            Choisissez un type de sélection spatiale dans la barre d’outils de la carte.
+            Cliquez sur un point ou un polygone sur la carte, ou sélectionnez une zone
+            administrative dans la liste, pour mettre à jour les graphiques d’aperçu disponibles.
+        </p>
+
+        <p>
+            <strong>
+                <i class="bi bi-arrow-left-square-fill me-1" aria-hidden="true"></i>
+                <i class="bi bi-arrow-right-square-fill me-1" aria-hidden="true"></i>
+                Navigation temporelle :
+            </strong>
+            Passez à la période précédente ou suivante, ou saisissez une date dans la barre d’outils.
+            Ces commandes apparaissent sur les pages qui prennent en charge la navigation temporelle.
+        </p>
+
+        <p>
+            <strong><span aria-hidden="true">+ / −</span> Zoom :</strong>
+            Utilisez les boutons plus et moins pour effectuer un zoom avant ou arrière.
+            Faites glisser l’icône de localisation sur la carte ou cliquez sur un point de grille ou un lieu pour vous déplacer vers un autre emplacement.
+        </p>
+
+        <p>
+            <strong>
+                <span class="position-relative d-inline-block align-middle me-1"
+                      style="width: 1.25rem; height: 1.25rem;" aria-hidden="true">
+                    <i class="bi bi-circle position-absolute top-50 start-50 translate-middle fs-5"></i>
+                    <i class="bi bi-arrows-angle-expand position-absolute top-50 start-50 translate-middle"
+                       style="font-size: 0.65rem;"></i>
+                </span>
+                Agrandir le graphique :
+            </strong>
+            Ouvrez un graphique agrandi avec les commandes d’analyse et d’affichage
+            disponibles pour ce graphique ; vous y trouverez des informations plus détaillées.
+        </p>
+
+
+        <p>
+            <strong><i class="bi bi-info-circle me-1" aria-hidden="true"></i> Informations sur le graphique :</strong>
+            Consultez les informations sur les données, la configuration et les paramètres utilisés pour produire le graphique.
+        </p>
+
+        <p>
+            <strong><i class="bi bi-reception-2 me-1" aria-hidden="true"></i> Paramètres du graphique :</strong>
+            Modifiez les paramètres du graphique, tels que le titre, le libellé et l’intervalle des graduations de l’axe des x ainsi que de l’axe des y, les couleurs du graphique et la police.
+        </p>
+
+        <p>
+            <strong><i class="bi bi-x-circle-fill me-1" aria-hidden="true"></i> Fermer :</strong>
+            Fermez le panneau de commandes ou la fenêtre du graphique ouvert.
+        </p>
