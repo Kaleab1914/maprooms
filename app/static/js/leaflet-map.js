@@ -64,10 +64,10 @@ function createLeafletTileLayer(container, options) {
     disableMapOffcanvas(map);
     disableMapClickSelect2(map);
 
-    // click on map control buttons
+    // prevent clicks on map control buttons from reaching the map
     map.clickMapControl = false;
-    $('.div-map-control button, .div-map-control select').on('click', () => {
-        map.clickMapControl = true;
+    $('.div-map-control button, .div-map-control select').on('click', (event) => {
+        event.stopPropagation();
     });
 
     return map;
