@@ -30,25 +30,31 @@ if not os.path.exists(GLOBAL_CONFIG['shp_dir']):
 GLOBAL_CONFIG['blank_icon'] = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
 
 GLOBAL_CONFIG['language'] = {}
-langs = {'code': config.LANGUAGES_CODE,
-         'name': config.LANGUAGES_NAME,
-         'label': config.LANGUAGES_LABEL,
-         'locale': config.LANGUAGES_LOCALE}
+langs = {
+    'code': config.LANGUAGES_CODE,
+    'name': config.LANGUAGES_NAME,
+    'label': config.LANGUAGES_LABEL,
+    'locale': config.LANGUAGES_LOCALE
+}
 GLOBAL_CONFIG['language']['code'] = langs['code'][0]
 
 maproom_lang = []
 for j in range(len(langs['code'])):
-    tmp = {'code': langs['code'][j],
-           'name': langs['name'][j],
-           'label': langs['label'][j],
-           'locale': langs['locale'][j]}
+    tmp = {
+        'code': langs['code'][j],
+        'name': langs['name'][j],
+        'label': langs['label'][j],
+        'locale': langs['locale'][j]
+    }
     maproom_lang = maproom_lang + [tmp]
 
 GLOBAL_CONFIG['language']['list'] = maproom_lang
 
-selected_lang = {'code': langs['code'][0],
-                 'name': langs['name'][0],
-                 'label': langs['label'][0]}
+selected_lang = {
+    'code': langs['code'][0],
+    'name': langs['name'][0],
+    'label': langs['label'][0]
+}
 GLOBAL_CONFIG['language']['selected'] = selected_lang
 
 def get_navigation_items():
@@ -111,21 +117,30 @@ def get_navigation_items():
 
     return out
 
-def get_navigation_users(yaml_dir):
+def get_navigation_menus(yaml_dir):
     global_file = os.path.join(yaml_dir, 'global.yaml')
     global_yaml = load_yaml_file(global_file)
     maproom_nav = GLOBAL_CONFIG['navigation'][0]['title']
-    users_nav = [{'path': ['user-account'],
-                 'title': maproom_nav + [global_yaml['user_accout']]},
-                 {'path': ['users-management'],
-                 'title': maproom_nav + [global_yaml['user_management']]}]
-    return users_nav
+    menu = global_yaml['menu']
+
+    menu_nav = []
+    for m in menu:
+        menu_nav += [{
+            'path': [menu[m]['file']],
+            'title': maproom_nav + [menu[m]['text']]
+        }]
+    return menu_nav
 
 GLOBAL_CONFIG['navigation'] = get_navigation_items()
-# add user account and management to navigation
-GLOBAL_CONFIG['navigation'] += get_navigation_users(yaml_dir)
+# add menus to navigation
+GLOBAL_CONFIG['navigation'] += get_navigation_menus(yaml_dir)
 
-def set_navbar_path(maproom=None, component=None, page=None, item_type='directory'):
+def set_navbar_path(
+    maproom=None,
+    component=None,
+    page=None,
+    item_type='directory'
+):
     """Return the current navigation path from explicit URL arguments.
 
     New URL format:

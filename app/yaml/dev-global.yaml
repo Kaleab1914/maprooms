@@ -4,51 +4,75 @@ login:
 logout:
     en: Logout
     fr: Se déconnecter
-user_accout:
-    en: My Account
-    fr: Mon Compte
-user_management:
-    en: Users Management
-    fr: Gestion des utilisateurs
-expand_chart:
-    en: Expand Chart
-    fr: Agrandir le graphique
-info_chart:
-    en: Information about this chart
-    fr: Informations sur ce graphique
-map_control:
-    en: Map control
-    fr: Contrôle de la carte
-save_leaflet_map:
-    en: Save current map
-    fr: Enregistrer la carte actuelle
-layers_control:
-    en: Layers control
-    fr: Contrôle des couches
-map_matplotlib:
-    en: Create map with Matplotlib
-    fr: Créer la carte avec Matplotlib
-spatial_avg_rm_layers:
-    en: Remove marker or selected polygon
-    fr: Supprimer marqueur ou polygone sélectionné
-time_nav_prev:
-    en: Previous
-    fr: Précédent
-time_nav_next:
-    en: Next
-    fr: Suivant
-plotly_replot:
-    en: Update plot
-    fr: Mettre à jour le graphique
-plotly_download:
-    en: Download as image
-    fr: Télécharger comme image
-plotly_chrat_edit:
-    en: Chart settings
-    fr: Paramètres du graphique
+
+menu:
+    user_account:
+        file: user-account
+        text:
+            en: My Account
+            fr: Mon Compte
+    users_management:
+        file: users-management
+        text:
+            en: Users Management
+            fr: Gestion des utilisateurs
+    upload_forecasts:
+        file: upload-forecasts
+        text:
+            en: Upload forecast data
+            fr: Importer les données de prévision
+    upload_stations:
+        file: upload-stations
+        text:
+            en: Upload observation data
+            fr: Importer les données d'observation
+    edit_maprooms:
+        file: edit-maprooms
+        text:
+            en: Edit and configure maprooms
+            fr: Modifier et configurer les maprooms
+
+tooltip:
+    expand_chart:
+        en: Expand Chart
+        fr: Agrandir le graphique
+    info_chart:
+        en: Information about this chart
+        fr: Informations sur ce graphique
+    map_control:
+        en: Map control
+        fr: Contrôle de la carte
+    save_leaflet_map:
+        en: Save current map
+        fr: Enregistrer la carte actuelle
+    layers_control:
+        en: Layers control
+        fr: Contrôle des couches
+    map_matplotlib:
+        en: Create map with Matplotlib
+        fr: Créer la carte avec Matplotlib
+    spatial_avg_rm_layers:
+        en: Remove marker or selected polygon
+        fr: Supprimer marqueur ou polygone sélectionné
+    time_nav_prev:
+        en: Previous
+        fr: Précédent
+    time_nav_next:
+        en: Next
+        fr: Suivant
+    plotly_replot:
+        en: Update plot
+        fr: Mettre à jour le graphique
+    plotly_download:
+        en: Download as image
+        fr: Télécharger comme image
+    plotly_chrat_edit:
+        en: Chart settings
+        fr: Paramètres du graphique
+    redraw_map:
+        en: Redraw map
+        fr: Redessiner la carte
+
 close_button:
     en: Close
     fr: Fermer
-redraw_map:
-    en: Redraw map
-    fr: Redessiner la carte
