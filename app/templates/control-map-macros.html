@@ -1017,3 +1017,66 @@
     monitoring spi monthly
 </div>
 {% endmacro %}
+
+<!--  -->
+{% macro create_map_control_spi_proj(tempRes, pageText) %}
+{% set prefix = tempRes ~ '-spi-proj' %}
+<div class="container" id="{{ prefix }}-map-control">
+    <fieldset class="border border-secondary rounded-3 mb-2">
+        <legend class="legend-label">{{ pageText.opt_inputs.regional_models.label }}</legend>
+        <select id="{{ prefix }}-regional-model" name="regional_model" class="form-select">
+            {% for key, model in pageText.regional_models.items() %}
+            <option value="{{ key }}" {% if key == pageText.opt_inputs.regional_models.default %}selected{% endif %}>{{ model.label }}</option>
+            {% endfor %}
+        </select>
+    </fieldset>
+
+    <fieldset class="border border-secondary rounded-3 mb-2">
+        <legend class="legend-label">{{ pageText.opt_inputs.GCM.label }}</legend>
+        <select id="{{ prefix }}-gcm" name="gcm" class="form-select">
+            {% for key, model in pageText.GCM.items() %}
+            <option value="{{ key }}" {% if key == pageText.opt_inputs.GCM.default %}selected{% endif %}>{{ model.label }}</option>
+            {% endfor %}
+        </select>
+    </fieldset>
+
+    <fieldset class="border border-secondary rounded-3 mb-2">
+        <legend class="legend-label">{{ pageText.opt_inputs.scenarios.label }}</legend>
+        <select id="{{ prefix }}-scenario" name="scenario" class="form-select">
+            {% for key, scenario in pageText.scenarios.items() %}
+            <option value="{{ key }}" {% if key == pageText.opt_inputs.scenarios.default %}selected{% endif %}>{{ scenario.label }}</option>
+            {% endfor %}
+        </select>
+    </fieldset>
+
+    <fieldset class="border border-secondary rounded-3 mb-2">
+        <legend class="legend-label">{{ pageText.opt_inputs.time_period.label }}</legend>
+        <div class="row gx-2">
+            <div class="col-6">
+                <label for="{{ prefix }}-start-year" class="form-label">{{ pageText.time_period.start.label }}</label>
+                <input id="{{ prefix }}-start-year" name="start_year" type="number" step="1" class="form-control" value="{{ pageText.time_period.start.value }}" required>
+            </div>
+            <div class="col-6">
+                <label for="{{ prefix }}-end-year" class="form-label">{{ pageText.time_period.end.label }}</label>
+                <input id="{{ prefix }}-end-year" name="end_year" type="number" step="1" class="form-control" value="{{ pageText.time_period.end.value if pageText.time_period.end.value is not none else '' }}" required>
+            </div>
+        </div>
+    </fieldset>
+</div>
+{% endmacro %}
+
+<!--  -->
+{% macro create_map_control_model_proj(tempRes, pageText) %}
+{% set prefix = tempRes ~ '-model-proj' %}
+<div class="container" id="{{ prefix }}-map-control">
+
+</div>
+{% endmacro %}
+
+<!--  -->
+{% macro create_map_control_seasonal_proj(tempRes, pageText) %}
+{% set prefix = tempRes ~ '-seasonal-proj' %}
+<div class="container" id="{{ prefix }}-map-control">
+
+</div>
+{% endmacro %}
