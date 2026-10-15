@@ -125,16 +125,23 @@ function getChartInfoSections(query, data) {
     ].filter(section => section.rows.length > 0);
 }
 
-// grid point: its coordinates; polygon: its subdivision type and name
+// grid point: its coordinates and the subdivision it is in;
+// polygon: its subdivision type and name
 function getChartInfoLocation(query) {
     const text = JS_TEXT.chart_info;
 
     if (query.geomExtract === 'points') {
         const point = query.pointsList[0];
-        return [
+        const rows = [
             [text.longitude, Number(point.lon).toFixed(6)],
             [text.latitude, Number(point.lat).toFixed(6)]
         ];
+        const near = getLocationSubdivisions(point.lon, point.lat)
+            .map(x => `${x.name}: ${x.field}`);
+        if (near.length > 0) {
+            rows.push([text.located_near, near]);
+        }
+        return rows;
     }
 
     if (query.geomExtract === 'polygons') {
