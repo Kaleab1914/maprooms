@@ -1,5 +1,4 @@
 import os
-# import config
 from app.scripts._global import GLOBAL_CONFIG
 from app.scripts.util import load_yaml_file
 from app.scripts.maproom_items import parse_lang_yaml_nested

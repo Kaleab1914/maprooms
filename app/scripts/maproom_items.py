@@ -259,7 +259,7 @@ def load_maproom_page_text(item_dirs, page_type):
     season_definition = parse_config_yaml_file(app_dir, 'season-definition.yaml')
     out = out | season_definition
 
-    if page_type in ['page', 'user']:
+    if page_type in ['page', 'user', 'admin']:
         nav_path = item_dirs[:-1]
         nav_path = os.path.join(*nav_path)
         nav_path = os.path.join(app_dir, nav_path)

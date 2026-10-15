@@ -1,19 +1,17 @@
 <header>
     <nav class="navbar navbar-expand-md">
         <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="https://www.sei.org/" target="_blank">
-                    <img id="sei-logo" src="{{ url_for('static', filename='images/default-sei_logo.png') }}">
+            <div class="navbar-header me-2">
+                <a class="navbar-brand navbar-logo-link" href="https://www.sei.org/" target="_blank">
+                    <img id="sei-logo" class="navbar-logo" src="{{ url_for('static', filename='images/default-sei_logo.png') }}">
                 </a>
-                <a class="navbar-brand" href="{{ url_for('homepage') }}">
-                    <img class="meteo-logo" src="{{ url_for('static', filename='images/default-meteo_logo.png') }}">
+                <a class="navbar-brand navbar-logo-link" href="{{ url_for('homepage') }}">
+                    <img class="meteo-logo navbar-logo" src="{{ url_for('static', filename='images/default-meteo_logo.png') }}">
                 </a>
             </div>
-
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <ul class="navbar-nav me-auto nav-maproom">
                     {% for nav in mapNav %}
@@ -52,11 +50,17 @@
                                     {% set lang_endpoint='set_languages_page' %}
                                     {% elif pageType == 'user' %}
                                     {% set lang_endpoint='auth.set_languages_user' %}
+                                    {% elif pageType == 'admin' %}
+                                    {% set lang_endpoint='admin.set_languages_admin' %}
                                     {% else %}
                                     {% set lang_endpoint='unknown_page' %}
                                     {% endif %}
+                                    <!--  -->
+                                    <!--  -->
                                     {% if pageType == 'user' %}
                                     <a class="dropdown-item maproom-lang-{{ lang.code }}" href="{{ url_for(lang_endpoint, lang_code = lang.code, user_page = pageText.user_page) }}"> {{lang.name}} </a>
+                                    {% elif pageType == 'admin' %}
+                                    <a class="dropdown-item maproom-lang-{{ lang.code }}" href="{{ url_for(lang_endpoint, lang_code = lang.code, admin_page = pageText.admin_page) }}">{{lang.name}} </a>
                                     {% else %}
                                     {% if pageType == 'page' %}
                                     {% if urlArgs.component %}
@@ -90,18 +94,44 @@
                             <ul class="dropdown-menu dropdown-menu-end">
                                 {% if session.data.role == 'admin' %}
                                 <li>
-                                    <a class="dropdown-item" href="{{ url_for('auth.users_management') }}">{{ pageText.user_management }} </a>
+                                    <a class="dropdown-item" href="{{ url_for('auth.users_management') }}">{{ pageText.menu.users_management.text }} </a>
                                 </li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
                                 {% endif %}
                                 <li>
-                                    <a class="dropdown-item" href="{{ url_for('auth.user_account') }}">{{ pageText.user_accout }}</a>
+                                    <a class="dropdown-item" href="{{ url_for('auth.user_account') }}">{{ pageText.menu.user_account.text }}</a>
                                 </li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
+                                <!--  -->
+                                <!--  -->
+                                {% if session.data.role == 'admin' %}
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('admin.upload_forecasts') }}">{{ pageText.menu.upload_forecasts.text }} </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <!--  -->
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('admin.upload_stations') }}">{{ pageText.menu.upload_stations.text }} </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <!--  -->
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('admin.edit_maprooms') }}">{{ pageText.menu.edit_maprooms.text }} </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                {% endif %}
+                                <!--  -->
+                                <!--  -->
                                 <li>
                                     <a class="dropdown-item" href="{{ url_for('auth.logoutUser') }}">{{ pageText.logout }}</a>
                                 </li>
