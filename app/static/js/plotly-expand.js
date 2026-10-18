@@ -3611,3 +3611,237 @@ function expand_analysis_display_drmExt_pdf(json, container) {
 
 ///////
 
+function expand_projection_query_distribution(tempRes) {
+    return preview_projection_query_pdf(
+        tempRes,
+        `${tempRes}-distribution-proj`
+    );
+}
+
+
+function expand_projection_charts_distribution(container, tempRes) {
+    const query = expand_projection_query_distribution(tempRes);
+
+    if (!query) {
+        return false;
+    }
+
+    const endpoint = createEndpoint(
+        'climate_projection',
+        'climate_projection_pdf'
+    );
+
+    ajaxDisplayChart(
+        endpoint,
+        query,
+        expand_projection_display_distribution,
+        container,
+        'projection_distribution'
+    );
+}
+
+
+function expand_projection_display_distribution(json, container) {
+    const divCont = $(`#${container}`);
+
+    // Retain both distributions for switching PDF/CDF
+    // without another data request.
+    // divCont.data('projectionDistribution', json);
+
+    const prefix = `${json.info.time_res}-distribution-proj`;
+    const plotType = $(`#${prefix}-plot-type`).val() || 'pdf';
+    const isCDF = plotType === 'cdf';
+    const theme = $('html').attr('data-bs-theme');
+
+    const isTemperature = [
+        'maximum_temperature',
+        'minimum_temperature'
+    ].includes(json.info.var.type);
+
+    const periods = [
+        ['historical', '#1e90ff'],
+        ['future', 'red']
+    ];
+
+    const data = periods.flatMap(([key, color]) => {
+        const sample = json[key];
+
+        if (isCDF) {
+            return [
+                {
+                    x: sample.cdf.smoothed.x,
+                    y: sample.cdf.smoothed.y,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: `${sample.label} — Smoothed`,
+                    legendgroup: key,
+                    line: {color: color, width: 3},
+                    hovertemplate:
+                        '%{data.name}: %{y:.2f}%<extra></extra>'
+                },
+                {
+                    x: sample.cdf.empirical.x,
+                    y: sample.cdf.empirical.y,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    name: `${sample.label} — Empirical`,
+                    legendgroup: key,
+                    line: {
+                        color: color,
+                        width: 1,
+                        dash: 'dot'
+                    },
+                    marker: {color: color, size: 6},
+                    hovertemplate:
+                        '%{data.name}: %{y:.2f}%<extra></extra>'
+                }
+            ];
+        }
+
+        return [{
+            x: sample.pdf.fitted.x,
+            y: sample.pdf.fitted.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: sample.label,
+            line: {color: color, width: 3},
+            hovertemplate:
+                '%{data.name}: %{y:.4f}<extra></extra>'
+        }];
+    });
+
+
+    const grid = {
+        fixedrange: true,
+        showline: true,
+        showgrid: true,
+        gridwidth: 0.5,
+        gridcolor: 'lightgray',
+        minor: {
+            showgrid: true,
+            gridwidth: 0.3,
+            gridcolor: 'lightgray',
+            griddash: 'dot'
+        }
+    };
+
+    let layout = {
+        xaxis: {
+            ...grid,
+            title: {
+                text: `${json.info.season} — ${json.info.var.name} ` +
+                    `(${json.info.var.units})`
+            },
+            range: json.xrange,
+            tickmode: 'array',
+            tickvals: json.xticks,
+            tickformat: isTemperature ? '.1f' : ',.0f',
+            orientation: 'h',
+            minor: {
+                ...grid.minor,
+                tickvals: createTicksMinor(json.xticks)
+            },
+            unifiedhovertitle: {
+                text: json.info.var.name +
+                    ': %{x:.2f} ' +
+                    json.info.var.units
+            }
+        },
+        yaxis: {
+            ...grid,
+            title: {
+                text: isCDF
+                    ? 'Probability of exceeding (%)'
+                    : 'Probability density'
+            },
+            rangemode: 'tozero'
+        },
+        showlegend: true,
+        legend: {orientation: 'h'},
+        hovermode: 'x unified',
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    if (isCDF) {
+        layout.yaxis.range = [0, 100];
+        layout.yaxis.ticksuffix = '%';
+    }
+
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(expand_layout, layout);
+    layout.margin.l = 65;
+
+    purgePlotlyChart(container);
+    divCont.empty();
+
+    layout.legend = {
+        orientation: 'h',
+        x: 0,
+        xanchor: 'left',
+        y: 1.02,
+        yanchor: 'bottom'
+    };
+
+    layout.margin = {
+        ...layout.margin,
+        t: 90,
+        b: 80
+    };
+
+    layout.xaxis.title.standoff = 15;
+
+    Plotly.newPlot(container, data, layout, {
+        responsive: true,
+        displayModeBar: false
+    });
+
+    setPlotlyThemeColors(container);
+}
+
+
+
+
+function expand_projection_query_series(tempRes) {
+    const prefix = `${tempRes}-series-proj`;
+    const scenarios = $(`#${prefix}-scenarios`).val() || [];
+
+    return preview_projection_query_series(
+        tempRes,
+        prefix,
+        scenarios
+    );
+}
+
+
+function expand_projection_charts_series(container, tempRes) {
+    const query = expand_projection_query_series(tempRes);
+
+    if (!query) {
+        return false;
+    }
+
+    const endpoint = createEndpoint(
+        'climate_projection',
+        'climate_projection_series'
+    );
+
+    ajaxDisplayChart(
+        endpoint,
+        query,
+        expand_projection_display_series,
+        container,
+        'projection_series_expand'
+    );
+}
+
+
+function expand_projection_display_series(json, container) {
+    const prefix = `${json.info.time_res}-series-proj`;
+    const plotType = $(`#${prefix}-plot-type`).val() || 'series';
+
+    preview_projection_display_series(json, container, {
+        expanded: true,
+        anomaly: plotType === 'anomaly'
+    });
+}
+
