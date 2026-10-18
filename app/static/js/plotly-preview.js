@@ -2861,7 +2861,10 @@ function preview_projection_display_series(
             },
             fixedrange: true,
             showline: true,
-            showgrid: false,
+            showgrid: true,
+            gridwidth: 0.3,
+            griddash: 'dot',
+            gridcolor: 'lightgray',
             unifiedhovertitle: {
                 text: `${json.info.season} — %{x:.0f}`
             }
@@ -2879,9 +2882,12 @@ function preview_projection_display_series(
             tickformat: isTemperature ? '.1f' : ',.0f',
             fixedrange: true,
             showline: true,
-            showgrid: false,
+            showgrid: true,
+            gridwidth: 0.3,
+            griddash: 'dot',
+            gridcolor: 'lightgray',
             zeroline: anomaly,
-            zerolinecolor: 'gray'
+            zerolinecolor: 'gray',
         },
         showlegend: expanded,
         legend: {
@@ -2902,9 +2908,9 @@ function preview_projection_display_series(
         layout
     );
 
-    layout.margin = expanded
-        ? {t: 120, b: 60, l: 75, r: 20}
-        : {t: 10, b: 30, l: 45, r: 10};
+    // layout.margin = expanded
+    //     ? {t: 120, b: 60, l: 75, r: 20}
+    //     : {t: 10, b: 30, l: 45, r: 10};
 
     purgePlotlyChart(container);
     $(`#${container}`).empty();
