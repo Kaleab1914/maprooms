@@ -48,6 +48,21 @@ function preview_drmExt_display_charts(tempRes) {
 function preview_drmSpi_display_charts(tempRes) {
     preview_drm_charts_spi(tempRes, 'div-chart-spi');
 }
+
+
+function preview_projection_display_charts(tempRes) {
+    preview_projection_charts_series(
+        tempRes,
+        'div-chart-seasonal-proj'
+    );
+
+    preview_projection_charts_pdf(
+        tempRes,
+        'div-chart-distribution-proj'
+    );
+}
+
+
 ///////////////////
 
 function analysis_query_format_date(date, temp_res) {
@@ -2490,6 +2505,414 @@ function preview_drm_display_spi(json, container) {
         deepMerge(preview_layout, layout),
         config
     );
+
+    setPlotlyThemeColors(container);
+}
+
+
+///////
+
+function preview_projection_query_pdf(tempRes, prefix = `${tempRes}-seasonal-proj`) {
+// function preview_projection_query_pdf(tempRes) {
+//     const prefix = `${tempRes}-seasonal-proj`;
+
+    const query = {
+        temporalRes: tempRes,
+        variable: $(`#${prefix}-variable`).val(),
+        model: $(`#${prefix}-gcm`).val(),
+        scenario: $(`#${prefix}-scenario`).val(),
+        seasStart: Number($(`#${prefix}-start-month`).val()),
+        seasEnd: Number($(`#${prefix}-end-month`).val()),
+        yearstartFut: Number(
+            $(`#${prefix}-future-date-calendar`).val()
+        ),
+        climPeriod: Number($(`#${prefix}-period-length`).val()),
+        geomExtract: "points",
+        pointsList: getClickLoctation()
+    };
+
+    const valid = [
+        query.seasStart,
+        query.seasEnd,
+        query.yearstartFut,
+        query.climPeriod
+    ].every(value => Number.isInteger(value) && value > 0);
+
+    if (!valid || query.seasStart > 12 || query.seasEnd > 12) {
+        flashMessage(
+            "Enter valid seasonal and period parameters.",
+            "error"
+        );
+        return false;
+    }
+
+    return query;
+}
+
+
+function preview_projection_charts_pdf(tempRes, contID) {
+    const query = preview_projection_query_pdf(tempRes);
+
+    if (!query) {
+        return false;
+    }
+
+    const endpoint = createEndpoint(
+        "climate_projection",
+        "climate_projection_pdf"
+    );
+
+    ajaxDisplayChart(
+        endpoint,
+        query,
+        preview_projection_display_pdf,
+        contID,
+        "projection_pdf"
+    );
+}
+
+
+function preview_projection_display_pdf(json, container) {
+    const divCont = $(`#${container}`);
+    divCont.empty();
+
+    const theme = $('html').attr('data-bs-theme');
+    const ticks = json.xticks;
+    const stride = Math.max(1, Math.ceil(ticks.length / 5));
+
+    const previewTicks = ticks.filter(
+        (value, index) => index % stride === 0
+    );
+
+    const data = [
+        {
+            x: json.historical.pdf.fitted.x,
+            y: json.historical.pdf.fitted.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: json.historical.label,
+            line: { color: '#1e90ff', width: 4 },
+            hovertemplate:
+                '%{data.name}: %{y:.4f}<extra></extra>'
+        },
+        {
+            x: json.future.pdf.fitted.x,
+            y: json.future.pdf.fitted.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: json.future.label,
+            line: { color: 'red', width: 3 },
+            hovertemplate:
+                '%{data.name}: %{y:.4f}<extra></extra>'
+        }
+    ];
+
+    var layout = {
+        xaxis: {
+            range: json.xrange,
+            tickvals: previewTicks,
+            tickmode: 'array',
+            tickangle: 0,
+            automargin: true,
+            tickfont: {size: 10},
+            automargin: true,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                tickvals: createTicksMinor(json.xticks),
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            },
+            unifiedhovertitle: {
+                text: json.info.var.name +
+                    ': %{x:.2f} ' +
+                    json.info.var.units
+            }
+        },
+        yaxis: {
+            rangemode: 'tozero',
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            }
+        },
+        showlegend: false,
+        hovermode: 'x unified',
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(preview_layout, layout);
+    layout.margin.l = 40;
+
+    const config = {
+        displayModeBar: false,
+        responsive: true
+    };
+
+    purgePlotlyChart(container);
+
+    Plotly.newPlot(
+        container,
+        data,
+        layout,
+        config
+    );
+
+    setPlotlyThemeColors(container);
+}
+
+///////
+
+function preview_projection_query_series(
+    tempRes,
+    prefix = `${tempRes}-seasonal-proj`,
+    scenarios = ['ssp1_2_6', 'ssp5_8_5']
+) {
+    const query = {
+        temporalRes: tempRes,
+        variable: $(`#${prefix}-variable`).val(),
+        seasStart: Number($(`#${prefix}-start-month`).val()),
+        seasEnd: Number($(`#${prefix}-end-month`).val()),
+        scenarios: scenarios,
+        geomExtract: 'points',
+        pointsList: getClickLoctation()
+    };
+
+    const validMonths = [
+        query.seasStart,
+        query.seasEnd
+    ].every(value => (
+        Number.isInteger(value)
+        && value >= 1
+        && value <= 12
+    ));
+
+    const validScenarios = (
+        Array.isArray(scenarios)
+        && scenarios.length > 0
+        && scenarios.every(scenario => (
+            Object.prototype.hasOwnProperty.call(
+                SCENARIOS,
+                scenario
+            )
+        ))
+    );
+
+    if (!query.variable || !validMonths || !validScenarios) {
+        flashMessage(
+            'Select a variable, valid season, and at least one scenario.',
+            'error'
+        );
+        return false;
+    }
+
+    return query;
+}
+
+
+function preview_projection_charts_series(tempRes, contID) {
+    const query = preview_projection_query_series(tempRes);
+
+    if (!query) {
+        return false;
+    }
+
+    const endpoint = createEndpoint(
+        'climate_projection',
+        'climate_projection_series'
+    );
+
+    ajaxDisplayChart(
+        endpoint,
+        query,
+        preview_projection_display_series,
+        contID,
+        'projection_series'
+    );
+}
+
+
+
+function preview_projection_display_series(
+    json,
+    container,
+    options = {}
+) {
+    const expanded = Boolean(options.expanded);
+    const anomaly = Boolean(options.anomaly);
+    const theme = $('html').attr('data-bs-theme');
+
+    const historical = {
+        ...json.historical,
+        ...(anomaly ? json.anomaly.historical : {})
+    };
+
+    const colors = {
+        ssp1_2_6: ['blue', 'rgba(0, 0, 255, 0.18)'],
+        ssp2_4_5: ['#e67e22', 'rgba(230, 126, 34, 0.18)'],
+        ssp3_7_0: ['#9467bd', 'rgba(148, 103, 189, 0.18)'],
+        ssp5_8_5: ['red', 'rgba(255, 0, 0, 0.18)']
+    };
+
+    function ensembleTraces(series, name, color, fill, rank) {
+        return [
+            {
+                x: series.years,
+                y: series.minimum,
+                type: 'scatter',
+                mode: 'lines',
+                line: {width: 0},
+                showlegend: false,
+                hoverinfo: 'skip',
+                connectgaps: false
+            },
+            {
+                x: series.years,
+                y: series.maximum,
+                type: 'scatter',
+                mode: 'lines',
+                name: `${name} — min–max`,
+                line: {width: 0},
+                fill: 'tonexty',
+                fillcolor: fill,
+                showlegend: expanded,
+                legendrank: rank + 100,
+                hoverinfo: 'skip',
+                connectgaps: false
+            },
+            {
+                x: series.years,
+                y: series.mean,
+                customdata: series.years.map((year, index) => [
+                    series.minimum[index],
+                    series.maximum[index],
+                    series.count[index]
+                ]),
+                type: 'scatter',
+                mode: 'lines',
+                name: `${name} — ensemble mean`,
+                line: {color: color, width: 3},
+                showlegend: expanded,
+                legendrank: rank,
+                connectgaps: false,
+                hovertemplate:
+                    '%{data.name}: %{y:.2f}<br>' +
+                    'Minimum: %{customdata[0]:.2f}<br>' +
+                    'Maximum: %{customdata[1]:.2f}<br>' +
+                    'Models: %{customdata[2]}<extra></extra>'
+            }
+        ];
+    }
+
+    const data = ensembleTraces(
+        historical,
+        'Historical',
+        'black',
+        'rgba(100, 100, 100, 0.18)',
+        0
+    );
+
+    json.info.scenarios.forEach((scenario, index) => {
+        const series = {
+            ...json.scenarios[scenario],
+            ...(anomaly ? json.anomaly.scenarios[scenario] : {})
+        };
+
+        const [color, fill] = colors[scenario];
+
+        data.push(...ensembleTraces(
+            series,
+            series.label,
+            color,
+            fill,
+            index + 1
+        ));
+    });
+
+    const isTemperature = [
+        'maximum_temperature',
+        'minimum_temperature'
+    ].includes(json.info.var.type);
+
+    let layout = {
+        title: {text: ''},
+        xaxis: {
+            type: 'linear',
+            range: [1981, 2100],
+            tick0: 2000,
+            dtick: 20,
+            tickformat: 'd',
+            tickangle: 0,
+            title: {
+                text: expanded ? 'Season starting year' : ''
+            },
+            fixedrange: true,
+            showline: true,
+            showgrid: false,
+            unifiedhovertitle: {
+                text: `${json.info.season} — %{x:.0f}`
+            }
+        },
+        yaxis: {
+            title: {
+                text: expanded
+                    ? (
+                        anomaly
+                            ? `Anomaly (${json.info.var.units})`
+                            : `${json.info.var.name} (${json.info.var.units})`
+                    )
+                    : ''
+            },
+            tickformat: isTemperature ? '.1f' : ',.0f',
+            fixedrange: true,
+            showline: true,
+            showgrid: false,
+            zeroline: anomaly,
+            zerolinecolor: 'gray'
+        },
+        showlegend: expanded,
+        legend: {
+            orientation: 'h',
+            x: 0,
+            xanchor: 'left',
+            y: 1.02,
+            yanchor: 'bottom',
+            font: {size: 11}
+        },
+        hovermode: 'x unified',
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(
+        expanded ? expand_layout : preview_layout,
+        layout
+    );
+
+    layout.margin = expanded
+        ? {t: 120, b: 60, l: 75, r: 20}
+        : {t: 10, b: 30, l: 45, r: 10};
+
+    purgePlotlyChart(container);
+    $(`#${container}`).empty();
+
+    Plotly.newPlot(container, data, layout, {
+        displayModeBar: false,
+        responsive: true
+    });
 
     setPlotlyThemeColors(container);
 }

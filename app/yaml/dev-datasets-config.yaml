@@ -1,3 +1,4 @@
+
 datasets:
     ALL:
         variables:
@@ -5,11 +6,13 @@ datasets:
             maximum_temperature: tmax
             minimum_temperature: tmin
             reference_evapotranspiration: et0
+            potential_evapotranspiration: pet
         daily:
+            # compute: False
             netcdf:
                 precip: 
-                    dir: /home/enacts/ENACTS_DATA/DATA/NETCDF/ALL/precip_daily
-                    format: rr_mrg_%Y%m%d_ALL.nc
+                    dir: /home/aranaivoson/ENACTS/DATA/ENACTS/NETCDF/ALL/rr_daily
+                    format: chirps-v2_%Y%m%d.nc
                     name: Daily rainfall
                     varid: precip
                     lon: Lon
@@ -20,10 +23,10 @@ datasets:
                     missval: -99
                     compute: False
                 tmax: 
-                    dir: /home/enacts/ENACTS_DATA/DATA/NETCDF/ALL/tmax_daily
-                    format: tmax_mrg_%Y%m%d_ALL.nc
+                    dir: /home/aranaivoson/ENACTS/DATA/ENACTS/NETCDF/ALL/tmax_daily
+                    format: era5_%Y%m%d.nc
                     name: Daily maximum temperature
-                    varid: temp
+                    varid: tmax
                     lon: Lon
                     lat: Lat
                     time: Time
@@ -32,10 +35,10 @@ datasets:
                     missval: -99
                     compute: False
                 tmin: 
-                    dir: /home/enacts/ENACTS_DATA/DATA/NETCDF/ALL/tmin_daily
-                    format: tmin_mrg_%Y%m%d_ALL.nc
+                    dir: /home/aranaivoson/ENACTS/DATA/ENACTS/NETCDF/ALL/tmin_daily
+                    format: era5_%Y%m%d.nc
                     name: Daily minimum temperature
-                    varid: temp
+                    varid: tmin
                     lon: Lon
                     lat: Lat
                     time: Time
@@ -61,16 +64,17 @@ datasets:
                     input: daily
                     write_zarr: True
                     dir_zarr: et0_daily
-            zarr_dir: /home/enacts/ENACTS_DATA/DATA/ZARR/ALL
+            zarr_dir: /home/aranaivoson/ENACTS/DATA/ENACTS/ZARR/ALL
             chunks:
                 time: 1000
                 lat: 50
                 lon: 50
         dekadal:
+            # compute: False
             netcdf:
                 precip: 
-                    dir: /home/enacts/ENACTS_DATA/DATA/NETCDF/ALL/precip_dekad
-                    format: rr_mrg_%Y%m%d_ALL.nc
+                    dir: /home/aranaivoson/ENACTS/DATA/ENACTS/NETCDF/ALL/rr_dekadal
+                    format: chirps-v3_%Y%m%d.nc
                     name: Dekadal rainfall
                     varid: precip
                     lon: Lon
@@ -81,10 +85,10 @@ datasets:
                     missval: -99
                     compute: False
                 tmax: 
-                    dir: /home/enacts/ENACTS_DATA/DATA/NETCDF/ALL/tmax_dekad
-                    format: tmax_mrg_%Y%m%d_ALL.nc
+                    dir: /home/aranaivoson/ENACTS/DATA/ENACTS/NETCDF/ALL/tmax_dekadal
+                    format: tmax_%Y%m%d.nc
                     name: Dekadal maximum temperature
-                    varid: temp
+                    varid: tmax
                     lon: Lon
                     lat: Lat
                     time: Time
@@ -93,10 +97,10 @@ datasets:
                     missval: -99
                     compute: False
                 tmin: 
-                    dir: /home/enacts/ENACTS_DATA/DATA/NETCDF/ALL/tmin_dekad
-                    format: tmin_mrg_%Y%m%d_ALL.nc
+                    dir: /home/aranaivoson/ENACTS/DATA/ENACTS/NETCDF/ALL/tmin_dekadal
+                    format: tmin_%Y%m%d.nc
                     name: Dekadal minimum temperature
-                    varid: temp
+                    varid: tmin
                     lon: Lon
                     lat: Lat
                     time: Time
@@ -117,12 +121,13 @@ datasets:
                     function: sum
                     input: daily
                     minfrac: 1
-            zarr_dir: /home/enacts/ENACTS_DATA/DATA/ZARR/ALL
+            zarr_dir: /home/aranaivoson/ENACTS/DATA/ENACTS/ZARR/ALL
             chunks:
                 time: 1000
                 lat: 50
                 lon: 50
         monthly:
+            # compute: True
             netcdf:
                 precip: 
                     name: Monthly rainfall
@@ -177,6 +182,7 @@ datasets:
                     input: daily
                     minfrac: 1
         seasonal:
+            # compute: True
             netcdf:
                 precip: 
                     name: Seasonal rainfall
@@ -218,6 +224,7 @@ datasets:
                     input: dekadal
                     minfrac: 1
         annual:
+            # compute: True
             netcdf:
                 precip: 
                     name: Annual rainfall
@@ -265,10 +272,11 @@ datasets:
             minimum_temperature: tmin
             reference_evapotranspiration: et0
         daily:
+            # compute: False
             netcdf:
                 precip: 
-                    dir: /home/enacts/ENACTS_DATA/DATA/NETCDF/ALL/precip_daily
-                    format: rr_mrg_%Y%m%d_MON.nc
+                    dir: /home/aranaivoson/ENACTS/DATA/ENACTS/NETCDF/MON/rr_daily
+                    format: chirps-v2_%Y%m%d.nc
                     name: Daily rainfall
                     varid: precip
                     lon: Lon
@@ -279,10 +287,10 @@ datasets:
                     missval: -99
                     compute: False
                 tmax: 
-                    dir: /home/enacts/ENACTS_DATA/DATA/NETCDF/MON/tmax_daily
-                    format: tmax_mrg_%Y%m%d_ALL.nc
+                    dir: /home/aranaivoson/ENACTS/DATA/ENACTS/NETCDF/MON/tmax_daily
+                    format: era5_%Y%m%d.nc
                     name: Daily maximum temperature
-                    varid: temp
+                    varid: tmax
                     lon: Lon
                     lat: Lat
                     time: Time
@@ -291,10 +299,10 @@ datasets:
                     missval: -99
                     compute: False
                 tmin: 
-                    dir: /home/enacts/ENACTS_DATA/DATA/NETCDF/MON/tmin_daily
-                    format: tmin_mrg_%Y%m%d_ALL.nc
+                    dir: /home/aranaivoson/ENACTS/DATA/ENACTS/NETCDF/MON/tmin_daily
+                    format: era5_%Y%m%d.nc
                     name: Daily minimum temperature
-                    varid: temp
+                    varid: tmin
                     lon: Lon
                     lat: Lat
                     time: Time
@@ -320,16 +328,17 @@ datasets:
                     input: daily
                     write_zarr: True
                     dir_zarr: et0_daily
-            zarr_dir: /home/enacts/ENACTS_DATA/DATA/ZARR/MON
+            zarr_dir: /home/aranaivoson/ENACTS/DATA/ENACTS/ZARR/MON
             chunks:
                 time: 1000
                 lat: 50
                 lon: 50
         dekadal:
+            # compute: False
             netcdf:
                 precip: 
-                    dir: /home/enacts/ENACTS_DATA/DATA/NETCDF/MON/precip_dekad
-                    format: rr_mrg_%Y%m%d_MON.nc
+                    dir: /home/aranaivoson/ENACTS/DATA/ENACTS/NETCDF/MON/rr_dekadal
+                    format: chirps-v3_%Y%m%d.nc
                     name: Dekadal rainfall
                     varid: precip
                     lon: Lon
@@ -340,10 +349,10 @@ datasets:
                     missval: -99
                     compute: False
                 tmax: 
-                    dir: /home/enacts/ENACTS_DATA/DATA/NETCDF/MON/tmax_dekad
-                    format: tmax_mrg_%Y%m%d_ALL.nc
+                    dir: /home/aranaivoson/ENACTS/DATA/ENACTS/NETCDF/MON/tmax_dekadal
+                    format: tmax_%Y%m%d.nc
                     name: Dekadal maximum temperature
-                    varid: temp
+                    varid: tmax
                     lon: Lon
                     lat: Lat
                     time: Time
@@ -352,10 +361,10 @@ datasets:
                     missval: -99
                     compute: False
                 tmin: 
-                    dir: /home/enacts/ENACTS_DATA/DATA/NETCDF/MON/tmin_dekad
-                    format: tmin_mrg_%Y%m%d_ALL.nc
+                    dir: /home/aranaivoson/ENACTS/DATA/ENACTS/NETCDF/MON/tmin_dekadal
+                    format: tmin_%Y%m%d.nc
                     name: Dekadal minimum temperature
-                    varid: temp
+                    varid: tmin
                     lon: Lon
                     lat: Lat
                     time: Time
@@ -376,12 +385,13 @@ datasets:
                     function: sum
                     input: daily
                     minfrac: 1
-            zarr_dir: /home/enacts/ENACTS_DATA/DATA/ZARR/MON
+            zarr_dir: /home/aranaivoson/ENACTS/DATA/ENACTS/ZARR/MON
             chunks:
                 time: 1000
                 lat: 50
                 lon: 50
         monthly:
+            # compute: True
             netcdf:
                 precip: 
                     name: Monthly rainfall
@@ -436,6 +446,7 @@ datasets:
                     input: daily
                     minfrac: 1
         seasonal:
+            # compute: True
             netcdf:
                 precip: 
                     name: Seasonal rainfall
@@ -477,6 +488,7 @@ datasets:
                     input: dekadal
                     minfrac: 1
         annual:
+            # compute: True
             netcdf:
                 precip: 
                     name: Annual rainfall
@@ -518,7 +530,8 @@ datasets:
                     input: dekadal
                     minfrac: 1
 climatology:
-    zarr_dir: /home/enacts/ENACTS_DATA/DATA/ZARR/CLIM
+    zarr_dir: /home/aranaivoson/ENACTS/DATA/ENACTS/ZARR/CLIM
+
 soilgrids:
     base_url: "https://files.isric.org/public/gyga/GYGA_Results"
     tawc:
@@ -530,10 +543,76 @@ soilgrids:
             name: tawc_agg_30cm
             file: "gyga_af_agg_30cm_tawcpf23mm__m_1km.tif"
             long_name: Absolute total available water capacity (mm), aggregated over the top 30 cm
-    files_dir: /home/enacts/SOILGRIDS/FILES
-    zarr_dir: /home/enacts/SOILGRIDS/ZARR
+    files_dir: /home/aranaivoson/ENACTS/DATA/SOILGRIDS/FILES
+    zarr_dir: /home/aranaivoson/ENACTS/DATA/SOILGRIDS/ZARR
     chunks:
         lat: 50
         lon: 50
+
 geom_layers:
-    shp_dir: /home/enacts/SHP
+    shp_dir: /home/aranaivoson/ENACTS/DATA/SHP
+
+climate_projection:
+    netcdf_dir: /mnt/d/ASA/Data_test/NEW/CMIP6_CDS_COMBINED
+
+    zarr_dir: /home/aranaivoson/ENACTS/DATA/CMIP6/ZARR
+
+    chunks:
+        time: 365
+        lat: 32
+        lon: 32
+
+    variables:
+        maximum_temperature: tasmax
+        rainfall: pr
+        minimum_temperature: tasmin
+
+    netcdf:
+        tasmax:
+            name: Daily maximum temperature
+            folder: TASMAX
+            varid: tasmax
+            lon: lon
+            lat: lat
+            time: time
+            units: K
+
+        pr:
+            name: Daily precipitation
+            folder: PR
+            varid: pr
+            lon: lon
+            lat: lat
+            time: time
+            units: kg m-2 s-1
+
+        tasmin:
+            name: Daily minimum temperature
+            folder: TASMIN
+            varid: tasmin
+            lon: lon
+            lat: lat
+            time: time
+            units: K
+
+    historical:
+        dataset: HIST
+        directory: Historical
+        file_pattern: "{folder}/Historical/{model}/{model}_historical_{varid}_*.nc"
+
+    projection:
+        dataset: PROJ
+        directory: Projection
+        file_pattern: "{folder}/Projection/{model}/{scenario}/{model}_{scenario}_{varid}_*.nc"
+
+    scenarios:
+        ssp1_2_6:
+            label: SSP1-2.6
+        ssp2_4_5:
+            label: SSP2-4.5
+        ssp3_7_0:
+            label: SSP3-7.0
+        ssp5_8_5:
+            label: SSP5-8.5
+
+

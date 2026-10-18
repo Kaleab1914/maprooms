@@ -47,16 +47,19 @@
     {{ fmacros.create_modal_matplotlib(pageText) }}
 </div>
 {% endblock %}
+
 {% block javascript %}
 {% include "block-js.html" %}
 <script>
-const REGIONAL_MODELS = {{ pageText.regional_models | tojson }};
 const GCM = {{ pageText.GCM | tojson }};
 const VARIABLES = {{ pageText.variables | tojson }};
 const SCENARIOS = {{ pageText.scenarios | tojson }};
 const SEASON_OPTIONS = {{ pageText.opt_season | tojson }};
+const SEASON_DEFAULTS = {{ pageText.season | tojson }};
 const CLIMATOLOGICAL_PERIOD = {{ pageText.climatological_period | tojson }};
 const DISTRIBUTION_CHANGE = {{ pageText.distribution_change | tojson }};
+const PROJECTION_DEFAULTS = {{ pageText.opt_inputs | tojson }};
+
 </script>
 <script type="text/javascript" src="{{ url_for('climate_projection.static', filename='js/seasonal-change.js') }}"></script>
 {% endblock %}
