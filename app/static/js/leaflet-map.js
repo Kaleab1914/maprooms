@@ -1217,6 +1217,36 @@ function getClickPolygon() {
     }
 }
 
+// for each administrative subdivision with "location: true"
+// in subdivision-config.yaml, the name of the polygon containing the point
+function getLocationSubdivisions(lon, lat) {
+    if (SUBDIV_BE === undefined) {
+        return [];
+    }
+    const point = turf.point([Number(lon), Number(lat)]);
+
+    const keys = Object.keys(LAYERS.subdivision).filter(key => {
+        const subdiv = LAYERS.subdivision[key];
+        return subdiv.group === 'administrative' && subdiv.location === true;
+    });
+    keys.sort((a, b) => LAYERS.subdivision[a].order - LAYERS.subdivision[b].order);
+
+    const out = [];
+    for (let key of keys) {
+        const subdiv = JSON.parse(SUBDIV_BE[key]);
+        const poly = subdiv.features.find(x =>
+            x.geometry !== null && turf.booleanPointInPolygon(point, x)
+        );
+        if (poly !== undefined) {
+            out.push({
+                name: LAYERS.subdivision[key].name,
+                field: poly.properties.field
+            });
+        }
+    }
+    return out;
+}
+
 function checkQueryPointOutside(query, time_res) {
     if (query['geomExtract'] !== 'points') {
         return false;
