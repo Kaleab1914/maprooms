@@ -212,13 +212,13 @@ def terciles_imagePng(data, breaks=None, colors=None):
     fig = plt.figure()
     ax = plt.axes([0, 0, 1, 1])
 
-    for cat, lab in enumerate(categories):
+    for category, label in enumerate(categories):
         field = np.where(
-            (data['winner'] == cat) & (data['proba'] >= 40),
+            (data['winner'] == category) & (data['proba'] >= 40),
             data['proba'],
             np.nan
         )
-        cmap = mcolors.ListedColormap(colors[lab])
+        cmap = mcolors.ListedColormap(colors[label])
         norm = mcolors.BoundaryNorm(breaks, cmap.N, clip=True)
         ax.pcolormesh(
             data['lon'],
@@ -241,8 +241,8 @@ def terciles_imagePng(data, breaks=None, colors=None):
 
     ##### colorbar
     ckeys = {}
-    fig = plt.figure(figsize=(10.5, 1.35), dpi=200, facecolor='white')
-    width, height, bottom = 0.295, 0.45, 0.22
+    fig = plt.figure(figsize=(10.5, 1.15), dpi=200, facecolor='white')
+    width, height, bottom = 0.295, 0.36, 0.26
     lefts = [0.02, 0.3525, 0.685]
 
     for label, left in zip(categories, lefts):
@@ -264,11 +264,8 @@ def terciles_imagePng(data, breaks=None, colors=None):
 
         ax.set_yticks([])
         ax.set_xticks([40, 50, 60, 70, 80, 90])
-        ax.xaxis.set_major_formatter(
-            mpl.ticker.PercentFormatter(xmax=100, decimals=0)
-        )
-        ax.tick_params(axis='x', labelsize=13, length=0, pad=4)
-        ax.set_title(label, fontsize=16, fontweight='bold', pad=5)
+        ax.tick_params(axis='x', labelsize=15, length=0, pad=3)
+        ax.set_title(f'{label} (%)', fontsize=18, fontweight='bold', pad=4)
         for spine in ax.spines.values():
             spine.set_color('#777777')
             spine.set_linewidth(0.7)
