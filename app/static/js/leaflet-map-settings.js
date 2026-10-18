@@ -847,3 +847,72 @@ function displayClimateProjectionSeasonalMap(options, map) {
 }
 
 
+
+function queryParamsClimateProjectionAgreementMap() {
+    const prefix = 'seasonal-model-proj';
+
+    const query = {
+        temporalRes: 'seasonal',
+        variable: $(`#${prefix}-variable`).val(),
+        scenario: $(`#${prefix}-scenario`).val(),
+        change: $(`#${prefix}-change-signal`).val(),
+        seasStart: Number($(`#${prefix}-start-month`).val()),
+        seasEnd: Number($(`#${prefix}-end-month`).val()),
+        yearstartFut: Number(
+            $(`#${prefix}-future-date-calendar`).val()
+        ),
+        climPeriod: Number($(`#${prefix}-period-length`).val())
+    };
+
+    const integers = [
+        query.seasStart,
+        query.seasEnd,
+        query.yearstartFut,
+        query.climPeriod
+    ].every(value => Number.isInteger(value) && value > 0);
+
+    if (
+        !integers
+        || query.seasStart > 12
+        || query.seasEnd > 12
+        || query.yearstartFut < 2015
+        || !query.variable
+        || !query.scenario
+        || !['positive', 'negative'].includes(query.change)
+    ) {
+        flashMessage(
+            'Enter valid seasonal and period parameters.',
+            'error'
+        );
+        return false;
+    }
+
+    return query;
+}
+
+
+function displayClimateProjectionAgreementMap(options, map) {
+    const query = queryParamsClimateProjectionAgreementMap();
+
+    if (!query) {
+        return false;
+    }
+
+    const endpoint = createEndpoint(
+        'climate_projection',
+        'climate_projection_agreement_map'
+    );
+
+    return ajaxLeafletMap(
+        endpoint,
+        query,
+        (data, settings, targetMap) => {
+            displayRasterImage(data, settings, targetMap);
+            targetMap.displayText_date.update(data.date);
+        },
+        options,
+        map
+    );
+}
+
+

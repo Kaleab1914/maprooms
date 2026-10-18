@@ -57,6 +57,16 @@ function createColorKeyH(ckey) {
     var table = $('<table>').addClass('ckeyh');
 
     var row0 = $('<tr>').addClass('ckeyh-title');
+
+    ///////
+    if (
+        Array.isArray(ckey.categories)
+        && ckey.categories.length > 0
+    ) {
+        return createCategoricalColorKeyH(ckey);
+    }
+    ///////
+    
     $('<td>').attr('colspan', ntd)
         .html(ckey.title).appendTo(row0);
     table.append(row0);
@@ -234,6 +244,50 @@ function createColorKeyVE(ckey, reverse = true) {
 
         table.append(row);
     }
+
+    return table;
+}
+
+///////
+
+function createCategoricalColorKeyH(ckey) {
+    const categories = ckey.categories;
+    const table = $('<table>').addClass('ckeyh');
+
+    const titleRow = $('<tr>').addClass('ckeyh-title');
+
+    $('<td>')
+        .attr('colspan', categories.length)
+        .text(ckey.title)
+        .appendTo(titleRow);
+
+    table.append(titleRow);
+
+    const colorRow = $('<tr>').addClass('ckeyh-color');
+    const labelRow = $('<tr>').addClass('ckeyh-label');
+
+    categories.forEach(category => {
+        $('<td>')
+            .css({
+                'background-color': category.color,
+                'height': '12px',
+                'border': '1px solid #999'
+            })
+            .appendTo(colorRow);
+
+        const label = $('<td>').css({
+            'text-align': 'center',
+            'padding': '2px 4px',
+            'white-space': 'nowrap'
+        });
+
+        $('<div>').text(category.label).appendTo(label);
+        $('<div>').text(category.range).appendTo(label);
+
+        labelRow.append(label);
+    });
+
+    table.append(colorRow, labelRow);
 
     return table;
 }

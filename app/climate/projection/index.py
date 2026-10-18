@@ -11,6 +11,12 @@ from .scripts.projection_ts import (
     climate_projection_ts_series
 )
 
+from .scripts.model_agreement import (
+    get_climate_projection_agreement_sp_data,
+    climate_projection_agreement_sp_data,
+)
+
+
 climate_projection = Blueprint(
     'climate_projection',
     __name__,
@@ -122,4 +128,36 @@ def climate_projection_series():
             )
         })
 
-        
+
+
+@climate_projection.route(
+    '/climate_projection_agreement_map',
+    methods=['POST'],
+)
+def climate_projection_agreement_map():
+    try:
+        params = request.get_json()
+
+        # Calculate outside the Matplotlib rendering lock.
+        data = get_climate_projection_agreement_sp_data(params)
+
+        with matplotlib_render_lock:
+            result = climate_projection_agreement_sp_data(data)
+
+        return json.dumps(result, allow_nan=False)
+
+    except (KeyError, TypeError, ValueError, FileNotFoundError) as exc:
+        return json.dumps({
+            'status': -1,
+            'message': str(exc),
+        })
+
+    except Exception:
+        app.logger.exception('Projection model agreement failed')
+
+        return json.dumps({
+            'status': -1,
+            'message': 'Unable to calculate the model agreement map.',
+        })
+
+
