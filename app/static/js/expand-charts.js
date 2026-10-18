@@ -1280,5 +1280,206 @@ function setAnalysisExpandModalDrmExt_pdf(tempRes, contID) {
 
     $(`#${tempRes}-pdf-parameters`).trigger('change');
 
-
 }
+
+
+//////
+
+function setProjectionExpandModalDistribution(tempRes, contID) {
+    showModalDialog(`modal-expand-${contID}`);
+
+    expandModalCharts(
+        contID,
+        expand_projection_charts_distribution,
+        tempRes
+    );
+
+    purgePlotlyChartExpandModal(contID);
+
+    const prefix = `${tempRes}-distribution-proj`;
+    const source = `${tempRes}-seasonal-proj`;
+    const contChart = `container-chart-${contID}`;
+
+    setOffCanvasMapControlSeasonalProjection(tempRes, prefix);
+
+
+    const fields = [
+        'variable',
+        'gcm',
+        'scenario',
+        'start-month',
+        'end-month',
+        'future-date-calendar',
+        'period-length'
+    ];
+
+    fields.forEach(field => {
+        $(`#${prefix}-${field}`)
+            .val($(`#${source}-${field}`).val())
+            .trigger('change.select2');
+    });
+
+    $(`.${prefix}-select2`).each(function() {
+        const select = $(this);
+
+        if (!select.hasClass('select2-hidden-accessible')) {
+            select.select2({
+                minimumResultsForSearch: -1,
+                dropdownParent: $(`#${prefix}-control`)
+            });
+        }
+    });
+
+    const selectors = fields
+        .map(field => `#${prefix}-${field}`)
+        .join(', ');
+
+    $(selectors)
+        .off('change.chartProjectionDistribution')
+        .on('change.chartProjectionDistribution', function() {
+            expand_projection_charts_distribution(
+                contChart,
+                tempRes
+            );
+        });
+
+
+    $(`#${prefix}-plot-type`)
+        .off('change.chartProjectionDistribution')
+        .on('change.chartProjectionDistribution', function() {
+            maproomDB.getData(
+                'projection_distribution',
+                function(data) {
+                    if (!data) {
+                        expand_projection_charts_distribution(
+                            contChart,
+                            tempRes
+                        );
+                        return;
+                    }
+
+                    expand_projection_display_distribution(
+                        data,
+                        contChart
+                    );
+                }
+            );
+        });
+
+
+    $(`#plotly-replot-${contID}`)
+        .off('click.chartProjectionDistribution')
+        .on('click.chartProjectionDistribution', function() {
+            expand_projection_charts_distribution(
+                contChart,
+                tempRes
+            );
+        });
+
+    $(`#plotly-download-${contID}`)
+        .off('click.chartProjectionDistribution')
+        .on('click.chartProjectionDistribution', function() {
+            downloadPlotlyImageJPG(contChart);
+        });
+}
+
+
+
+function setProjectionExpandModalSeries(tempRes, contID) {
+    const prefix = `${tempRes}-series-proj`;
+    const source = `${tempRes}-seasonal-proj`;
+    const contChart = `container-chart-${contID}`;
+
+    setOffCanvasMapControlSeasonalProjection(tempRes, prefix);
+
+    const fields = [
+        'variable',
+        'start-month',
+        'end-month'
+    ];
+
+    fields.forEach(field => {
+        $(`#${prefix}-${field}`)
+            .val($(`#${source}-${field}`).val())
+            .trigger('change.select2');
+    });
+
+    const scenarioSelect = $(`#${prefix}-scenarios`);
+    const previousScenarios = scenarioSelect.val();
+
+    scenarioSelect.val(
+        previousScenarios && previousScenarios.length
+            ? previousScenarios
+            : ['ssp1_2_6', 'ssp5_8_5']
+    ).trigger('change.select2');
+
+    $(`.${prefix}-select2`).each(function() {
+        const select = $(this);
+
+        if (!select.hasClass('select2-hidden-accessible')) {
+            select.select2({
+                minimumResultsForSearch: -1,
+                closeOnSelect: !select.prop('multiple'),
+                dropdownParent: $(`#${prefix}-control`)
+            });
+        }
+    });
+
+    const redraw = () => {
+        expand_projection_charts_series(contChart, tempRes);
+    };
+
+    const selectors = fields
+        .map(field => `#${prefix}-${field}`)
+        .join(', ');
+
+    $(selectors)
+        .off('change.chartProjectionSeries')
+        .on('change.chartProjectionSeries', redraw);
+
+    // Recalculate after the user finishes selecting scenarios.
+    scenarioSelect
+        .off('select2:close.chartProjectionSeries')
+        .on('select2:close.chartProjectionSeries', redraw);
+
+    $(`#${prefix}-plot-type`)
+        .off('change.chartProjectionSeries')
+        .on('change.chartProjectionSeries', function() {
+            maproomDB.getData(
+                'projection_series_expand',
+                function(data) {
+                    if (!data) {
+                        redraw();
+                        return;
+                    }
+
+                    expand_projection_display_series(
+                        data,
+                        contChart
+                    );
+                }
+            );
+        });
+
+    $(`#plotly-replot-${contID}`)
+        .off('click.chartProjectionSeries')
+        .on('click.chartProjectionSeries', redraw);
+
+    $(`#plotly-download-${contID}`)
+        .off('click.chartProjectionSeries')
+        .on('click.chartProjectionSeries', function() {
+            downloadPlotlyImageJPG(contChart);
+        });
+
+    showModalDialog(`modal-expand-${contID}`);
+
+    expandModalCharts(
+        contID,
+        expand_projection_charts_series,
+        tempRes
+    );
+
+    purgePlotlyChartExpandModal(contID);
+}
+
+
