@@ -71,13 +71,39 @@ def convert_cmip6_units(data, variable):
     return converted
 
 
+def rechunk_dataset(dataset, chunks):
+    dataset = dataset.copy(deep=False)
+
+    for name in dataset.variables:
+        variable = dataset[name]
+        data = variable.data
+
+        if not hasattr(data, "rechunk"):
+            continue
+
+        target_chunks = tuple(
+            min(chunks.get(dimension, size), size)
+            for dimension, size in zip(
+                variable.dims,
+                variable.shape,
+                strict=True,
+            )
+        )
+        dataset[name].data = data.rechunk(target_chunks)
+
+    return dataset
+
+
 def convert_cmip6_to_zarr(
     config_file,
     period,
     model,
     scenario=None,
     variable_key="maximum_temperature",
+    bbox=None,
 ):
+    # bbox = {'minLon': 30.625, 'maxLon': 50.375, 'minLat': 0.625, 'maxLat': 17.375}
+
     with Path(config_file).open(encoding="utf-8") as stream:
         config = yaml.safe_load(stream)["climate_projection"]
 
@@ -164,7 +190,7 @@ def convert_cmip6_to_zarr(
 
         time_encoding = {
             key: source[time_name].encoding[key]
-            for key in ("units", "calendar")
+            for key in ("units", "calendar", "dtype")
             if key in source[time_name].encoding
         }
 
@@ -190,7 +216,17 @@ def convert_cmip6_to_zarr(
         )
 
         dataset["time"].encoding.update(time_encoding)
-        dataset = dataset.chunk(config["chunks"])
+        dataset = rechunk_dataset(dataset, config["chunks"])
+
+        if bbox is not None:
+            dataset = dataset.where(
+                (dataset.lon >= bbox["minLon"])
+                & (dataset.lon <= bbox["maxLon"])
+                & (dataset.lat >= bbox["minLat"])
+                & (dataset.lat <= bbox["maxLat"]),
+                drop=True,
+            )
+            dataset = dataset.compute()
 
         target.parent.mkdir(parents=True, exist_ok=True)
 
@@ -343,6 +379,7 @@ def main():
                             model,
                             scenario,
                             variable_key=variable_key,
+                            bbox=config["bbox"]
                         )
 
                     except FileExistsError as exc:
