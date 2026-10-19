@@ -31,4 +31,12 @@ $(document).ready(function() {
 
     ////////////
 
+    // resolution should be provided from data
+    $('#list-spatial-average').select2({
+        data: [{ id: 'grid', text: '0.25 x 0.25' }]
+    });
+
+    //// grid point only 
+    $('#support-spatial-average').prop('disabled', true);
+    $('#list-spatial-average').prop('disabled', true);
 });
