@@ -470,8 +470,12 @@ function leafletRasterImage(image, bounds, options, map = MAP_BE) {
 
 function displayRasterImage(json, options, map = MAP_BE) {
     leafletRasterImage(json.data.png, json.data.bounds, options, map);
-    displayColorBar(json.ckeys, 'horizontal', map);
-    // displayColorBar(json.ckeys, 'vertical', map);
+    if (json.ckeys.raster) {
+        displayColorBarRaster(json.ckeys, map);
+    } else {
+        displayColorBar(json.ckeys, 'horizontal', map);
+        // displayColorBar(json.ckeys, 'vertical', map);
+    }
     // 
     // leaflet basemap
     changeLeafletBasemapStyle(map);

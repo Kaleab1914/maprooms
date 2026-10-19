@@ -16,6 +16,7 @@
                 <div class="col-sm-12 col-map-container">
                     <div id="div-map-container" class="div-map-container">
                         {% call fmacros.create_map_control(pageText, urlArgs) %}
+                        {{ fmacrosMap.create_map_control_seasfcst("seasonal", pageText) }}
                         {% endcall %}
                     </div>
                 </div>
@@ -38,5 +39,8 @@
 {% endblock %}
 {% block javascript %}
 {% include "block-js.html" %}
+<script>
+const SEAS_FCST = JSON.parse('{{ pageText.forecasts | tojson }}');
+</script>
 <script type="text/javascript" src="{{ url_for('climate_forecast.static', filename='js/seasonal.js') }}"></script>
 {% endblock %}

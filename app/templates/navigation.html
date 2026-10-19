@@ -41,7 +41,7 @@
                     <li class="d-flex justify-content-end">
                         <div class="dropdown">
                             <a class="nav-link dropdown-toggle lang-maproom" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"> {{ langUser.selected.label }} ({{ langUser.selected.name }}) </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
+                            <ul class="dropdown-menu dropdown-menu-end" style="z-index: 1050;">
                                 {% for lang in langUser.list %}
                                 <li>
                                     {% if pageType == 'main' %}
@@ -91,7 +91,7 @@
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ session.data.username }}
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
+                            <ul class="dropdown-menu dropdown-menu-end" style="z-index: 1050;">
                                 {% if session.data.role == 'admin' %}
                                 <li>
                                     <a class="dropdown-item" href="{{ url_for('auth.users_management') }}">{{ pageText.menu.users_management.text }} </a>

@@ -82,3 +82,5 @@ subdivision_map:
 subdivision_def:
     administrative: [zone, woreda]
     whatershed: [sub_basins]
+
+subdivision_blank_data: region

@@ -550,6 +550,11 @@ soilgrids:
         lon: 50
 
 geom_layers:
+    shp_dir: /home/enacts/SHP
+forecast_data:
+    seasonal:
+        rainfall: /home/enacts/FORECASTS/SEASONAL_PRECIP
+        temperature: /home/enacts/FORECASTS/SEASONAL_TEMP
     shp_dir: /home/aranaivoson/ENACTS/DATA/SHP
 
 climate_projection:
