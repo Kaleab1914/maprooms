@@ -34,22 +34,22 @@ maprooms:
             en: Seasonal Forecast
             fr: Prévision Saisonnière
         description:
-            en: This Maproom displays the full seasonal forecast distribution in different formats, providing an outlook for the coming season.
-            fr: Ce Maproom affiche la distribution complète des prévisions saisonnières dans différents formats, offrant un aperçu des conditions attendues pour la saison à venir.
+            en: This Maproom displays the full forecast distribution in different flavors.
+            fr: Le Maproom affiche la distribution complète des prévisions saisonnières dans différents formats.
         icon_image: default-emi_forecast.gif
     - monthly:
         title:
             en: Monthly Forecast
             fr: Prévision Mensuelle
         description:
-            en: This Maproom displays the full monthly forecast distribution in different formats, providing an outlook for the coming month.
-            fr: Ce Maproom affiche la distribution complète des prévisions mensuelles dans différents formats, offrant un aperçu des conditions attendues pour le mois à venir.
+            en: This Maproom displays the full forecast distribution in different flavors.
+            fr: Le Maproom affiche la distribution complète des prévisions saisonnières dans différents formats.
         icon_image: default-emi_forecast.gif
     - ten-days:
         title:
             en: 10-Days Forecast
             fr: Prévision 10-Jours
         description:
-            en: This Maproom displays the full 10-day forecast distribution in different formats, providing an outlook for the coming ten days.
-            fr: Ce Maproom affiche la distribution complète des prévisions à dix jours dans différents formats, offrant un aperçu des conditions attendues pour les dix prochains jours.
+            en: This Maproom displays the full forecast distribution in different flavors.
+            fr: Le Maproom affiche la distribution complète des prévisions saisonnières dans différents formats.
         icon_image: default-emi_forecast.gif
