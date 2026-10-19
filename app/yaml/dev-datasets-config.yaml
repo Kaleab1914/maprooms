@@ -620,4 +620,9 @@ climate_projection:
         ssp5_8_5:
             label: SSP5-8.5
 
+    bbox:
+        minLon: 30.625
+        maxLon: 50.375
+        minLat: 0.625
+        maxLat: 17.375
 
