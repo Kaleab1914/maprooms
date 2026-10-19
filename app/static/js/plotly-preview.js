@@ -2924,3 +2924,76 @@ function preview_projection_display_series(
 }
 
 
+//////
+function preview_projection_spi_query(
+    prefix = 'monthly-spi-proj'
+) {
+    const query = queryParamsClimateProjectionSpi(prefix);
+
+    if (!query) {
+        return false;
+    }
+
+    const spatial = queryParamsSpatialAverage();
+
+    if (!spatial) {
+        return false;
+    }
+
+    query.plotStartYear = Number(
+        $(`#${prefix}-plot-start`).val()
+    );
+
+    query.plotEndYear = Number(
+        $(`#${prefix}-plot-end`).val()
+    );
+
+    if (
+        !Number.isInteger(query.plotStartYear)
+        || !Number.isInteger(query.plotEndYear)
+        || query.plotStartYear < 1981
+        || query.plotEndYear > 2100
+        || query.plotStartYear > query.plotEndYear
+    ) {
+        flashMessage(
+            'Select valid chart display years.',
+            'error'
+        );
+        return false;
+    }
+
+    return {
+        ...query,
+        ...spatial
+    };
+}
+
+
+function preview_projection_spi_charts(
+    tempRes,
+    container = 'div-chart-spi-proj'
+) {
+    const query = preview_projection_spi_query();
+
+    if (!query) {
+        return false;
+    }
+
+    return ajaxDisplayChart(
+        createEndpoint(
+            'climate_projection',
+            'climate_projection_spi_series'
+        ),
+        query,
+        // preview_drm_display_spi,
+        (json, container) => {
+            if (json.warning) {
+                flashMessage(json.warning, 'info');
+            }
+
+            preview_drm_display_spi(json, container);
+        },
+        container
+    );
+}
+

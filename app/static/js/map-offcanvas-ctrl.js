@@ -795,54 +795,6 @@ function setOffCanvasMapControlDrmSpiAnalysis(tempRes) {
 
 }
 
-//////////////
-// function setOffCanvasMapControlSeasonalProjection(tempRes) {
-//     const prefix = `${tempRes}-seasonal-proj`;
-
-//     $(`#${prefix}-regional-model`)
-//         .off('change.seasonalProjection')
-//         .on('change.seasonalProjection', function() {
-//             const select = $(`#${prefix}-gcm`);
-//             const previous = select.val();
-//             const available = REGIONAL_MODELS[this.value].gcm;
-
-//             select.empty();
-
-//             available.forEach(key => {
-//                 select.append(new Option(GCM[key].label, key));
-//             });
-
-//             if (available.includes(previous)) {
-//                 select.val(previous);
-//             }
-
-//             select.trigger('change');
-//         });
-
-//     $(`#${prefix}-variable`)
-//         .off('change.seasonalProjection')
-//         .on('change.seasonalProjection', function() {
-//             ['historical', 'future'].forEach(period => {
-//                 const container = `${prefix}-${period}-date`;
-//                 const selected = $(`#${container}-calendar`).val();
-//                 const year = selected
-//                     ? selected.slice(0, 4)
-//                     : CLIMATOLOGICAL_PERIOD[period].start_year;
-//                 const dataset = period === 'historical'
-//                     ? DATA_SET.historical.dataset
-//                     : DATA_SET.projection.dataset;
-
-//                 setDateCalendar(
-//                     container, `${prefix}-variable`, dataset, tempRes,
-//                     `${year}-01-01`, false, true, true
-//                 );
-//             });
-//         });
-
-//     $(`#${prefix}-regional-model`).trigger('change');
-//     $(`#${prefix}-variable`).trigger('change');
-// }
-
 function setOffCanvasMapControlSeasonalProjection(tempRes, prefix = `${tempRes}-seasonal-proj`) {
     // function setOffCanvasMapControlSeasonalProjection(tempRes) {
     //     const prefix = `${tempRes}-seasonal-proj`;
@@ -870,30 +822,263 @@ function setOffCanvasMapControlSeasonalProjection(tempRes, prefix = `${tempRes}-
         .val(CLIMATOLOGICAL_PERIOD.length);
 }
 
-function setOffCanvasMapControlSpiProjection(tempRes) {
-    const prefix = `${tempRes}-spi-proj`;
 
-    $(`#${prefix}-regional-model`)
-        .off('change.spiProjection')
-        .on('change.spiProjection', function() {
-            const select = $(`#${prefix}-gcm`);
-            const previous = select.val();
-            const available = REGIONAL_MODELS[this.value].gcm;
+// function setOffCanvasMapControlSpiProjection(tempRes) {
+//     const prefix = `${tempRes}-spi-proj`;
 
-            select.empty();
+function setProjectionSpiControls(prefix, sourcePrefix = null) {
+    const length = sourcePrefix
+        ? Number($(`#${sourcePrefix}-timescale`).val())
+        : SPI_SETTINGS.length;
 
-            available.forEach(key => {
-                select.append(new Option(GCM[key].label, key));
-            });
+    const select = $(`#${prefix}-timescale`).empty();
 
-            if (available.includes(previous)) {
-                select.val(previous);
-            }
+    for (let value = 2; value <= 12; value++) {
+        select.append(new Option(value, value));
+    }
 
-            select.trigger('change');
+    select.val(length).trigger('change.select2');
+
+    ['start', 'end'].forEach(field => {
+        const value = sourcePrefix
+            ? $(`#${sourcePrefix}-plot-${field}`).val()
+            : SPI_PLOT_PERIOD[`${field}_year`];
+
+        $(`#${prefix}-plot-${field}`).val(value);
+    });
+}
+
+
+
+function setProjectionSpiMapMonth(prefix, month) {
+    const coverage = $(`#${prefix}-gcm`).data('spiCoverage');
+
+    if (
+        !coverage
+        || !/^\d{4}-(0[1-9]|1[0-2])$/.test(month)
+        || month < coverage.start.slice(0, 7)
+        || month > coverage.end.slice(0, 7)
+    ) {
+        return false;
+    }
+
+    setDateCalendar(
+        `${prefix}-map-date`,
+        coverage,
+        null,
+        'monthly',
+        `${month}-01`,
+        true,
+        false,
+        null,
+        true
+    );
+
+    const length = Number($(`#${prefix}-timescale`).val());
+
+    $(`#${prefix}-season-months`).text(
+        defineSeasonMonths(Number(month.slice(5, 7)), length)
+    );
+
+    return true;
+}
+
+
+async function setProjectionSpiDateCalendars(
+    tempRes,
+    prefix,
+    resetDates = false
+) {
+    const modelSelect = $(`#${prefix}-gcm`);
+    const model = modelSelect.val();
+    const scenario = $(`#${prefix}-scenario`).val();
+    const timeScale = Number($(`#${prefix}-timescale`).val());
+
+    const token = {};
+
+    modelSelect.data('spiCoverageToken', token);
+    modelSelect.data('spiCalendarReady', false);
+
+    const previousMap = resetDates
+        ? null
+        : $(`#${prefix}-map-date-calendar`).val();
+
+    try {
+        const json = await $.ajax({
+            type: 'POST',
+            url: createEndpoint(
+                'climate_projection',
+                'climate_projection_spi_coverage'
+            ),
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                model,
+                scenario,
+                timeScale,
+                variable: 'rainfall'
+            })
         });
 
-    $(`#${prefix}-regional-model`).trigger('change');
+        if (modelSelect.data('spiCoverageToken') !== token) {
+            return false;
+        }
+
+        if (!json || json.status !== 0 || !json.data) {
+            throw new Error(
+                json?.message || 'Unable to load dataset dates.'
+            );
+        }
+
+        const coverage = json.data;
+
+        modelSelect.data('spiCoverage', coverage);
+
+
+        const resolution = modelSelect.data('spiSpatialResolution');
+
+        if (resolution && coverage.spatial_resolution) {
+            Object.assign(resolution, coverage.spatial_resolution);
+
+            if ($('#support-spatial-average').val() === 'gridpoint') {
+                const items = getDataSpatialAverage(
+                    'gridpoint',
+                    resolution
+                );
+
+                $('#list-spatial-average')
+                    .empty()
+                    .select2({ data: items })
+                    .val('grid')
+                    .trigger('change.select2');
+            }
+        }
+
+
+        const first = coverage.start.slice(0, 7);
+        const last = coverage.end.slice(0, 7);
+
+        const currentMap = resetDates
+            ? null
+            : $(`#${prefix}-map-date-calendar`).val();
+
+        let month = String(
+            currentMap
+            || previousMap
+            || SPI_MAP_MONTHS.projection
+        ).slice(0, 7);
+
+        if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+            month = first;
+        }
+
+        month = month < first
+            ? first
+            : month > last
+                ? last
+                : month;
+
+        if (document.getElementById(`${prefix}-map-date`)) {
+            const valid = setProjectionSpiMapMonth(
+                prefix,
+                month
+            );
+
+            if (!valid) {
+                throw new Error(
+                    'Unable to initialize the projection month.'
+                );
+            }
+        }
+
+        const end = Math.min(
+            Number($(`#${prefix}-plot-end`).val())
+                || SPI_PLOT_PERIOD.end_year,
+            coverage.plot_end_year
+        );
+
+        const start = Math.max(
+            coverage.plot_start_year,
+            Math.min(
+                Number($(`#${prefix}-plot-start`).val())
+                    || SPI_PLOT_PERIOD.start_year,
+                end
+            )
+        );
+
+        $(`#${prefix}-plot-start`).val(start);
+        $(`#${prefix}-plot-end`).val(end);
+
+        modelSelect.data('spiCalendarReady', true);
+
+        return true;
+
+    } catch (error) {
+        if (modelSelect.data('spiCoverageToken') !== token) {
+            return false;
+        }
+
+        console.error(error);
+
+        flashMessage(
+            error.message || 'Unable to load dataset dates.',
+            'error'
+        );
+
+        return false;
+    }
+}
+
+
+async function setOffCanvasMapControlSpiProjection(tempRes) {
+    const prefix = `${tempRes}-spi-proj`;
+
+    $(`#${prefix}-gcm`).val(SPI_DEFAULTS.GCM.default);
+    $(`#${prefix}-scenario`).val(SPI_DEFAULTS.scenarios.default);
+    $(`#${prefix}-distribution`).val(SPI_SETTINGS.distribution);
+
+    setProjectionSpiControls(prefix);
+    const resolution = { lon: '…', lat: '…' };
+    $(`#${prefix}-gcm`).data('spiSpatialResolution', resolution);
+    setSelectSpatialAverage(resolution);
+
+    $(`.${prefix}-select2`).each(function() {
+        const select = $(this);
+
+        if (!select.hasClass('select2-hidden-accessible')) {
+            select.select2({
+                minimumResultsForSearch: -1,
+                dropdownParent: $(`#${prefix}-control`)
+            });
+        }
+    });
+
+    setMonitoringColorbar('spi_seas');
+
+    return setProjectionSpiDateCalendars(
+        tempRes,
+        prefix,
+        true
+    );
+}
+
+function setProjectionSpiSeasonMonths(tempRes) {
+    const prefix = `${tempRes}-spi-proj`;
+
+    const month = String(
+        $(`#${prefix}-map-date-calendar`).val() || ''
+    ).slice(0, 7);
+
+    const length = Number($(`#${prefix}-timescale`).val());
+
+    if (/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+        $(`#${prefix}-season-months`).text(
+            defineSeasonMonths(
+                Number(month.slice(5, 7)),
+                length
+            )
+        );
+    }
 }
 
 //////////////
@@ -1059,3 +1244,4 @@ function setSeasFcstTargets(tempRes, year, month, fcst_obj) {
         );
     }
 }
+

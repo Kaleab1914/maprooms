@@ -904,4 +904,167 @@ function displayClimateProjectionSeasonalMap(options, map) {
         options,
         map
     );
+
 }
+
+
+function queryParamsClimateProjectionAgreementMap() {
+    const prefix = 'seasonal-model-proj';
+
+    const query = {
+        temporalRes: 'seasonal',
+        variable: $(`#${prefix}-variable`).val(),
+        scenario: $(`#${prefix}-scenario`).val(),
+        change: $(`#${prefix}-change-signal`).val(),
+        seasStart: Number($(`#${prefix}-start-month`).val()),
+        seasEnd: Number($(`#${prefix}-end-month`).val()),
+        yearstartFut: Number(
+            $(`#${prefix}-future-date-calendar`).val()
+        ),
+        climPeriod: Number($(`#${prefix}-period-length`).val())
+    };
+
+    const integers = [
+        query.seasStart,
+        query.seasEnd,
+        query.yearstartFut,
+        query.climPeriod
+    ].every(value => Number.isInteger(value) && value > 0);
+
+    if (
+        !integers
+        || query.seasStart > 12
+        || query.seasEnd > 12
+        || query.yearstartFut < 2015
+        || !query.variable
+        || !query.scenario
+        || !['positive', 'negative'].includes(query.change)
+    ) {
+        flashMessage(
+            'Enter valid seasonal and period parameters.',
+            'error'
+        );
+        return false;
+    }
+
+    return query;
+}
+
+
+function displayClimateProjectionAgreementMap(options, map) {
+    const query = queryParamsClimateProjectionAgreementMap();
+
+    if (!query) {
+        return false;
+    }
+
+    const endpoint = createEndpoint(
+        'climate_projection',
+        'climate_projection_agreement_map'
+    );
+
+    return ajaxLeafletMap(
+        endpoint,
+        query,
+        (data, settings, targetMap) => {
+            displayRasterImage(data, settings, targetMap);
+            targetMap.displayText_date.update(data.date);
+        },
+        options,
+        map
+    );
+}
+
+
+///////
+
+function queryParamsClimateProjectionSpi(
+    prefix = 'monthly-spi-proj'
+) {
+    if (!$(`#${prefix}-gcm`).data('spiCalendarReady')) {
+        return false;
+    }
+
+    const query = {
+        temporalRes: 'monthly',
+        variable: 'rainfall',
+        analysis: 'spi',
+        timeScale: Number($(`#${prefix}-timescale`).val()),
+        distribution: $(`#${prefix}-distribution`).val(),
+        model: $(`#${prefix}-gcm`).val(),
+        scenario: $(`#${prefix}-scenario`).val()
+    };
+
+    if (
+        !query.model
+        || !query.scenario
+        || !['gamma', 'peasron3'].includes(query.distribution)
+        || !Number.isInteger(query.timeScale)
+        || query.timeScale < 2
+        || query.timeScale > 12
+    ) {
+        flashMessage('Select valid SPI parameters.', 'error');
+        return false;
+    }
+
+    return query;
+}
+
+
+function queryParamsClimateProjectionSpiMap() {
+    const prefix = 'monthly-spi-proj';
+    const query = queryParamsClimateProjectionSpi(prefix);
+
+    if (!query) {
+        return false;
+    }
+
+    query.mapMonth = String(
+        $(`#${prefix}-map-date-calendar`).val() || ''
+    ).slice(0, 7);
+
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(query.mapMonth)) {
+        flashMessage('Select a valid start month.', 'error');
+        return false;
+    }
+
+    query.colorbar = colorbarGetData();
+
+    if (!query.colorbar) {
+        return false;
+    }
+
+    return query;
+}
+
+
+function displayClimateProjectionSpiMap(options, map) {
+    const query = queryParamsClimateProjectionSpiMap();
+    setProjectionSpiSeasonMonths('monthly');
+
+    if (!query) {
+        return false;
+    }
+
+    return ajaxLeafletMap(
+        createEndpoint(
+            'climate_projection',
+            'climate_projection_spi_map'
+        ),
+        query,
+        (data, settings, targetMap) => {
+            displayRasterImage(data, settings, targetMap);
+            // targetMap.displayText_date.update(data.date);
+            const label = $('<div>')
+                .text(data.date)
+                .html();
+
+            targetMap.displayText_date.update(
+                label.replace(': ', ':<br>')
+            );
+        },
+        options,
+        map
+    );
+}
+

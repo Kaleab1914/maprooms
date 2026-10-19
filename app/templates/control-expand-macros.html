@@ -1100,12 +1100,15 @@
 
 
 <!--  -->
-{% macro create_expand_charts_spi_proj(tempRes, pageText, variable="rainfall") %}
-<div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-spi-proj-control">
-    <fieldset>
-        
-    </fieldset>
-</div>
+{% macro create_expand_charts_spi_proj(tempRes, pageText) %}
+    {% import 'control-map-macros.html' as projectionControls %}
+
+    {{ projectionControls.create_map_control_spi_proj(
+        tempRes,
+        pageText,
+        prefix=tempRes ~ '-chart-spi-proj',
+        include_map=false
+    ) }}
 {% endmacro %}
 
 <!--  -->

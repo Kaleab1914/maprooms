@@ -1,58 +1,77 @@
+
 {% extends "layout.html" %}
-{% block title %} {{metInfo.pageTitle}} {% endblock %}
+
+{% block title %}
+{{ metInfo.pageTitle }}
+{% endblock %}
+
 {% block head %}
 {{ super() }}
 <style>
     .card-description {
         height: 90vh;
     }
+
     .card-description-tab {
         max-height: 78vh;
     }
 </style>
 {% endblock %}
+
 {% block content %}
-<!--  -->
 <div class="container-fluid" id="container-page">
     <div class="row">
+
         <div class="col-sm-4">
-            {{ fmacros.create_card_information(pageText.description, pageText.instruction) }}
+            {{ fmacros.create_card_information(
+                pageText.description,
+                pageText.instruction
+            ) }}
         </div>
+
         <div class="col-sm-8">
+
             <div class="row">
                 <div class="col-sm-12 col-map-container">
-                    <div id="div-map-container" class="div-map-container">
-                        {% call fmacros.create_map_control(pageText, urlArgs) %}
-                        {{ fmacrosMap.create_map_control_spi_proj("monthly", pageText) }}
+                    <div
+                        id="div-map-container"
+                        class="div-map-container">
+                        {% call fmacros.create_map_control(pageText,urlArgs) %}
+                            {{ fmacrosMap.create_map_control_spi_proj("monthly",pageText) }}
                         {% endcall %}
                     </div>
                 </div>
             </div>
+
+
             <div class="row justify-content-center">
-                <div class="col-sm-6">
-                    {{ fmacros.create_card_charts("div-chart-spi-proj", pageText) }}
+                <div class="col-sm-12">
+                    {{ fmacros.create_card_charts("div-chart-spi-proj",pageText) }}
                     {% call fmacros.create_modal_expand_charts("div-chart-spi-proj", pageText) %}
-                    {{ fmacrosExp.create_expand_charts_spi_proj("monthly", pageText) }}
-                    {% endcall %}
-                </div>
-                <div class="col-sm-6">
-                    {{ fmacros.create_card_charts("div-chart-anom-proj", pageText) }}
-                    {% call fmacros.create_modal_expand_charts("div-chart-anom-proj", pageText) %}
-                    {{ fmacrosExp.create_expand_charts_anom_proj("monthly", pageText) }}
+                        {{ fmacrosExp.create_expand_charts_spi_proj("monthly",pageText) }}
                     {% endcall %}
                 </div>
             </div>
+
         </div>
     </div>
     {{ fmacros.create_modal_matplotlib(pageText) }}
 </div>
 {% endblock %}
+
 {% block javascript %}
 {% include "block-js.html" %}
+
 <script>
-const REGIONAL_MODELS = {{ pageText.regional_models | tojson }};
 const GCM = {{ pageText.GCM | tojson }};
 const SCENARIOS = {{ pageText.scenarios | tojson }};
+const SPI_DEFAULTS = {{ pageText.opt_inputs | tojson }};
+const SPI_PLOT_PERIOD = {{ pageText.plot_period | tojson }};
+const SPI_MAP_MONTHS = {{ pageText.map_month | tojson }};
+const SPI_SETTINGS = {{ pageText.spi_settings | tojson }};
 </script>
-<script type="text/javascript" src="{{ url_for('climate_projection.static', filename='js/spi-monthly.js') }}"></script>
+
+<script type="text/javascript" src="{{ url_for('climate_projection.static', filename='js/spi-monthly.js') }}">
+</script>
 {% endblock %}
+
