@@ -102,7 +102,7 @@ function changeLeafletBasemapStyle(map = MAP_BE, options = MTO_INIT) {
             }
         }
     });
-    $('#list-spatial-average').trigger('change');
+    $('#map-basemap-style').trigger('change');
 }
 
 function selectLeafletBasemapStyle(basemap, options) {
