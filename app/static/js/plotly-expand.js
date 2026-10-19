@@ -3845,3 +3845,40 @@ function expand_projection_display_series(json, container) {
     });
 }
 
+///////
+function expand_projection_spi_charts(container, tempRes) {
+    const query = preview_projection_spi_query(
+        `${tempRes}-chart-spi-proj`
+    );
+
+    if (!query) {
+        return false;
+    }
+
+    return ajaxDisplayChart(
+        createEndpoint(
+            'climate_projection',
+            'climate_projection_spi_series'
+        ),
+        query,
+        // expand_analysis_display_spei_ts,
+        (json, container) => {
+            if (json.warning) {
+                flashMessage(json.warning, 'info');
+            }
+
+            expand_analysis_display_spei_ts(json, container);
+        },
+        container
+    );
+}
+
+
+function expand_projection_spi_display(json, container) {
+    return preview_drm_display_spi(
+        json,
+        container,
+        true
+    );
+}
+

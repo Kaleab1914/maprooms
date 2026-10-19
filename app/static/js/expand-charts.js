@@ -1481,4 +1481,79 @@ function setProjectionExpandModalSeries(tempRes, contID) {
     purgePlotlyChartExpandModal(contID);
 }
 
+/////
+async function setProjectionExpandModalSpi(tempRes, contID) {
+    const prefix = `${tempRes}-chart-spi-proj`;
+    const source = `${tempRes}-spi-proj`;
+    const container = `container-chart-${contID}`;
+
+    showModalDialog(`modal-expand-${contID}`);
+
+    ['gcm', 'scenario', 'distribution'].forEach(field => {
+        $(`#${prefix}-${field}`)
+            .val($(`#${source}-${field}`).val())
+            .trigger('change.select2');
+    });
+
+    setProjectionSpiControls(prefix, source);
+
+    $(`.${prefix}-select2`).each(function() {
+        const select = $(this);
+
+        if (!select.hasClass('select2-hidden-accessible')) {
+            select.select2({
+                minimumResultsForSearch: -1,
+                dropdownParent: $(`#${prefix}-control`)
+            });
+        }
+    });
+
+    const ready = await setProjectionSpiDateCalendars(
+        tempRes,
+        prefix
+    );
+
+    if (!ready) {
+        return;
+    }
+
+    const draw = () => {
+        expand_projection_spi_charts(container, tempRes);
+    };
+
+    expandModalCharts(
+        contID,
+        expand_projection_spi_charts,
+        tempRes
+    );
+
+    purgePlotlyChartExpandModal(contID);
+    $(`#rangeselector-${contID}`).show();
+
+    $(`#${prefix}-gcm, #${prefix}-scenario, #${prefix}-timescale`)
+        .off('change.projectionSpiExpand')
+        .on('change.projectionSpiExpand', async function() {
+            if (await setProjectionSpiDateCalendars(
+                tempRes,
+                prefix
+            )) {
+                draw();
+            }
+        });
+
+    $(`#${prefix}-distribution, #${prefix}-plot-start, #${prefix}-plot-end`)
+        .off('change.projectionSpiExpand')
+        .on('change.projectionSpiExpand', draw);
+
+    $(`#plotly-replot-${contID}`)
+        .off('click.projectionSpiExpand')
+        .on('click.projectionSpiExpand', draw);
+
+    $(`#plotly-download-${contID}`)
+        .off('click.projectionSpiExpand')
+        .on('click.projectionSpiExpand', () => {
+            downloadPlotlyImageJPG(container);
+        });
+}
+
 

@@ -16,6 +16,13 @@ from .scripts.model_agreement import (
     climate_projection_agreement_sp_data,
 )
 
+from .scripts.projection_spi import (
+    get_climate_projection_spi_sp_data,
+    climate_projection_spi_sp_data,
+    climate_projection_spi_ts_data,
+    climate_projection_spi_coverage_data,
+)
+
 
 climate_projection = Blueprint(
     'climate_projection',
@@ -160,4 +167,99 @@ def climate_projection_agreement_map():
             'message': 'Unable to calculate the model agreement map.',
         })
 
+
+
+@climate_projection.route(
+    '/climate_projection_spi_map',
+    methods=['POST'],
+)
+def climate_projection_spi_map():
+    try:
+        data = get_climate_projection_spi_sp_data(
+            request.get_json()
+        )
+
+        with matplotlib_render_lock:
+            result = climate_projection_spi_sp_data(data)
+
+        return json.dumps(result, allow_nan=False)
+
+    except (
+        KeyError,
+        IndexError,
+        TypeError,
+        ValueError,
+        FileNotFoundError,
+    ) as exc:
+        return json.dumps({
+            'status': -1,
+            'message': str(exc),
+        })
+
+    except Exception:
+        app.logger.exception('Projection SPI map failed')
+
+        return json.dumps({
+            'status': -1,
+            'message': 'Unable to calculate the projection SPI map.',
+        })
+
+
+@climate_projection.route(
+    '/climate_projection_spi_series',
+    methods=['POST'],
+)
+def climate_projection_spi_series():
+    try:
+        result = climate_projection_spi_ts_data(
+            request.get_json()
+        )
+
+        return json.dumps(result, allow_nan=False)
+
+    except (
+        KeyError,
+        IndexError,
+        TypeError,
+        ValueError,
+        FileNotFoundError,
+    ) as exc:
+        return json.dumps({
+            'status': -1,
+            'message': str(exc),
+        })
+
+    except Exception:
+        app.logger.exception('Projection SPI series failed')
+
+        return json.dumps({
+            'status': -1,
+            'message': 'Unable to calculate the projection SPI series.',
+        })
+
+
+
+@climate_projection.route(
+    '/climate_projection_spi_coverage',
+    methods=['POST'],
+)
+def climate_projection_spi_coverage():
+    try:
+        return json.dumps(
+            climate_projection_spi_coverage_data(
+                request.get_json()
+            ),
+            allow_nan=False,
+        )
+    except (KeyError, IndexError, TypeError, ValueError) as exc:
+        return json.dumps({
+            'status': -1,
+            'message': str(exc),
+        })
+    except Exception:
+        app.logger.exception('Projection SPI coverage failed')
+        return json.dumps({
+            'status': -1,
+            'message': 'Unable to read the dataset dates.',
+        })
 
