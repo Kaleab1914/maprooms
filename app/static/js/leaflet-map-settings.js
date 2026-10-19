@@ -805,59 +805,11 @@ function queryParamsClimateSeasFcstMap(time_res) {
     }
     query.colorbar = colorbar;
 
-
-////////////
-function queryParamsClimateProjectionSeasonalMap() {
-    const prefix = "seasonal-seasonal-proj";
-
-    const query = {
-        temporalRes: "seasonal",
-        variable: $(`#${prefix}-variable`).val(),
-        model: $(`#${prefix}-gcm`).val(),
-        scenario: $(`#${prefix}-scenario`).val(),
-        seasStart: Number($(`#${prefix}-start-month`).val()),
-        seasEnd: Number($(`#${prefix}-end-month`).val()),
-        yearstartH: Number(
-            $(`#${prefix}-historical-date-calendar`).val()
-        ),
-        yearstartFut: Number(
-            $(`#${prefix}-future-date-calendar`).val()
-        ),
-        climPeriod: Number($(`#${prefix}-period-length`).val())
-    };
-
-    const valid = [
-        query.seasStart,
-        query.seasEnd,
-        query.yearstartH,
-        query.yearstartFut,
-        query.climPeriod
-    ].every(value => Number.isInteger(value) && value > 0);
-
-    if (
-        !valid
-        || query.seasStart > 12
-        || query.seasEnd > 12
-    ) {
-        flashMessage("Enter valid months, years and period length.", "error");
-        return false;
-    }
-
-    query.colorbar = colorbarGetData();
-
-    if (!query.colorbar) {
-        return false;
-    }
-
     return query;
 }
 
 function displayClimateSeasFcstMap(time_res, options, map) {
     const query = queryParamsClimateSeasFcstMap(time_res);
-
-function displayClimateProjectionSeasonalMap(options, map) {
-    const query = queryParamsClimateProjectionSeasonalMap();
-
     if (!query) {
         return false;
     }
@@ -881,8 +833,65 @@ function displayClimateProjectionSeasonalMap(options, map) {
 
     return request;
 }
-        "climate_projection",
-        "climate_projection_seasonal_map"
+
+////////////
+
+function queryParamsClimateProjectionSeasonalMap() {
+    const prefix = 'seasonal-seasonal-proj';
+
+    const query = {
+        temporalRes: 'seasonal',
+        variable: $(`#${prefix}-variable`).val(),
+        model: $(`#${prefix}-gcm`).val(),
+        scenario: $(`#${prefix}-scenario`).val(),
+        seasStart: Number($(`#${prefix}-start-month`).val()),
+        seasEnd: Number($(`#${prefix}-end-month`).val()),
+        yearstartH: Number(
+            $(`#${prefix}-historical-date-calendar`).val()
+        ),
+        yearstartFut: Number(
+            $(`#${prefix}-future-date-calendar`).val()
+        ),
+        climPeriod: Number($(`#${prefix}-period-length`).val())
+    };
+
+    const valid = [
+        query.seasStart,
+        query.seasEnd,
+        query.yearstartH,
+        query.yearstartFut,
+        query.climPeriod
+    ].every(value => Number.isInteger(value) && value > 0);
+
+    if (
+        !valid ||
+        query.seasStart > 12 ||
+        query.seasEnd > 12
+    ) {
+        flashMessage('Enter valid months, years and period length.', 'error');
+        return false;
+    }
+
+    query.colorbar = colorbarGetData();
+
+    if (!query.colorbar) {
+        return false;
+    }
+
+    return query;
+}
+
+
+function displayClimateProjectionSeasonalMap(options, map) {
+    const query = queryParamsClimateProjectionSeasonalMap();
+
+    if (!query) {
+        return false;
+    }
+
+    const endpoint = createEndpoint(
+        'climate_projection',
+        'climate_projection_seasonal_map'
     );
 
     return ajaxLeafletMap(
@@ -896,5 +905,3 @@ function displayClimateProjectionSeasonalMap(options, map) {
         map
     );
 }
-
-

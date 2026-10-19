@@ -795,7 +795,6 @@ function setOffCanvasMapControlDrmSpiAnalysis(tempRes) {
 
 }
 
-
 //////////////
 // function setOffCanvasMapControlSeasonalProjection(tempRes) {
 //     const prefix = `${tempRes}-seasonal-proj`;
@@ -845,8 +844,8 @@ function setOffCanvasMapControlDrmSpiAnalysis(tempRes) {
 // }
 
 function setOffCanvasMapControlSeasonalProjection(tempRes, prefix = `${tempRes}-seasonal-proj`) {
-// function setOffCanvasMapControlSeasonalProjection(tempRes) {
-//     const prefix = `${tempRes}-seasonal-proj`;
+    // function setOffCanvasMapControlSeasonalProjection(tempRes) {
+    //     const prefix = `${tempRes}-seasonal-proj`;
     const months = getListOfMonthsCalendar().short;
 
     ["start", "end"].forEach(boundary => {
@@ -864,32 +863,12 @@ function setOffCanvasMapControlSeasonalProjection(tempRes, prefix = `${tempRes}-
     $(`#${prefix}-historical-date-calendar`)
         .val(CLIMATOLOGICAL_PERIOD.historical.start_year);
 
-    $(`#${prefix}-variable`)
-        .off('change.seasonalProjection')
-        .on('change.seasonalProjection', function() {
-            ['historical', 'future'].forEach(period => {
-                const container = `${prefix}-${period}-date`;
-                const selected = $(`#${container}-calendar`).val();
-                const year = selected ?
-                    selected.slice(0, 4) :
-                    CLIMATOLOGICAL_PERIOD[period].start_year;
-                const dataset = period === 'historical' ?
-                    DATA_SET.historical.dataset :
-                    DATA_SET.projection.dataset;
-
-                setDateCalendar(
-                    container, `${prefix}-variable`, dataset, tempRes,
-                    `${year}-01-01`, false, true, true
-                );
-            });
-        });
     $(`#${prefix}-future-date-calendar`)
         .val(CLIMATOLOGICAL_PERIOD.future.start_year);
 
     $(`#${prefix}-period-length`)
         .val(CLIMATOLOGICAL_PERIOD.length);
 }
-
 
 function setOffCanvasMapControlSpiProjection(tempRes) {
     const prefix = `${tempRes}-spi-proj`;
