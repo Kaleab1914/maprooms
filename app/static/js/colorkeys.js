@@ -1,3 +1,32 @@
+function displayColorBarRaster(ckeys, map) {
+    const options = {
+        id: 'table-colorkeyH-id',
+        position: 'bottomright'
+    };
+
+    const colorbarImage = $('<img>', {
+        class: 'raster-colorbar-image',
+        src: ckeys.png,
+        alt: 'Map color scale'
+    });
+
+    addLControlColorBar(colorbarImage, options, map);
+
+    const colorbarContainer = map.colorBar.getContainer();
+    $(colorbarContainer).css({
+        'background-color': '#f4f4f4',
+        'margin-right': '5px',
+        'margin-bottom': '1px',
+        'padding': '3px'
+    });
+    colorbarImage.css({
+        'display': 'block',
+        'width': '400px',
+        'max-width': 'calc(100vw - 40px)',
+        'height': 'auto'
+    });
+}
+
 function displayColorBar(ckeys, direction, map) {
     const options = {
         id: 'table-colorkeyH-id',
@@ -291,3 +320,4 @@ function createCategoricalColorKeyH(ckey) {
 
     return table;
 }
+

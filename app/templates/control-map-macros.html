@@ -666,7 +666,6 @@
 <!--  -->
 {% macro create_map_control_drm_analysis_temperature(tempRes, pageText) %}
 <div class="container">
-
     {% set tstepID = tempRes ~ '-map-date' %}
     <fieldset class="border border-secondary rounded-3">
         <legend class="legend-label">{{ pageText.variables.label }}</legend>
@@ -690,7 +689,7 @@
             <div class="row gx-1">
                 <div class="col-md-4">
                     <select id="{{ tstepID }}-start-mon" class="form-select form-select2-nosearch"></select>
-                    {#  <select id="{{ tempRes }}-map-date" class="form-select form-select2-nosearch"></select> #}
+                    {# <select id="{{ tempRes }}-map-date" class="form-select form-select2-nosearch"></select> #}
                 </div>
                 <div class="col-md-2">
                     <select id="{{ tstepID }}-start-day" class="form-select form-select2-nosearch"></select>
@@ -712,8 +711,7 @@
             {% endfor %}
         </select>
     </fieldset>
-<!--  -->
-
+    <!--  -->
     <fieldset id="{{ tempRes }}-map-def-number" class="border border-secondary rounded-3" style="display: none;">
         <legend id="{{ tempRes }}-map-def-number-thres-lab" class="legend-label">{{ pageText.definition.label }}</legend>
         <div class="row gx-0 mt-1">
@@ -728,7 +726,6 @@
             </div>
         </div>
     </fieldset>
-
     <fieldset id="{{ tempRes }}-map-climato" class="border border-secondary rounded-3">
         <legend class="legend-label">{{ pageText.label_statistics.stats }}</legend>
         <div class="w-100">
@@ -754,10 +751,7 @@
             </div>
         </div>
     </fieldset>
-    
-
-<!--  -->
-
+    <!--  -->
     <fieldset id="div-{{ tstepID }}-climato-years" class="border border-secondary rounded-3">
         <legend class="legend-label">{{ pageText.opt_season_map.label_year }}</legend>
         <div class="row gx-1">
@@ -783,10 +777,8 @@
             </div>
         </div>
     </fieldset>
-
 </div>
 {% endmacro %}
-
 <!--  -->
 {% macro create_map_control_drm_analysis_rainfall(tempRes, pageText) %}
 <div class="container">
@@ -813,7 +805,7 @@
             <div class="row gx-1">
                 <div class="col-md-4">
                     <select id="{{ tstepID }}-start-mon" class="form-select form-select2-nosearch"></select>
-                    {#  <select id="{{ tempRes }}-map-date" class="form-select form-select2-nosearch"></select> #}
+                    {# <select id="{{ tempRes }}-map-date" class="form-select form-select2-nosearch"></select> #}
                 </div>
                 <div class="col-md-2">
                     <select id="{{ tstepID }}-start-day" class="form-select form-select2-nosearch"></select>
@@ -849,7 +841,7 @@
             </div>
         </div>
     </fieldset>
-    <fieldset id="{{ tempRes }}-map-def-spell" class="border border-secondary rounded-3" >
+    <fieldset id="{{ tempRes }}-map-def-spell" class="border border-secondary rounded-3">
         <legend id="{{ tempRes }}-map-def-spell-thres-lab" class="legend-label">{{ pageText.definition.spell.label }}</legend>
         <div class="row gx-0 mt-1">
             <div class="col-md-2 d-flex align-items-center">
@@ -870,7 +862,7 @@
                 {% endfor %}
             </select>
         </div>
-        <div id="div-{{ tempRes }}-map-climato-proba" >
+        <div id="div-{{ tempRes }}-map-climato-proba">
             <div class="input-group w-75 mt-2">
                 <span class="input-group-text">{{ pageText.probabilities.thres }}</span>
                 <input id="{{ tempRes }}-map-climato-probaTh" type="text" value="{{ pageText.parameters.TotRain.value}}" class="form-control" style="flex: 0 0 70px;">
@@ -886,8 +878,6 @@
             </div>
         </div>
     </fieldset>
-
-
     <!--  -->
     <fieldset id="div-{{ tstepID }}-climato-years" class="border border-secondary rounded-3">
         <legend class="legend-label">{{ pageText.opt_season_map.label_year }}</legend>
@@ -914,17 +904,12 @@
             </div>
         </div>
     </fieldset>
-
-
-
 </div>
 {% endmacro %}
-
 <!--  -->
 {% macro create_map_control_drm_analysis_spi(tempRes, pageText) %}
 <div class="container">
     {% set tstepID = tempRes ~ '-map-date' %}
-
     <select id="{{ tempRes }}-map-variable" hidden>
         <option value="rainfall" selected>Rainfall</option>
     </select>
@@ -986,10 +971,8 @@
             </div>
         </div>
     </fieldset>
-
 </div>
 {% endmacro %}
-
 <!--  -->
 {% macro create_expand_charts_compare(tempRes, pageText) %}
 <div class="container">
@@ -1020,7 +1003,6 @@
     monitoring spi monthly
 </div>
 {% endmacro %}
-
 <!--  -->
 
 {% macro create_map_control_spi_proj(tempRes, pageText, prefix=none, include_map=true) %}
@@ -1151,7 +1133,6 @@
 
 </div>
 {% endmacro %}
-
 <!--  -->
 
 {% macro create_map_control_model_proj(tempRes, pageText) %}
@@ -1252,7 +1233,6 @@
 </div>
 {% endmacro %}
 
-
 <!--  -->
 {% macro create_map_control_seasonal_proj(tempRes, pageText) %}
 <div class="container">
@@ -1314,8 +1294,6 @@
         <div id="{{ prefix }}-season-summary" class="d-flex justify-content-center">
         </div>
     </fieldset>
-
-    <!--  -->
     <fieldset class="border border-secondary rounded-3">
         <legend class="legend-label">{{ pageText.opt_climatological_period.label }}</legend>
         <div class="container-fluid">
@@ -1391,24 +1369,72 @@
 
 </div>
 {% endmacro %}
-
 <!--  -->
 {% macro create_map_control_health_wasp(tempRes, pageText) %}
 <div class="container">
-
 </div>
 {% endmacro %}
-
 <!--  -->
 {% macro create_map_control_health_cmst(tempRes, pageText) %}
 <div class="container">
-
 </div>
 {% endmacro %}
-
 <!--  -->
 {% macro create_map_control_health_ndvi(tempRes, pageText) %}
 <div class="container">
-
+</div>
+{% endmacro %}
+<!--  -->
+{% macro create_map_control_seasfcst(tempRes, pageText) %}
+<div class="container">
+    <fieldset class="border border-secondary rounded-3">
+        <legend class="legend-label">{{ pageText.variables.label }}</legend>
+        <select id="{{ tempRes }}-map-variable" class="form-select form-select2-nosearch">
+            {% for key, value in pageText.variables.select.items() %}
+            <option value="{{key}}">{{value}}</option>
+            {% endfor %}
+        </select>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3">
+        <legend class="legend-label">{{ pageText.forecasts.type.label }}</legend>
+        <select id="{{ tempRes }}-forecast-type" class="form-select form-select2-nosearch">
+            {% for key, value in pageText.forecasts.type.select.items() %}
+            <option value="{{key}}">{{value}}</option>
+            {% endfor %}
+        </select>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 mt-2">
+        <span class="ms-3">{{ pageText.forecasts.season.issued }}</span>
+        <select id="{{ tempRes }}-forecast-issued-month" class="form-select form-select2-nosearch d-inline-block w-25 align-middle"></select>
+        <select id="{{ tempRes }}-forecast-issued-year" class="form-select form-select2-nosearch d-inline-block w-25 align-middle"></select>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 mt-2">
+        <span class="ms-3">{{ pageText.forecasts.season.target }}</span>
+        <select id="{{ tempRes }}-forecast-target" class="form-select form-select2-nosearch d-inline-block w-25 align-middle"></select>
+    </fieldset>
+    <fieldset id="{{ tempRes }}-flexible-proba-opt" class="border border-secondary rounded-3">
+        <legend class="legend-label">{{ pageText.forecasts.type.select.flexible }}</legend>
+        <select id="{{ tempRes }}-flexible-parameters" class="form-select form-select2-nosearch">
+            {% for key, value in pageText.forecasts.parameters.rainfall.items() %}
+            <option value="{{key}}">{{value}}</option>
+            {% endfor %}
+        </select>
+        <div id="{{ tempRes }}-flexible-proba-exceed" class="mt-2">
+            <select id="{{ tempRes }}-flexible-proba-thres" class="form-select form-select2-nosearch d-inline-block w-auto align-middle">
+                {% for key, value in pageText.forecasts.proba.rainfall.items() %}
+                <option value="{{ key }}">{{ value.select }}
+                </option>
+                {% endfor %}
+            </select>
+            <select id="{{ tempRes }}-flexible-proba-value-1" class="d-none form-select d-inline-block w-auto align-middle">
+                {% for perc in range(10, 91, 5) %}
+                <option value="{{ perc }}" {% if (perc==pageText.forecasts.proba.rainfall.percentile.value) %} selected {% endif %}>{{ perc }}</option>
+                {% endfor %}
+            </select>
+            <span id="{{ tempRes }}-flexible-proba-unit-1" class="d-none">{{ pageText.forecasts.proba.rainfall.percentile.units }}</span>
+            <input id="{{ tempRes }}-flexible-proba-value-2" class="d-none form-control form-control-sm text-center d-inline-block w-auto align-middle" type="text" size="5" value="{{ pageText.forecasts.proba.rainfall.rainfall.value }}">
+            <span id="{{ tempRes }}-flexible-proba-unit-2" class="d-none">{{ pageText.forecasts.proba.rainfall.rainfall.units }}</span>
+        </div>
+    </fieldset>
 </div>
 {% endmacro %}

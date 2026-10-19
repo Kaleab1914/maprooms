@@ -38,7 +38,9 @@ function combineAxisResolvers(...resolvers) {
 }
 
 function makeCaseKeyResolver(...selectIds) {
+    /* beautify preserve:start */
     // return () => selectIds.map(id => $(`#${id}`).val() ?? '').join('|');
+    /* beautify preserve:end */
     return () => selectIds
         .map(id => {
             const value = $(`#${id}`).val();
@@ -1209,8 +1211,8 @@ function setAnalysisExpandModalDrmExt_cdf(tempRes, contID) {
             expand_analysis_charts_drmExt_cdf(contChart, tempRes);
         });
 
-        $(`#${tempRes}-proba-parameters`).trigger('change');
-        
+    $(`#${tempRes}-proba-parameters`).trigger('change');
+
 
 }
 
@@ -1231,13 +1233,13 @@ function setAnalysisExpandModalDrmExt_pdf(tempRes, contID) {
 
     const contChart = `container-chart-${contID}`;
     $(`#plotly-replot-${contID}`)
-    .off('click.drmExtReplot')
-    .on('click.drmExtReplot', () => {
-        expand_analysis_charts_drmExt_pdf(
-            contChart,
-            tempRes
-        );
-    });
+        .off('click.drmExtReplot')
+        .on('click.drmExtReplot', () => {
+            expand_analysis_charts_drmExt_pdf(
+                contChart,
+                tempRes
+            );
+        });
 
     $(`#${tempRes}-pdf-parameters`)
         .off('change.drmExtExpandParameters')
@@ -1272,12 +1274,11 @@ function setAnalysisExpandModalDrmExt_pdf(tempRes, contID) {
                     []
                 );
             }
-            
+
             expand_analysis_charts_drmExt_pdf(contChart, tempRes);
         });
 
-        $(`#${tempRes}-pdf-parameters`).trigger('change');
-        
+    $(`#${tempRes}-pdf-parameters`).trigger('change');
 
 }
 

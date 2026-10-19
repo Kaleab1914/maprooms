@@ -4,6 +4,7 @@ import base64
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+from matplotlib.patches import Rectangle
 from .util import pretty
 from .colorbar import format_ColorScale, colorRampPalette
 from ._colors import COLORS_MAPROOM
@@ -163,6 +164,7 @@ def create_imagePng(
         orientation='horizontal'
     )
     ckeys['png'] = render_image_png(plt)
+    ckeys['raster'] = False
 
     return {'data': img_out, 'ckeys': ckeys}
 
@@ -191,3 +193,84 @@ def raster_colorbar_imagePng(colors_list, n = 100):
     )
 
     return render_image_png(plt)
+
+def terciles_imagePng(data, breaks=None, colors=None):
+    if breaks is None:
+        breaks = [40, 50, 60, 70, 80, 90, 100]
+    breaks = np.array(breaks)
+
+    if colors is None:
+        colors = {
+            'Above': ['#c8f5c5', '#79ec68', '#58bd32', '#439a27', '#2f731b', '#17450e'],
+            'Normal': ['#dff6f3', '#b8efeb', '#81e8e2', '#50ddd8', '#26c8c8', '#0ea8ad'],
+            'Below': ['#ffff72', '#ffd84b', '#f6a62c', '#ed741d', '#df3a1b', '#bd1716'],
+        }
+
+    categories = tuple(reversed(colors.keys()))
+
+    ###### map
+    fig = plt.figure()
+    ax = plt.axes([0, 0, 1, 1])
+
+    for category, label in enumerate(categories):
+        field = np.where(
+            (data['winner'] == category) & (data['proba'] >= 40),
+            data['proba'],
+            np.nan
+        )
+        cmap = mcolors.ListedColormap(colors[label])
+        norm = mcolors.BoundaryNorm(breaks, cmap.N, clip=True)
+        ax.pcolormesh(
+            data['lon'],
+            data['lat'],
+            field,
+            cmap=cmap,
+            norm=norm,
+            shading='nearest',
+            rasterized=True
+        )
+
+    x_min, x_max = ax.get_xlim()
+    y_min, y_max = ax.get_ylim()
+    bounds = [[y_max.item(), x_min.item()],
+              [y_min.item(), x_max.item()]]
+    ax.axis('off')
+
+    img_png = render_image_png(plt)
+    img_out = {'png': img_png, 'bounds': bounds}
+
+    ##### colorbar
+    ckeys = {}
+    fig = plt.figure(figsize=(10.5, 1.15), dpi=200, facecolor='white')
+    width, height, bottom = 0.295, 0.36, 0.26
+    lefts = [0.02, 0.3525, 0.685]
+
+    for label, left in zip(categories, lefts):
+        ax = fig.add_axes([left, bottom, width, height])
+        ax.set_xlim(40, 100)
+        ax.set_ylim(0, 1)
+
+        for index, color in enumerate(colors[label]):
+            ax.add_patch(
+                Rectangle(
+                    (breaks[index], 0),
+                    10,
+                    1,
+                    facecolor=color,
+                    edgecolor='#777777',
+                    linewidth=0.6,
+                )
+            )
+
+        ax.set_yticks([])
+        ax.set_xticks([40, 50, 60, 70, 80, 90])
+        ax.tick_params(axis='x', labelsize=15, length=0, pad=3)
+        ax.set_title(f'{label} (%)', fontsize=18, fontweight='bold', pad=4)
+        for spine in ax.spines.values():
+            spine.set_color('#777777')
+            spine.set_linewidth(0.7)
+
+    ckeys['png'] = render_image_png(plt)
+    ckeys['raster'] = True
+
+    return {'data': img_out, 'ckeys': ckeys}

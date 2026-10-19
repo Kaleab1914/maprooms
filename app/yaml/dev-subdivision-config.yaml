@@ -1,4 +1,6 @@
 ## Shapefiles or GeoJSON of the subdivision
+## location (administrative group): true for the subdivision whose polygon name
+## is shown as "Located near" in the chart information of a grid point
 subdivision:
     woreda:
         file: gadm41_ETH_3.json
@@ -7,6 +9,7 @@ subdivision:
         region: NAME_1
         order: 0
         group: administrative
+        location: true
         name:
             en: Woreda
             fr: Woreda
@@ -17,6 +20,7 @@ subdivision:
         region: NAME_1
         order: 1
         group: administrative
+        location: false
         name:
             en: Zone
             fr: Zone
@@ -27,6 +31,7 @@ subdivision:
         region: NAME_1
         order: 2
         group: administrative
+        location: false
         name:
             en: Region
             fr: Région
@@ -77,3 +82,5 @@ subdivision_map:
 subdivision_def:
     administrative: [zone, woreda]
     whatershed: [sub_basins]
+
+subdivision_blank_data: region

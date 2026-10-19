@@ -615,7 +615,7 @@ function displayClimateMonitoringMap(time_res, options, map) {
 
 ////////////
 
-function queryParamsDrmAnalysisMap(time_res){
+function queryParamsDrmAnalysisMap(time_res) {
     let query = new Object();
     query.temporalRes = time_res;
     query.dataset = DATA_SET.use;
@@ -629,7 +629,7 @@ function queryParamsDrmAnalysisMap(time_res){
     query.dailyAnalysis = true;
     query.minFrac = 1.0;
     query.seasParams = $(`#${time_res}-map-parameters`).val();
-    
+
     // Force it to use max_temperature or min_temperature for temperature variable 
     if (['max_temperature', 'min_temperature'].includes(query.variable)) {
         const selectedVariable = query.variable;
@@ -655,7 +655,7 @@ function queryParamsDrmAnalysisMap(time_res){
     }
 
     if (query.variable === 'rainfall') {
-        query.defSpell = parseInt($(`#${time_res}-map-def-spell-thres-val`).val().trim(),10);
+        query.defSpell = parseInt($(`#${time_res}-map-def-spell-thres-val`).val().trim(), 10);
     };
 
     query.defThres = Number($(`#${time_res}-map-def-number-thres-val`).val().trim());
@@ -673,7 +673,6 @@ function queryParamsDrmAnalysisMap(time_res){
 
     return query;
 }
-
 
 function displayDrmAnalysisMap(time_res, options, map) {
     const query = queryParamsDrmAnalysisMap(time_res);
@@ -706,12 +705,14 @@ function queryParamsDrmAnalysisMapSPI(time_res) {
     let query = new Object();
     query.temporalRes = time_res;
     //query.temporalRes = 'seasonal';
-    
+
     query.dataset = DATA_SET.use;
+    /* beautify preserve:start */
     query.map_variable = $(`#${time_res}-map-variable`).val() ?? 'rainfall';
+    /* beautify preserve:end */
     query.variable = DATA_SET.variables[query.map_variable];
     //query.variable = 'rainfall';
-    
+
     query.mapType = 'rawdata';
     const tstep_id = `${time_res}-map-date`;
     const bp_id = `${time_res}-base-period`;
@@ -744,9 +745,8 @@ function queryParamsDrmAnalysisMapSPI(time_res) {
     const date = $(`#${tstep_id}-calendar`).val();
 
     query.seasStart = Number(date.split('-')[1]);
-    query.Date = formatSeasonDate(date, query.seasLength, true); 
+    query.Date = formatSeasonDate(date, query.seasLength, true);
     return query;
-
 }
 
 function displayDrmAnalysisMapSPI(time_res, options, map) {
@@ -773,14 +773,74 @@ function displayDrmAnalysisMapSPI(time_res, options, map) {
     return request;
 }
 
+////////////
 
+function queryParamsClimateSeasFcstMap(time_res) {
+    let query = new Object();
+    query.temporalRes = time_res;
+    query.dataset = DATA_SET.use;
+    query.map_variable = $(`#${time_res}-map-variable`).val();
+    query.variable = query.map_variable;
+
+    query.year = $(`#${time_res}-forecast-issued-year`).val();
+    query.issued = $(`#${time_res}-forecast-issued-month`).val();
+    query.target = $(`#${time_res}-forecast-target`).val();
+
+    query.forecast = $(`#${time_res}-forecast-type`).val();
+    if (query.forecast === 'flexible') {
+        query.parameter = $(`#${time_res}-flexible-parameters`).val();
+        if (['probExc', 'probNoExc'].includes(query.parameter)) {
+            query.probaType = $(`#${time_res}-flexible-proba-thres`).val();
+            if (query.probaType === 'percentile') {
+                query.probaThres = Number($(`#${time_res}-flexible-proba-value-1`).val().trim());
+            } else {
+                query.probaThres = Number($(`#${time_res}-flexible-proba-value-2`).val().trim());
+            }
+        }
+    }
+
+    const colorbar = colorbarGetData();
+    if (!colorbar) {
+        return false;
+    }
+    query.colorbar = colorbar;
+
+    return query;
+}
+
+function displayClimateSeasFcstMap(time_res, options, map) {
+    const query = queryParamsClimateSeasFcstMap(time_res);
+    if (!query) {
+        return false;
+    }
+
+    const endpoint = createEndpoint(
+        'climate_forecast',
+        'climate_forecast_seas_map'
+    );
+
+    const request = ajaxLeafletMap(
+        endpoint,
+        query,
+        displayRasterImage,
+        options,
+        map
+    );
+
+    const date = `${query.target} ${query.year}`;
+    map.displayText_date.update(date);
+    // updateAnalysisMapDate(time_res, query, map);
+
+    return request;
+}
 
 ////////////
+
 function queryParamsClimateProjectionSeasonalMap() {
-    const prefix = "seasonal-seasonal-proj";
+    const prefix = 'seasonal-seasonal-proj';
 
     const query = {
-        temporalRes: "seasonal",
+        temporalRes: 'seasonal',
         variable: $(`#${prefix}-variable`).val(),
         model: $(`#${prefix}-gcm`).val(),
         scenario: $(`#${prefix}-scenario`).val(),
@@ -804,11 +864,11 @@ function queryParamsClimateProjectionSeasonalMap() {
     ].every(value => Number.isInteger(value) && value > 0);
 
     if (
-        !valid
-        || query.seasStart > 12
-        || query.seasEnd > 12
+        !valid ||
+        query.seasStart > 12 ||
+        query.seasEnd > 12
     ) {
-        flashMessage("Enter valid months, years and period length.", "error");
+        flashMessage('Enter valid months, years and period length.', 'error');
         return false;
     }
 
@@ -830,8 +890,8 @@ function displayClimateProjectionSeasonalMap(options, map) {
     }
 
     const endpoint = createEndpoint(
-        "climate_projection",
-        "climate_projection_seasonal_map"
+        'climate_projection',
+        'climate_projection_seasonal_map'
     );
 
     return ajaxLeafletMap(
@@ -844,8 +904,8 @@ function displayClimateProjectionSeasonalMap(options, map) {
         options,
         map
     );
-}
 
+}
 
 
 function queryParamsClimateProjectionAgreementMap() {
@@ -1007,3 +1067,4 @@ function displayClimateProjectionSpiMap(options, map) {
         map
     );
 }
+

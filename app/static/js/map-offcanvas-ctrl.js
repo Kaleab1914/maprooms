@@ -685,37 +685,37 @@ function setOffCanvasMapControlsDrmExtTemp(tempRes) {
     $(`#${tempRes}-map-parameters`)
         .off('change.drmExtTempParameters')
         .on('change.drmExtTempParameters', function() {
-            const this_val= $(this).val();
+            const this_val = $(this).val();
 
-            if (this_val==='seasAvg'){
+            if (this_val === 'seasAvg') {
                 // $(`#${tempRes}-map-def-number`).hide();
                 setVisibility([], [`${tempRes}-map-def-number`]);
-            }else{
-            //   $(`#${tempRes}-map-def-number`).show();
-             setVisibility([`${tempRes}-map-def-number`], []);
+            } else {
+                //   $(`#${tempRes}-map-def-number`).show();
+                setVisibility([`${tempRes}-map-def-number`], []);
             }
 
             $(`#${tempRes}-map-climato-probaTh`).val(PARAMS_LIST[this_val].value);
             $(`#${tempRes}-map-climato-parUnit`).text(PARAMS_LIST[this_val].unit);
 
-        }); 
+        });
     $(`#${tempRes}-map-parameters`).trigger('change');
 
-        // 
+    // 
     $(`#${tempRes}-map-statistics`)
         .off('change.drmExtTempParameters')
         .on('change.drmExtTempParameters', function() {
-            const this_val= $(this).val();
+            const this_val = $(this).val();
 
-            if (['probExc', 'probNoExc'].includes(this_val)){
+            if (['probExc', 'probNoExc'].includes(this_val)) {
                 // $(`#${tempRes}-map-def-number`).hide();
                 setVisibility([`div-${tempRes}-map-climato-proba`], []);
-            }else{
-            //  $(`#${tempRes}-map-def-number`).show();
-                setVisibility([],[`div-${tempRes}-map-climato-proba`]);
+            } else {
+                //  $(`#${tempRes}-map-def-number`).show();
+                setVisibility([], [`div-${tempRes}-map-climato-proba`]);
             }
-    
-        }); 
+
+        });
     $(`#${tempRes}-map-statistics`).trigger('change');
 
 }
@@ -727,15 +727,15 @@ function setOffCanvasMapControlsDrmExtRain(tempRes) {
     $(`#${tempRes}-map-parameters`)
         .off('change.drmExtRainParameters')
         .on('change.drmExtRainParameters', function() {
-            const this_val= $(this).val();
+            const this_val = $(this).val();
 
-            if (this_val==='TotRain'){
+            if (this_val === 'TotRain') {
                 setVisibility(
-                [],
-                [
-                    `${tempRes}-map-def-number`,
-                    `${tempRes}-map-def-spell`
-                ])
+                    [],
+                    [
+                        `${tempRes}-map-def-number`,
+                        `${tempRes}-map-def-spell`
+                    ])
 
             } else if (['NumWD', 'NumDD', 'RainInt'].includes(this_val)) {
                 setVisibility(
@@ -758,24 +758,24 @@ function setOffCanvasMapControlsDrmExtRain(tempRes) {
             $(`#${tempRes}-map-climato-probaTh`).val(PARAMS_LIST[this_val].value);
             $(`#${tempRes}-map-climato-parUnit`).text(PARAMS_LIST[this_val].unit);
 
-        }); 
+        });
     $(`#${tempRes}-map-parameters`).trigger('change');
 
     //
     $(`#${tempRes}-map-statistics`)
         .off('change.drmExtRainParameters')
         .on('change.drmExtRainParameters', function() {
-            const this_val= $(this).val();
+            const this_val = $(this).val();
 
-            if (['probExc', 'probNoExc'].includes(this_val)){
+            if (['probExc', 'probNoExc'].includes(this_val)) {
                 // $(`#${tempRes}-map-def-number`).hide();
                 setVisibility([`div-${tempRes}-map-climato-proba`], []);
-            }else{
-            //   $(`#${tempRes}-map-def-number`).show();
-                setVisibility([],[`div-${tempRes}-map-climato-proba`]);
+            } else {
+                //   $(`#${tempRes}-map-def-number`).show();
+                setVisibility([], [`div-${tempRes}-map-climato-proba`]);
             }
         });
-        
+
     $(`#${tempRes}-map-statistics`).trigger('change');
 
 }
@@ -785,7 +785,7 @@ function setOffCanvasMapControlDrmSpiAnalysis(tempRes) {
     // setNamesCalendar(
     //     `${tempRes}-map-date`, tempRes
     // );
-    setDateCalendar(`${tempRes}-map-date`,`${tempRes}-map-variable`,DATA_SET.use,tempRes);
+    setDateCalendar(`${tempRes}-map-date`, `${tempRes}-map-variable`, DATA_SET.use, tempRes);
     setAnalysisSeasonLengthMap(tempRes);
     //setClimateSeasonMonthsTelecon(tempRes);
     setAnalysisSeasonMonths(tempRes, 'rawdata');
@@ -795,10 +795,9 @@ function setOffCanvasMapControlDrmSpiAnalysis(tempRes) {
 
 }
 
-
 function setOffCanvasMapControlSeasonalProjection(tempRes, prefix = `${tempRes}-seasonal-proj`) {
-// function setOffCanvasMapControlSeasonalProjection(tempRes) {
-//     const prefix = `${tempRes}-seasonal-proj`;
+    // function setOffCanvasMapControlSeasonalProjection(tempRes) {
+    //     const prefix = `${tempRes}-seasonal-proj`;
     const months = getListOfMonthsCalendar().short;
 
     ["start", "end"].forEach(boundary => {
@@ -824,6 +823,8 @@ function setOffCanvasMapControlSeasonalProjection(tempRes, prefix = `${tempRes}-
 }
 
 
+function setOffCanvasMapControlSpiProjection(tempRes) {
+    const prefix = `${tempRes}-spi-proj`;
 
 function setProjectionSpiControls(prefix, sourcePrefix = null) {
     const length = sourcePrefix
@@ -846,6 +847,7 @@ function setProjectionSpiControls(prefix, sourcePrefix = null) {
         $(`#${prefix}-plot-${field}`).val(value);
     });
 }
+
 
 
 function setProjectionSpiMapMonth(prefix, month) {
@@ -1078,3 +1080,168 @@ function setProjectionSpiSeasonMonths(tempRes) {
         );
     }
 }
+
+//////////////
+
+function setOffCanvasSeasFcstMapControl(tempRes) {
+    $(`#${tempRes}-forecast-type`)
+        .off('change.seasonalForecast')
+        .on('change.seasonalForecast', function() {
+            if ($(this).val() === 'flexible') {
+                $(`#${tempRes}-flexible-proba-opt`).show();
+            } else {
+                $(`#${tempRes}-flexible-proba-opt`).hide();
+            }
+        });
+    $(`#${tempRes}-forecast-type`).trigger('change');
+
+    $(`#${tempRes}-flexible-parameters`)
+        .off('change.seasonalForecast')
+        .on('change.seasonalForecast', function() {
+            setSeasFcstProbaParsVisibility(tempRes, $(this).val());
+            const this_stat = $(`#${tempRes}-flexible-proba-thres`).val();
+            setSeasFcstProbaThresVisibility(tempRes, this_stat);
+        });
+    $(`#${tempRes}-flexible-parameters`).trigger('change');
+
+    $(`#${tempRes}-flexible-proba-thres`)
+        .off('change.seasonalForecast')
+        .on('change.seasonalForecast', function() {
+            setSeasFcstProbaThresVisibility(tempRes, $(this).val());
+        });
+    $(`#${tempRes}-flexible-proba-thres`).trigger('change');
+
+    $(`#${tempRes}-map-variable`)
+        .off('change.seasonalForecast')
+        .on('change.seasonalForecast', function() {
+            const this_val = $(this).val();
+            setSeasFcstSeasonSelect(tempRes, this_val);
+
+            const fcst_pars = SEAS_FCST.parameters[this_val];
+            $(`#${tempRes}-flexible-parameters`).empty();
+            for (const k of SEAS_FCST.order[this_val]) {
+                $(`#${tempRes}-flexible-parameters`).append(
+                    $('<option>').text(fcst_pars[k]).val(k)
+                );
+            }
+            $(`#${tempRes}-flexible-parameters`)
+                .val(SEAS_FCST.order[this_val][0]);
+
+            // for (const [k, v] of Object.entries(fcst_pars)) {
+            //     $(`#${tempRes}-flexible-parameters`).append(
+            //         $('<option>').text(v).val(k)
+            //     );
+            // }
+
+            const proba_thres = SEAS_FCST.proba[this_val];
+            $(`#${tempRes}-flexible-proba-thres`).empty();
+            for (const [k, v] of Object.entries(proba_thres)) {
+                $(`#${tempRes}-flexible-proba-thres`).append(
+                    $('<option>').text(v.select).val(k)
+                );
+            }
+
+            const this_par = $(`#${tempRes}-flexible-parameters`).val();
+            setSeasFcstProbaParsVisibility(tempRes, this_par);
+
+            const this_stat = $(`#${tempRes}-flexible-proba-thres`).val();
+            // if (this_stat !== 'percentile') {
+            $(`#${tempRes}-flexible-proba-value-2`)
+                .val(proba_thres[this_val].value);
+            $(`#${tempRes}-flexible-proba-unit-2`)
+                .text(proba_thres[this_val].units);
+            // }
+            setSeasFcstProbaThresVisibility(tempRes, this_stat);
+        });
+    $(`#${tempRes}-map-variable`).trigger('change');
+}
+
+function setSeasFcstProbaThresVisibility(tempRes, stats) {
+    if (stats === 'percentile') {
+        $(`#${tempRes}-flexible-proba-value-1`).removeClass('d-none');
+        $(`#${tempRes}-flexible-proba-unit-1`).removeClass('d-none');
+        $(`#${tempRes}-flexible-proba-value-2`).addClass('d-none');
+        $(`#${tempRes}-flexible-proba-unit-2`).addClass('d-none');
+    } else {
+        $(`#${tempRes}-flexible-proba-value-1`).addClass('d-none');
+        $(`#${tempRes}-flexible-proba-unit-1`).addClass('d-none');
+        $(`#${tempRes}-flexible-proba-value-2`).removeClass('d-none');
+        $(`#${tempRes}-flexible-proba-unit-2`).removeClass('d-none');
+    }
+}
+
+function setSeasFcstProbaParsVisibility(tempRes, pars) {
+    if (['probExc', 'probNoExc'].includes(pars)) {
+        $(`#${tempRes}-flexible-proba-exceed`).show();
+    } else {
+        $(`#${tempRes}-flexible-proba-exceed`).hide();
+    }
+}
+
+function setSeasFcstSeasonSelect(tempRes, variable) {
+    $.get('/get_seasonal_forecasts_data', { variable: variable }, function(json) {
+        if (json.status !== 0) {
+            flashMessage(json.message, 'error');
+            return false;
+        }
+        setSeasFcstDefSeasons(tempRes, json.data);
+    }, 'json').fail(function(jqXHR, textStatus, errorThrown) {
+        displayAjaxError(jqXHR, textStatus, errorThrown);
+    });
+}
+
+function setSeasFcstDefSeasons(tempRes, fcst_obj) {
+    const year_id = $(`#${tempRes}-forecast-issued-year`);
+    for (const yr of fcst_obj.years) {
+        year_id.append(
+            $('<option>').text(yr).val(yr)
+        );
+    }
+    year_id.val(fcst_obj.display.year);
+    year_id
+        .off('change.fcstYear')
+        .on('change.fcstYear', function() {
+            setSeasFcstIssuedMonth(
+                tempRes, $(this).val(), fcst_obj
+            );
+        });
+    year_id.trigger('change');
+
+    // 
+    setTimeout(() => {
+        $(`#${tempRes}-forecast-target`)
+            .val(fcst_obj.display.target);
+    }, 100);
+}
+
+function setSeasFcstIssuedMonth(tempRes, year, fcst_obj) {
+    const month_id = $(`#${tempRes}-forecast-issued-month`);
+    month_id.empty();
+    const fcst = fcst_obj.forecast[year].issued;
+    for (const mo of fcst) {
+        month_id.append(
+            $('<option>').text(mo.text).val(mo.val)
+        );
+    }
+    month_id.val(fcst_obj.display.month);
+    month_id
+        .off('change.fcstMonth')
+        .on('change.fcstMonth', function() {
+            setSeasFcstTargets(
+                tempRes, year, $(this).val(), fcst_obj
+            );
+        });
+    month_id.trigger('change');
+}
+
+function setSeasFcstTargets(tempRes, year, month, fcst_obj) {
+    const target_id = $(`#${tempRes}-forecast-target`);
+    target_id.empty();
+    const fcst = fcst_obj.forecast[year].targets[month];
+    for (const tg of fcst) {
+        target_id.append(
+            $('<option>').text(tg).val(tg)
+        );
+    }
+}
+

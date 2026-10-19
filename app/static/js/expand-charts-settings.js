@@ -1,3 +1,4 @@
+/* beautify ignore:start */
 // converts an rgb(a) match from a regex to a #rrggbb hex string
 function rgbTripleToHex(rgbMatch) {
     return `#${rgbMatch.slice(1, 4).map(value =>
@@ -1604,3 +1605,4 @@ function enablePlotlyChartSettings(
             dialog.fadeOut(200);
         });
 }
+/* beautify ignore:end */
