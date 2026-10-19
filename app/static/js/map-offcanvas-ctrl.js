@@ -823,8 +823,8 @@ function setOffCanvasMapControlSeasonalProjection(tempRes, prefix = `${tempRes}-
 }
 
 
-function setOffCanvasMapControlSpiProjection(tempRes) {
-    const prefix = `${tempRes}-spi-proj`;
+// function setOffCanvasMapControlSpiProjection(tempRes) {
+//     const prefix = `${tempRes}-spi-proj`;
 
 function setProjectionSpiControls(prefix, sourcePrefix = null) {
     const length = sourcePrefix
