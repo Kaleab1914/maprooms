@@ -827,9 +827,9 @@ function setOffCanvasMapControlSeasonalProjection(tempRes, prefix = `${tempRes}-
 //     const prefix = `${tempRes}-spi-proj`;
 
 function setProjectionSpiControls(prefix, sourcePrefix = null) {
-    const length = sourcePrefix
-        ? Number($(`#${sourcePrefix}-timescale`).val())
-        : SPI_SETTINGS.length;
+    const length = sourcePrefix ?
+        Number($(`#${sourcePrefix}-timescale`).val()) :
+        SPI_SETTINGS.length;
 
     const select = $(`#${prefix}-timescale`).empty();
 
@@ -840,9 +840,9 @@ function setProjectionSpiControls(prefix, sourcePrefix = null) {
     select.val(length).trigger('change.select2');
 
     ['start', 'end'].forEach(field => {
-        const value = sourcePrefix
-            ? $(`#${sourcePrefix}-plot-${field}`).val()
-            : SPI_PLOT_PERIOD[`${field}_year`];
+        const value = sourcePrefix ?
+            $(`#${sourcePrefix}-plot-${field}`).val() :
+            SPI_PLOT_PERIOD[`${field}_year`];
 
         $(`#${prefix}-plot-${field}`).val(value);
     });
@@ -854,10 +854,10 @@ function setProjectionSpiMapMonth(prefix, month) {
     const coverage = $(`#${prefix}-gcm`).data('spiCoverage');
 
     if (
-        !coverage
-        || !/^\d{4}-(0[1-9]|1[0-2])$/.test(month)
-        || month < coverage.start.slice(0, 7)
-        || month > coverage.end.slice(0, 7)
+        !coverage ||
+        !/^\d{4}-(0[1-9]|1[0-2])$/.test(month) ||
+        month < coverage.start.slice(0, 7) ||
+        month > coverage.end.slice(0, 7)
     ) {
         return false;
     }
@@ -899,9 +899,9 @@ async function setProjectionSpiDateCalendars(
     modelSelect.data('spiCoverageToken', token);
     modelSelect.data('spiCalendarReady', false);
 
-    const previousMap = resetDates
-        ? null
-        : $(`#${prefix}-map-date-calendar`).val();
+    const previousMap = resetDates ?
+        null :
+        $(`#${prefix}-map-date-calendar`).val();
 
     try {
         const json = await $.ajax({
@@ -924,11 +924,13 @@ async function setProjectionSpiDateCalendars(
             return false;
         }
 
+        /* beautify preserve:start */
         if (!json || json.status !== 0 || !json.data) {
             throw new Error(
                 json?.message || 'Unable to load dataset dates.'
             );
         }
+        /* beautify preserve:end */
 
         const coverage = json.data;
 
@@ -958,25 +960,25 @@ async function setProjectionSpiDateCalendars(
         const first = coverage.start.slice(0, 7);
         const last = coverage.end.slice(0, 7);
 
-        const currentMap = resetDates
-            ? null
-            : $(`#${prefix}-map-date-calendar`).val();
+        const currentMap = resetDates ?
+            null :
+            $(`#${prefix}-map-date-calendar`).val();
 
         let month = String(
-            currentMap
-            || previousMap
-            || SPI_MAP_MONTHS.projection
+            currentMap ||
+            previousMap ||
+            SPI_MAP_MONTHS.projection
         ).slice(0, 7);
 
         if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
             month = first;
         }
 
-        month = month < first
-            ? first
-            : month > last
-                ? last
-                : month;
+        month = month < first ?
+            first :
+            month > last ?
+            last :
+            month;
 
         if (document.getElementById(`${prefix}-map-date`)) {
             const valid = setProjectionSpiMapMonth(
@@ -992,16 +994,16 @@ async function setProjectionSpiDateCalendars(
         }
 
         const end = Math.min(
-            Number($(`#${prefix}-plot-end`).val())
-                || SPI_PLOT_PERIOD.end_year,
+            Number($(`#${prefix}-plot-end`).val()) ||
+            SPI_PLOT_PERIOD.end_year,
             coverage.plot_end_year
         );
 
         const start = Math.max(
             coverage.plot_start_year,
             Math.min(
-                Number($(`#${prefix}-plot-start`).val())
-                    || SPI_PLOT_PERIOD.start_year,
+                Number($(`#${prefix}-plot-start`).val()) ||
+                SPI_PLOT_PERIOD.start_year,
                 end
             )
         );
@@ -1127,12 +1129,6 @@ function setOffCanvasSeasFcstMapControl(tempRes) {
             $(`#${tempRes}-flexible-parameters`)
                 .val(SEAS_FCST.order[this_val][0]);
 
-            // for (const [k, v] of Object.entries(fcst_pars)) {
-            //     $(`#${tempRes}-flexible-parameters`).append(
-            //         $('<option>').text(v).val(k)
-            //     );
-            // }
-
             const proba_thres = SEAS_FCST.proba[this_val];
             $(`#${tempRes}-flexible-proba-thres`).empty();
             for (const [k, v] of Object.entries(proba_thres)) {
@@ -1145,15 +1141,15 @@ function setOffCanvasSeasFcstMapControl(tempRes) {
             setSeasFcstProbaParsVisibility(tempRes, this_par);
 
             const this_stat = $(`#${tempRes}-flexible-proba-thres`).val();
-            // if (this_stat !== 'percentile') {
             $(`#${tempRes}-flexible-proba-value-2`)
                 .val(proba_thres[this_val].value);
             $(`#${tempRes}-flexible-proba-unit-2`)
                 .text(proba_thres[this_val].units);
-            // }
             setSeasFcstProbaThresVisibility(tempRes, this_stat);
+
+            return setSeasFcstSeasonSelect(tempRes, this_val);
         });
-    $(`#${tempRes}-map-variable`).trigger('change');
+    return $(`#${tempRes}-map-variable`).triggerHandler('change');
 }
 
 function setSeasFcstProbaThresVisibility(tempRes, stats) {
@@ -1179,12 +1175,21 @@ function setSeasFcstProbaParsVisibility(tempRes, pars) {
 }
 
 function setSeasFcstSeasonSelect(tempRes, variable) {
-    $.get('/get_seasonal_forecasts_data', { variable: variable }, function(json) {
+    return $.get('/get_seasonal_forecasts_data', { variable: variable }, function(json) {
         if (json.status !== 0) {
             flashMessage(json.message, 'error');
             return false;
         }
         setSeasFcstDefSeasons(tempRes, json.data);
+
+        const rlon = json.data.resolution.lon;
+        const rlat = json.data.resolution.lat;
+        $('#list-spatial-average').select2({
+            data: [{
+                id: 'grid',
+                text: `${rlon} x ${rlat}`
+            }]
+        });
     }, 'json').fail(function(jqXHR, textStatus, errorThrown) {
         displayAjaxError(jqXHR, textStatus, errorThrown);
     });
@@ -1244,4 +1249,3 @@ function setSeasFcstTargets(tempRes, year, month, fcst_obj) {
         );
     }
 }
-

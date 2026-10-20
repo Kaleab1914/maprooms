@@ -8,8 +8,10 @@ from flask import current_app as app
 import json
 
 from .scripts.forecasts_data import get_seasonal_forecast_files
-from .scripts.forecasts_seas import climate_forecast_seas_data
-
+from .scripts.forecasts_seas import (
+    climate_forecast_seas_data,
+    climate_forecast_seas_df
+)
 
 climate_forecast = Blueprint(
     'climate_forecast',
@@ -47,5 +49,14 @@ def climate_forecast_seas_map():
     try:
         map_data = climate_forecast_seas_data(params)
         return json.dumps(map_data)
+    except Exception as e:
+        return json.dumps({'status': -1, 'message': str(e)})
+
+@climate_forecast.route('/climate_forecast_seas_proba', methods=['POST'])
+def climate_forecast_seas_proba():
+    params = request.get_json()
+    try:
+        proba_data = climate_forecast_seas_df(params)
+        return json.dumps(proba_data)
     except Exception as e:
         return json.dumps({'status': -1, 'message': str(e)})

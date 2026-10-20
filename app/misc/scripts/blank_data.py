@@ -38,7 +38,7 @@ def blank_numpy_dict(
     lon2d, lat2d = np.meshgrid(lon, lat)
 
     if buffer:
-        pixel_size = abs(lon[1] - lon[0])
+        pixel_size = abs(float(lon[1] - lon[0]))
         polygon = polygon.buffer(pixel_size)
 
     inside = shapely.intersects_xy(polygon, lon2d, lat2d)
