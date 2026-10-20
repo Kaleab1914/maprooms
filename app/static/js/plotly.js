@@ -215,8 +215,9 @@ function setPlotlyThemeColors(container) {
             layout.yaxis2.tickfont.color = yax_tck_col2;
         }
 
-
+        // /* beautify preserve:start */
         // const title_col = gd.layout.title?.font?.color;
+        // /* beautify preserve:end */
         const title_col = gd.layout.title && gd.layout.title.font ?
             gd.layout.title.font.color :
             undefined;
@@ -268,7 +269,6 @@ function loadPlotlyExportLogo() {
 
 
 function getPlotlyExportLogoBox(icon, chart_height) {
-    
     const height = Math.round(Math.min(64, Math.max(44, chart_height / 10)));
     const pad = 8;
     return {
@@ -373,12 +373,12 @@ async function downloadPlotlyImageJPG(container) {
             print_layout.margin = { b: 100 };
         }
     }
-   
+
     if (plot_layout.title && plot_layout.title.text) {
         print_layout.margin = deepMerge(print_layout.margin || {}, { t: 60 });
     }
 
-   
+
     const logo_box = logo ?
         getPlotlyExportLogoBox(logo, gd._fullLayout.height) :
         null;
@@ -391,7 +391,7 @@ async function downloadPlotlyImageJPG(container) {
         });
     }
 
-   
+
     if (isWhitishColor(
             plot_layout.title && plot_layout.title.font ?
             plot_layout.title.font.color :
@@ -407,7 +407,7 @@ async function downloadPlotlyImageJPG(container) {
     print_layout = deepMerge(print_layout, legend_color);
     gd.layout = deepMerge(plot_layout, print_layout);
 
-    
+
     const scale = 3;
     Plotly.toImage(gd, { format: 'png', width: null, height: null, scale: scale })
         .then(function(dataUrl) {

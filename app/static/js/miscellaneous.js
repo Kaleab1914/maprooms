@@ -995,3 +995,28 @@ function groupTSDataByYear(ts_dates, ts_data, start_mon, time_res) {
 }
 
 //////////////
+
+function nearestIndex(arr, x) {
+    // Binary search for sorted array
+    let left = 0;
+    let right = arr.length - 1;
+
+    // Handle boundaries
+    if (x <= arr[left]) return left;
+    if (x >= arr[right]) return right;
+
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2);
+
+        if (arr[mid] === x) return mid;
+
+        if (arr[mid] < x) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+
+    // x lies between arr[right] and arr[left]
+    return (x - arr[right] <= arr[left] - x) ? right : left;
+}
