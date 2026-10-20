@@ -2516,6 +2516,12 @@ function preview_projection_query_pdf(tempRes, prefix = `${tempRes}-seasonal-pro
 // function preview_projection_query_pdf(tempRes) {
 //     const prefix = `${tempRes}-seasonal-proj`;
 
+    const spatial = queryParamsSpatialAverage();
+
+    if (!spatial) {
+        return false;
+    }
+
     const query = {
         temporalRes: tempRes,
         variable: $(`#${prefix}-variable`).val(),
@@ -2527,8 +2533,8 @@ function preview_projection_query_pdf(tempRes, prefix = `${tempRes}-seasonal-pro
             $(`#${prefix}-future-date-calendar`).val()
         ),
         climPeriod: Number($(`#${prefix}-period-length`).val()),
-        geomExtract: "points",
-        pointsList: getClickLoctation()
+        // geomExtract: "points",
+        // pointsList: getClickLoctation()
     };
 
     const valid = [
@@ -2546,7 +2552,10 @@ function preview_projection_query_pdf(tempRes, prefix = `${tempRes}-seasonal-pro
         return false;
     }
 
-    return query;
+    return {
+        ...query,
+        ...spatial
+    };
 }
 
 
@@ -2681,14 +2690,20 @@ function preview_projection_query_series(
     prefix = `${tempRes}-seasonal-proj`,
     scenarios = ['ssp1_2_6', 'ssp5_8_5']
 ) {
+    const spatial = queryParamsSpatialAverage();
+
+    if (!spatial) {
+        return false;
+    }    
+
     const query = {
         temporalRes: tempRes,
         variable: $(`#${prefix}-variable`).val(),
         seasStart: Number($(`#${prefix}-start-month`).val()),
         seasEnd: Number($(`#${prefix}-end-month`).val()),
         scenarios: scenarios,
-        geomExtract: 'points',
-        pointsList: getClickLoctation()
+        // geomExtract: 'points',
+        // pointsList: getClickLoctation()
     };
 
     const validMonths = [
@@ -2719,7 +2734,11 @@ function preview_projection_query_series(
         return false;
     }
 
-    return query;
+    // return query;
+    return {
+        ...query,
+        ...spatial
+    };
 }
 
 

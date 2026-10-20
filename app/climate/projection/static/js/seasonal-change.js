@@ -43,6 +43,18 @@ $(document).ready(function() {
             );
         });
 
+    const resolution = {
+        lon: '…',
+        lat: '…'
+    };
+
+    $(`#${prefix}-gcm`).data(
+        'projectionSpatialResolution',
+        resolution
+    );
+
+    setSelectSpatialAverage(resolution);
+
 
     const redraw = () => {
         displayClimateProjectionSeasonalMap(options, map);
@@ -52,7 +64,7 @@ $(document).ready(function() {
     // Initial map display.
     displayClimateProjectionSeasonalMap(options, map);
 
-    mapClickLoctation(
+    mapClickLayersSpatialAverage(
         preview_projection_display_charts,
         tempRes,
         map

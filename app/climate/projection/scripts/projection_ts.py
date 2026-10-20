@@ -19,7 +19,85 @@ from .projection_data import (
     get_climate_projection_dataset,
     get_climate_projection_variable
 )
+
 from .projection_sp import _integer, _seasonal_values
+from .projection_spi import (
+    _projection_spi_polygon,
+    _subset_projection_spi_polygon,
+)
+
+
+def _seasonal_chart_location(params):
+    params = dict(params)
+    params.pop('_chart_polygon', None)
+
+    mode = params.get('geomExtract', 'points')
+
+    if mode == 'polygons':
+        polygon = _projection_spi_polygon(params)
+        params['_chart_polygon'] = polygon
+
+        lon = float(polygon['lon'])
+        lat = float(polygon['lat'])
+
+    elif mode == 'points':
+        points = params.get('pointsList')
+
+        if not isinstance(points, list) or not points:
+            raise ValueError('Select a point on the map.')
+
+        lon = float(points[0]['lon'])
+        lat = float(points[0]['lat'])
+
+    else:
+        raise ValueError('Unsupported spatial selection.')
+
+    if not np.isfinite([lon, lat]).all():
+        raise ValueError('Invalid selection coordinates.')
+
+    return params, (lon + 180) % 360 - 180, lat
+
+
+def _select_seasonal_chart_data(data, params, lon, lat):
+    data = data.assign_coords(
+        lon=((data.lon + 180) % 360) - 180
+    ).sortby('lon').sortby('lat')
+
+    polygon = params.get('_chart_polygon')
+
+    if polygon is not None:
+        # Keep fallback coordinates independent for each dataset.
+        selection = dict(polygon)
+
+        selected, _, mask = _subset_projection_spi_polygon(
+            data,
+            data,
+            selection,
+        )
+
+        return (
+            selected.where(mask),
+            float(selection['lon']),
+            float(selection['lat']),
+        )
+
+    if not (
+        float(data.lon.min()) <= lon <= float(data.lon.max())
+        and float(data.lat.min()) <= lat <= float(data.lat.max())
+    ):
+        raise ValueError('Selected point is outside the dataset.')
+
+    selected = data.sel(
+        lon=[lon],
+        lat=[lat],
+        method='nearest',
+    )
+
+    return (
+        selected,
+        float(selected.lon.values[0]),
+        float(selected.lat.values[0]),
+    )
 
 
 def _point_seasonal_sample(
@@ -28,21 +106,10 @@ def _point_seasonal_sample(
     data = get_climate_projection_variable(dataset, params)
     units = data.attrs['units']
 
-    data = data.assign_coords(
-        lon=((data.lon + 180) % 360) - 180
-    ).sortby('lon').sortby('lat')
-
-    if not (
-        float(data.lon.min()) <= lon <= float(data.lon.max())
-        and float(data.lat.min()) <= lat <= float(data.lat.max())
-    ):
-        raise ValueError('Selected point is outside the dataset.')
-
-
-    point = data.sel(
-        lon=[lon],
-        lat=[lat],
-        method='nearest'
+    point, selected_lon, selected_lat = (
+        _select_seasonal_chart_data(
+            data, params, lon, lat
+        )
     )
 
     rainfall = params['variable'] == 'rainfall'
@@ -53,8 +120,11 @@ def _point_seasonal_sample(
         period,
         start,
         end,
-        rainfall=rainfall
-    ).isel(lat=0, lon=0).compute()
+        rainfall=rainfall,
+    ).mean(
+        dim=('lat', 'lon'),
+        skipna=True,
+    ).compute()
 
     if rainfall:
         units = 'mm'
@@ -82,8 +152,8 @@ def _point_seasonal_sample(
         'sd': sd,
         'count': int(values.size),
         'units': units,
-        'lon': float(point.lon.values[0]),
-        'lat': float(point.lat.values[0])
+        'lon': selected_lon,
+        'lat': selected_lat
     }
 
 
@@ -96,12 +166,7 @@ def climate_projection_ts_pdf(params):
     if future_year + period - 1 + int(end < start) > 9999:
         raise ValueError('Future period exceeds the supported year range.')
 
-    point = params['pointsList'][0]
-    lon = float(point['lon'])
-    lat = float(point['lat'])
-
-    if not np.isfinite([lon, lat]).all():
-        raise ValueError('Invalid point coordinates.')
+    params, lon, lat = _seasonal_chart_location(params)
 
     lon = (lon + 180) % 360 - 180
 
@@ -301,27 +366,11 @@ def _point_seasonal_series(
             else data.attrs['units']
         )
 
-        data = data.assign_coords(
-            lon=((data.lon + 180) % 360) - 180
-        ).sortby('lon').sortby('lat')
-
-        if not (
-            float(data.lon.min()) <= lon <= float(data.lon.max())
-            and float(data.lat.min()) <= lat <= float(data.lat.max())
-        ):
-            raise ValueError(
-                f"Selected point is outside model {params['model']}."
+        point, selected_lon, selected_lat = (
+            _select_seasonal_chart_data(
+                data, params, lon, lat
             )
-
-        # maybe need another method here, bc different grid point size
-        point = data.sel(
-            lon=[lon],
-            lat=[lat],
-            method='nearest'
         )
-
-        selected_lon = float(point.lon.values[0])
-        selected_lat = float(point.lat.values[0])
 
         final_year = year + period - 1 + int(end < start)
 
@@ -338,8 +387,11 @@ def _point_seasonal_series(
             period,
             start,
             end,
-            rainfall=params['variable'] == 'rainfall'
-        ).isel(lat=0, lon=0)
+            rainfall=params['variable'] == 'rainfall',
+        ).mean(
+            dim=('lat', 'lon'),
+            skipna=True,
+        )
 
     return {
         'years': seasonal.season_year.values.astype(int),
@@ -384,12 +436,7 @@ def climate_projection_ts_series(params):
 
     scenarios = list(dict.fromkeys(requested))
 
-    point = params['pointsList'][0]
-    lon = float(point['lon'])
-    lat = float(point['lat'])
-
-    if not np.isfinite([lon, lat]).all():
-        raise ValueError('Invalid point coordinates.')
+    params, lon, lat = _seasonal_chart_location(params)
 
     lon = (lon + 180) % 360 - 180
 
@@ -643,7 +690,11 @@ def climate_projection_ts_series(params):
                 'spread': 'minimum–maximum',
                 'time_res': 'seasonal',
                 'season_year_convention': 'starting_year',
-                'geom': {'lon': lon, 'lat': lat}
+                'geom': {
+                    'name': params.get('Poly', 'Point'),
+                    'lon': lon,
+                    'lat': lat,
+                },
             }
         }
     }

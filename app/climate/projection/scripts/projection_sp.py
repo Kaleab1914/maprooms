@@ -73,6 +73,7 @@ def climate_projection_sp_data(params):
         }
 
     result['date'] = data['date']
+    result['spatial_resolution'] = data['spatial_resolution']
     result['ckeys']['title'] = (
         f"{data['longname']} ({data['units']})"
     )
@@ -168,7 +169,17 @@ def get_climate_projection_sp_data(params):
             f'{season}: '
             f'{future_year}–{future_year + period - 1} minus '
             f'{historical_year}–{historical_end}'
-        )
+        ),
+        'spatial_resolution': {
+            'lon': float(np.round(
+                np.median(np.diff(np.sort(change.lon.values))),
+                6
+            )),
+            'lat': float(np.round(
+                np.median(np.diff(np.sort(change.lat.values))),
+                6
+            )),
+        },
     }
 
 def _seasonal_values(data, year, period, start, end, rainfall=False ):
