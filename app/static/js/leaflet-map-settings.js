@@ -882,30 +882,30 @@ function queryParamsClimateProjectionSeasonalMap() {
 }
 
 
-function displayClimateProjectionSeasonalMap(options, map) {
-    const query = queryParamsClimateProjectionSeasonalMap();
+// function displayClimateProjectionSeasonalMap(options, map) {
+//     const query = queryParamsClimateProjectionSeasonalMap();
 
-    if (!query) {
-        return false;
-    }
+//     if (!query) {
+//         return false;
+//     }
 
-    const endpoint = createEndpoint(
-        'climate_projection',
-        'climate_projection_seasonal_map'
-    );
+//     const endpoint = createEndpoint(
+//         'climate_projection',
+//         'climate_projection_seasonal_map'
+//     );
 
-    return ajaxLeafletMap(
-        endpoint,
-        query,
-        (data, settings, targetMap) => {
-            displayRasterImage(data, settings, targetMap);
-            targetMap.displayText_date.update(data.date);
-        },
-        options,
-        map
-    );
+//     return ajaxLeafletMap(
+//         endpoint,
+//         query,
+//         (data, settings, targetMap) => {
+//             displayRasterImage(data, settings, targetMap);
+//             targetMap.displayText_date.update(data.date);
+//         },
+//         options,
+//         map
+//     );
 
-}
+// }
 
 
 function queryParamsClimateProjectionAgreementMap() {
@@ -1068,3 +1068,54 @@ function displayClimateProjectionSpiMap(options, map) {
     );
 }
 
+
+function displayClimateProjectionSeasonalMap(options, map) {
+    const query = queryParamsClimateProjectionSeasonalMap();
+
+    if (!query) {
+        return false;
+    }
+
+    const endpoint = createEndpoint(
+        'climate_projection',
+        'climate_projection_seasonal_map'
+    );
+
+    return ajaxLeafletMap(
+        endpoint,
+        query,
+        (data, settings, targetMap) => {
+            displayRasterImage(data, settings, targetMap);
+            targetMap.displayText_date.update(data.date);
+
+            const resolution = $(
+                '#seasonal-seasonal-proj-gcm'
+            ).data('projectionSpatialResolution');
+
+            if (resolution && data.spatial_resolution) {
+                Object.assign(
+                    resolution,
+                    data.spatial_resolution
+                );
+
+                if (
+                    $('#support-spatial-average').val()
+                    === 'gridpoint'
+                ) {
+                    const items = getDataSpatialAverage(
+                        'gridpoint',
+                        resolution
+                    );
+
+                    $('#list-spatial-average')
+                        .empty()
+                        .select2({ data: items })
+                        .val('grid')
+                        .trigger('change.select2');
+                }
+            }
+        },
+        options,
+        map
+    );
+}

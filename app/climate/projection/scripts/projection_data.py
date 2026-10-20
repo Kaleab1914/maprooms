@@ -58,9 +58,10 @@ def get_climate_projection_dataset(params):
 
     return xr.open_zarr(
         str(path),
-        chunks=config['chunks'],
+        chunks={},
         consolidated=False
     )
+
 
 
 def get_climate_projection_variable(dataset, params):

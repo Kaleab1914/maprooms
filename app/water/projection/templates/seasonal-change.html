@@ -2,16 +2,64 @@
 {% block title %} {{metInfo.pageTitle}} {% endblock %}
 {% block head %}
 {{ super() }}
-<!-- block head -->
-<!-- <style> </style> -->
+<style>
+    .card-description {
+        height: 90vh;
+    }
+    .card-description-tab {
+        max-height: 78vh;
+    }
+</style>
 {% endblock %}
 {% block content %}
+<!--  -->
 <div class="container-fluid" id="container-page">
-    {{ fmacros.tmp_placeholder_image(urlArgs) }}
-    <!--  -->
+    <div class="row">
+        <div class="col-sm-4">
+            {{ fmacros.create_card_information(pageText.description, pageText.instruction) }}
+        </div>
+        <div class="col-sm-8">
+            <div class="row">
+                <div class="col-sm-12 col-map-container">
+                    <div id="div-map-container" class="div-map-container">
+                        {% call fmacros.create_map_control(pageText, urlArgs) %}
+                        {{ fmacrosMap.create_map_control_seasonal_proj("seasonal", pageText) }}
+                        {% endcall %}
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-6">
+                    {{ fmacros.create_card_charts("div-chart-seasonal-proj", pageText) }}
+                    {% call fmacros.create_modal_expand_charts("div-chart-seasonal-proj", pageText) %}
+                    {{ fmacrosExp.create_expand_charts_seasonal_proj("seasonal", pageText) }}
+                    {% endcall %}
+                </div>
+                <div class="col-sm-6">
+                    {{ fmacros.create_card_charts("div-chart-distribution-proj", pageText) }}
+                    {% call fmacros.create_modal_expand_charts("div-chart-distribution-proj", pageText) %}
+                    {{ fmacrosExp.create_expand_charts_distribution_proj("seasonal", pageText) }}
+                    {% endcall %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ fmacros.create_modal_matplotlib(pageText) }}
 </div>
 {% endblock %}
+
 {% block javascript %}
 {% include "block-js.html" %}
-<!--  -->
+<script>
+const GCM = {{ pageText.GCM | tojson }};
+const VARIABLES = {{ pageText.variables | tojson }};
+const SCENARIOS = {{ pageText.scenarios | tojson }};
+const SEASON_OPTIONS = {{ pageText.opt_season | tojson }};
+const SEASON_DEFAULTS = {{ pageText.season | tojson }};
+const CLIMATOLOGICAL_PERIOD = {{ pageText.climatological_period | tojson }};
+const DISTRIBUTION_CHANGE = {{ pageText.distribution_change | tojson }};
+const PROJECTION_DEFAULTS = {{ pageText.opt_inputs | tojson }};
+
+</script>
+<script type="text/javascript" src="{{ url_for('climate_projection.static', filename='js/seasonal-change.js') }}"></script>
 {% endblock %}

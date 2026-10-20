@@ -35,63 +35,102 @@ dataset:
         dataset: HIST
     projection:
         dataset: PROJ
-
-
-regional_models:
-    CLMcom-CCLM4:
-        label: CLMcom-CCLM4
-        value: ".CLMcom-CCLM4-8-17_v1"
-        gcm:
-            - CNRM-CM5
-            - EC-EARTH
-
-    SMHI-RCA4:
-        label: SMHI-RCA4
-        value: ".SMHI-RCA4_v1"
-        gcm:
-            - CNRM-CM5
+    variables:
+        rainfall: [precip]
 
 GCM:
-    CNRM-CM5:
-        label: CNRM-CERFACS-CNRM-CM5
-        value: ".CNRM-CERFACS-CNRM-CM5_r1i1p1"
-
-    EC-EARTH:
-        label: ICHEC-EC-EARTH
-        value: ".ICHEC-EC-EARTH_r12i1p1"
+    access_cm2:
+        label: ACCESS-CM2
+    inm_cm5_0:
+        label: INM-CM5-0
+    miroc_es2l:
+        label: MIROC-ES2L
+    mpi_esm1_2_hr:
+        label: MPI-ESM1-2-HR
+    mpi_esm1_2_lr:
+        label: MPI-ESM1-2-LR
+    mri_esm2_0:
+        label: MRI-ESM2-0
+    noresm2_mm:
+        label: NorESM2-MM
 
 scenarios:
-    Hist:
-        label: Hist
-        value: Hist
-
-    SSP2:
-        label: SSP2
-        value: SSP2
-
-    SSP8:
-        label: SSP8
-        value: SSP8
-
+    ssp1_2_6:
+        label: SSP1-2.6
+    ssp2_4_5:
+        label: SSP2-4.5
+    ssp3_7_0:
+        label: SSP3-7.0
+    ssp5_8_5:
+        label: SSP5-8.5
 
 opt_inputs:
-    regional_models:
-        label: Regional climate model
-        default: CLMcom-CCLM4
     GCM:
-        label: Global climate model
-        default: CNRM-CM5
+        label:
+            en: Global climate model
+            fr: Modèle climatique global
+        default: access_cm2
+
     scenarios:
-        label: Scenario
-        default: Hist
-    time_period:
-        label: SPI time period
+        label:
+            en: Scenario
+            fr: Scénario
+        default: ssp2_4_5
 
-time_period:
-    start:
-        label: Start year
-        value: 1951
-    end:
-        label: End year
-        value: 2100
+    map_month:
+        label:
+            en: Map accumulation period
+            fr: Période de cumul de la carte
 
+map_month:
+    projection: "2015-01"
+
+plot_period:
+    start_year: 1981
+    end_year: 2100
+
+spi_settings:
+    distribution: gamma
+    length: 3
+
+spi_chart_label:
+    en: Monthly SPI
+    fr: SPI mensuel
+
+spi_controls:
+    start_month:
+        en: Start month
+        fr: Mois de début
+
+    length:
+        en: Length
+        fr: Durée
+
+    plot_period:
+        en: Chart display period
+        fr: Période affichée du graphique
+
+    start_year:
+        en: Start year
+        fr: Année de début
+
+    end_year:
+        en: End year
+        fr: Année de fin
+
+    distribution:
+        en: Distribution
+        fr: Distribution
+
+    months:
+        en: months
+        fr: mois
+
+spi_distributions:
+    gamma:
+        en: Gamma
+        fr: Gamma
+
+    peasron3:
+        en: Pearson Type III
+        fr: Pearson Type III

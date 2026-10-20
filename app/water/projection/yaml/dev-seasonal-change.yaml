@@ -121,71 +121,64 @@ dataset:
     projection:
         dataset: PROJ
     variables:
-        rainfall: [precip]
-        min_temperature: [tmin]
-        max_temperature: [tmax]
-
-regional_models:
-    CLMcom-CCLM4:
-        label: CLMcom-CCLM4
-        value: ".CLMcom-CCLM4-8-17_v1"
-        gcm:
-            - CNRM-CM5
-            - EC-EARTH
-
-    SMHI-RCA4:
-        label: SMHI-RCA4
-        value: ".SMHI-RCA4_v1"
-        gcm:
-            - CNRM-CM5
+        maximum_temperature: [tasmax]
+        minimum_temperature: [tasmin]
+        rainfall: [pr]
 
 GCM:
-    CNRM-CM5:
-        label: CNRM-CERFACS-CNRM-CM5
-        value: ".CNRM-CERFACS-CNRM-CM5_r1i1p1"
-
-    EC-EARTH:
-        label: ICHEC-EC-EARTH
-        value: ".ICHEC-EC-EARTH_r12i1p1"
+    access_cm2:
+        label: ACCESS-CM2
+    inm_cm5_0:
+        label: INM-CM5-0
+    miroc_es2l:
+        label: MIROC_ES2L
+    mpi_esm1_2_lr:
+        label: MPI-ESM1-2-LR
+    mri_esm2_0:
+        label: MRI-ESM2-0
+    noresm2_mm:
+        label: NorESM2-MM
 
 scenarios:
-    SSP2:
-        label: SSP2
-        value: SSP2
-
-    SSP8:
-        label: SSP8
-        value: SSP8
+    ssp1_2_6:
+        label: SSP1-2.6
+    ssp2_4_5:
+        label: SSP2-4.5
+    ssp3_7_0:
+        label: SSP3-7.0
+    ssp5_8_5:
+        label: SSP5-8.5
 
 variables:
     label:
         en: Variable
         fr: Variable
-    default: rainfall
     select:
-        rainfall:
-            en: Rainfall
-            fr: Précipitations
-        min_temperature:
-            en: Minimum temperature
-            fr: Température minimale
-        max_temperature:
+        maximum_temperature:
             en: Maximum temperature
             fr: Température maximale
+        minimum_temperature:
+            en: Minimum temperature
+            fr: Température minimale
+        rainfall:
+            en: Precipitation
+            fr: Précipitations
 
 opt_inputs:
-    regional_models:
-        label:
-            en: Regional climate model
-            fr: Modèle climatique régional
     GCM:
         label:
             en: Global climate model
             fr: Modèle climatique global
+        default: access_cm2
     scenarios:
         label:
             en: Scenario
             fr: Scénario
+        default: ssp2_4_5
+
+season:
+    start_month: 3
+    end_month: 5
 
 opt_season:
     label:
@@ -199,12 +192,11 @@ opt_season:
             en: End month
             fr: Mois de fin
 
-
 climatological_period:
     historical:
-        start_year: 1961
+        start_year: 1981
     future:
-        start_year: 2006
+        start_year: 2015
     length: 30
 
 opt_climatological_period:
@@ -233,8 +225,33 @@ distribution_change:
         fr: De
     label_to:
         en: To
-        fr: A
+        fr: À
     from: 0
     to: 10
     step: 1
     dtype: integer
+
+distribution_chart:
+    label:
+        en: Distribution chart
+        fr: Graphique de distribution
+    select:
+        pdf:
+            en: Probability Density Function (PDF)
+            fr: Fonction de Densité de Probabilité (PDF)
+        cdf:
+            en: Cumulative Distribution Function (CDF)
+            fr: Fonction de Répartition (CDF)
+
+series_chart:
+    label:
+        en: Chart type
+        fr: Type de graphique
+    select:
+        series:
+            en: Time series
+            fr: Série chronologique
+        anomaly:
+            en: Anomaly
+            fr: Anomalie
+
