@@ -271,7 +271,7 @@ function expandModalCharts(container, callback_chart, time_res = null, plotEleme
         .addClass('modal-expand-charts-plotly')
         .appendTo(divChart);
 
-// create the chart settings button
+    // create the chart settings button
     enablePlotlyChartSettings(container, `${contChart}${plotElementSuffix}`, undefined, colorsModule, axisKindResolver, caseKeyResolver, disallowedTickUnits);
 
     const modalEl = document.getElementById(`modal-expand-${container}`);
@@ -409,7 +409,8 @@ function ajaxGetSubdivisions() {
 
 function ajaxDisplayChart(endpoint, query, callback, container, storename = null) {
     const spin_opts = spinnerChartOptions();
-    let spinner = new Spinner(spin_opts).spin();
+    let spinner1 = new Spinner(spin_opts).spin();
+    let spinner2 = new Spinner(spin_opts).spin();
     $.ajax({
         type: 'POST',
         url: endpoint,
@@ -426,16 +427,27 @@ function ajaxDisplayChart(endpoint, query, callback, container, storename = null
                 maproomDB.saveData(storename, json.data);
             }
             callback(json.data, container);
-            saveChartInfo(container, query, json.data);
+            if (query.displayProbaType2) {
+                saveChartInfo(container[0], query, json.data.cdf);
+                saveChartInfo(container[1], query, json.data.pdf);
+            } else {
+                saveChartInfo(container, query, json.data);
+            }
         },
         beforeSend: () => {
-            $(`#${container}`).append(spinner.el);
+            if (query.displayProbaType2) {
+                $(`#${container[0]}`).append(spinner1.el);
+                $(`#${container[1]}`).append(spinner2.el);
+            } else {
+                $(`#${container}`).append(spinner1.el);
+            }
         },
         error: (xhr, s, e) => {
             displayAjaxError(xhr, s, e);
         }
     }).always(() => {
-        spinner.stop();
+        spinner1.stop();
+        spinner2.stop();
     });
 }
 

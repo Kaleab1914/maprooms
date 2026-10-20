@@ -1,12 +1,14 @@
-$(document).ready(function() {
+$(document).ready(async function() {
     $('[data-bs-toggle="tooltip"]').tooltip();
     let map = createLeafletTileLayer('div-map-container', MTO_INIT);
 
     // hide map time navigation
-    $('#div-map-time-navigation').removeClass('d-flex').addClass('d-none');
+    $('#div-map-time-navigation')
+        .removeClass('d-flex')
+        .addClass('d-none');
 
     // offcanvas map controls
-    setOffCanvasSeasFcstMapControl('seasonal');
+    await setOffCanvasSeasFcstMapControl('seasonal');
 
     ////////////
     // Modal Expand Charts
@@ -15,9 +17,7 @@ $(document).ready(function() {
     ////////////
     // initialize map
     const map_options = {};
-    setTimeout(() => {
-        displayClimateSeasFcstMap('seasonal', map_options, map);
-    }, 500);
+    displayClimateSeasFcstMap('seasonal', map_options, map);
 
     // display map when offcanvas hidden
     $('#map-control-offcanvas-dataselect').on('hidden.bs.offcanvas', () => {
@@ -29,6 +29,11 @@ $(document).ready(function() {
         displayClimateSeasFcstMap('seasonal', map_options, map);
     });
 
-    ////////////
+    ///////////
+    // display preview time series on click on map
+    mapClickLayersSpatialAverage(preview_seasfcst_display_charts, 'seasonal', map);
 
+    //// grid point only 
+    $('#support-spatial-average').prop('disabled', true);
+    $('#list-spatial-average').prop('disabled', true);
 });

@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
     document.querySelectorAll('[data-bs-toggle="tooltip"]')
         .forEach(element => new bootstrap.Tooltip(element));
@@ -9,9 +8,8 @@ $(document).ready(function() {
     const tempRes = 'seasonal';
     const prefix = `${tempRes}-model-proj`;
 
-    $('#div-map-time-navigation')
-        .removeClass('d-flex')
-        .addClass('d-none');
+    // hide map navigation
+    $('#container-map-navigation').hide();
 
     setOffCanvasMapControlSeasonalProjection(tempRes, prefix);
 
@@ -35,4 +33,3 @@ $(document).ready(function() {
 
     redraw();
 });
-

@@ -49,7 +49,6 @@ function preview_drmSpi_display_charts(tempRes) {
     preview_drm_charts_spi(tempRes, 'div-chart-spi');
 }
 
-
 function preview_projection_display_charts(tempRes) {
     preview_projection_charts_series(
         tempRes,
@@ -62,6 +61,10 @@ function preview_projection_display_charts(tempRes) {
     );
 }
 
+function preview_seasfcst_display_charts(tempRes) {
+    preview_seasfcst_charts_proba(tempRes, ['div-chart-cdf', 'div-chart-pdf']);
+    preview_seasfcst_charts_ter(tempRes, 'div-chart-ter');
+}
 
 ///////////////////
 
@@ -2133,7 +2136,7 @@ function preview_drm_query_cdf(tempRes) {
     if (query.variable === 'rainfall') {
         query.defSpell = parseInt($(`#${tempRes}-map-def-spell-thres-val`).val().trim(), 10);
     } //else {
-      //  query.defTempBase = Number($(`#${tempRes}-map-def-spell-thres-val`).val().trim());
+    //  query.defTempBase = Number($(`#${tempRes}-map-def-spell-thres-val`).val().trim());
     //}
 
     const dates = preview_analysis_query_temporal(
@@ -2151,13 +2154,13 @@ function preview_drm_query_cdf(tempRes) {
     }
 
     if (['max_temperature', 'min_temperature'].includes(query.variable)) {
-        const selectedVariable = query.variable; 
+        const selectedVariable = query.variable;
         query.variable = 'temperature';
 
 
         if (query.seasParams === 'seasAvg') {
-            query.seasParams = selectedVariable === 'max_temperature'
-                ? 'MaxTemp' : 'MinTemp';
+            query.seasParams = selectedVariable === 'max_temperature' ?
+                'MaxTemp' : 'MinTemp';
         }
     }
 
@@ -2281,7 +2284,6 @@ function preview_drm_display_cdf(json, container) {
     );
 
     setPlotlyThemeColors(container);
-
 }
 
 ///////
@@ -2308,22 +2310,19 @@ function preview_drm_charts_pdf(tempRes, contID) {
     );
 }
 
-
 function preview_drm_display_pdf(json, container) {
     const divCont = $(`#${container}`);
     divCont.empty();
     const theme = $('html').attr('data-bs-theme');
 
-    const data = [
-        {
+    const data = [{
             x: json.pdf.kde.x,
             y: json.pdf.kde.y,
             type: 'scatter',
             mode: 'lines',
             name: 'Kernel density',
             line: { color: '#1e90ff', width: 4 },
-            hovertemplate:
-                '%{data.name}: %{y:.4f}<extra></extra>'
+            hovertemplate: '%{data.name}: %{y:.4f}<extra></extra>'
         },
         {
             x: json.pdf.fitted.x,
@@ -2332,8 +2331,7 @@ function preview_drm_display_pdf(json, container) {
             mode: 'lines',
             name: 'Fitted density',
             line: { color: 'red', width: 3 },
-            hovertemplate:
-                '%{data.name}: %{y:.4f}<extra></extra>'
+            hovertemplate: '%{data.name}: %{y:.4f}<extra></extra>'
         }
     ];
 
@@ -2397,10 +2395,10 @@ function preview_drm_display_pdf(json, container) {
     );
 
     setPlotlyThemeColors(container);
-
 }
 
 ///////
+
 function preview_drm_query_spi(tempRes) {
     return preview_monitoring_query_spei_ts(tempRes);
 }
@@ -2465,8 +2463,7 @@ function preview_drm_display_spi(json, container) {
             }
         },
         customdata: xaxisHoverText,
-        hovertemplate:
-            'Date: %{customdata}<br> %{data.name}: %{y:.1f} %{data.units} <extra></extra>'
+        hovertemplate: 'Date: %{customdata}<br> %{data.name}: %{y:.1f} %{data.units} <extra></extra>'
     }];
 
     var layout = {
@@ -2509,12 +2506,11 @@ function preview_drm_display_spi(json, container) {
     setPlotlyThemeColors(container);
 }
 
-
 ///////
 
 function preview_projection_query_pdf(tempRes, prefix = `${tempRes}-seasonal-proj`) {
-// function preview_projection_query_pdf(tempRes) {
-//     const prefix = `${tempRes}-seasonal-proj`;
+    // function preview_projection_query_pdf(tempRes) {
+    //     const prefix = `${tempRes}-seasonal-proj`;
 
     const spatial = queryParamsSpatialAverage();
 
@@ -2558,7 +2554,6 @@ function preview_projection_query_pdf(tempRes, prefix = `${tempRes}-seasonal-pro
     };
 }
 
-
 function preview_projection_charts_pdf(tempRes, contID) {
     const query = preview_projection_query_pdf(tempRes);
 
@@ -2580,7 +2575,6 @@ function preview_projection_charts_pdf(tempRes, contID) {
     );
 }
 
-
 function preview_projection_display_pdf(json, container) {
     const divCont = $(`#${container}`);
     divCont.empty();
@@ -2593,16 +2587,14 @@ function preview_projection_display_pdf(json, container) {
         (value, index) => index % stride === 0
     );
 
-    const data = [
-        {
+    const data = [{
             x: json.historical.pdf.fitted.x,
             y: json.historical.pdf.fitted.y,
             type: 'scatter',
             mode: 'lines',
             name: json.historical.label,
             line: { color: '#1e90ff', width: 4 },
-            hovertemplate:
-                '%{data.name}: %{y:.4f}<extra></extra>'
+            hovertemplate: '%{data.name}: %{y:.4f}<extra></extra>'
         },
         {
             x: json.future.pdf.fitted.x,
@@ -2611,8 +2603,7 @@ function preview_projection_display_pdf(json, container) {
             mode: 'lines',
             name: json.future.label,
             line: { color: 'red', width: 3 },
-            hovertemplate:
-                '%{data.name}: %{y:.4f}<extra></extra>'
+            hovertemplate: '%{data.name}: %{y:.4f}<extra></extra>'
         }
     ];
 
@@ -2623,7 +2614,7 @@ function preview_projection_display_pdf(json, container) {
             tickmode: 'array',
             tickangle: 0,
             automargin: true,
-            tickfont: {size: 10},
+            tickfont: { size: 10 },
             automargin: true,
             fixedrange: true,
             showline: true,
@@ -2710,15 +2701,15 @@ function preview_projection_query_series(
         query.seasStart,
         query.seasEnd
     ].every(value => (
-        Number.isInteger(value)
-        && value >= 1
-        && value <= 12
+        Number.isInteger(value) &&
+        value >= 1 &&
+        value <= 12
     ));
 
     const validScenarios = (
-        Array.isArray(scenarios)
-        && scenarios.length > 0
-        && scenarios.every(scenario => (
+        Array.isArray(scenarios) &&
+        scenarios.length > 0 &&
+        scenarios.every(scenario => (
             Object.prototype.hasOwnProperty.call(
                 SCENARIOS,
                 scenario
@@ -2741,7 +2732,6 @@ function preview_projection_query_series(
     };
 }
 
-
 function preview_projection_charts_series(tempRes, contID) {
     const query = preview_projection_query_series(tempRes);
 
@@ -2762,8 +2752,6 @@ function preview_projection_charts_series(tempRes, contID) {
         'projection_series'
     );
 }
-
-
 
 function preview_projection_display_series(
     json,
@@ -2787,13 +2775,12 @@ function preview_projection_display_series(
     };
 
     function ensembleTraces(series, name, color, fill, rank) {
-        return [
-            {
+        return [{
                 x: series.years,
                 y: series.minimum,
                 type: 'scatter',
                 mode: 'lines',
-                line: {width: 0},
+                line: { width: 0 },
                 showlegend: false,
                 hoverinfo: 'skip',
                 connectgaps: false
@@ -2804,7 +2791,7 @@ function preview_projection_display_series(
                 type: 'scatter',
                 mode: 'lines',
                 name: `${name} — min–max`,
-                line: {width: 0},
+                line: { width: 0 },
                 fill: 'tonexty',
                 fillcolor: fill,
                 showlegend: expanded,
@@ -2823,12 +2810,11 @@ function preview_projection_display_series(
                 type: 'scatter',
                 mode: 'lines',
                 name: `${name} — ensemble mean`,
-                line: {color: color, width: 3},
+                line: { color: color, width: 3 },
                 showlegend: expanded,
                 legendrank: rank,
                 connectgaps: false,
-                hovertemplate:
-                    '%{data.name}: %{y:.2f}<br>' +
+                hovertemplate: '%{data.name}: %{y:.2f}<br>' +
                     'Minimum: %{customdata[0]:.2f}<br>' +
                     'Maximum: %{customdata[1]:.2f}<br>' +
                     'Models: %{customdata[2]}<extra></extra>'
@@ -2867,7 +2853,7 @@ function preview_projection_display_series(
     ].includes(json.info.var.type);
 
     let layout = {
-        title: {text: ''},
+        title: { text: '' },
         xaxis: {
             type: 'linear',
             range: [1981, 2100],
@@ -2890,13 +2876,12 @@ function preview_projection_display_series(
         },
         yaxis: {
             title: {
-                text: expanded
-                    ? (
-                        anomaly
-                            ? `Anomaly (${json.info.var.units})`
-                            : `${json.info.var.name} (${json.info.var.units})`
-                    )
-                    : ''
+                text: expanded ?
+                    (
+                        anomaly ?
+                        `Anomaly (${json.info.var.units})` :
+                        `${json.info.var.name} (${json.info.var.units})`
+                    ) : ''
             },
             tickformat: isTemperature ? '.1f' : ',.0f',
             fixedrange: true,
@@ -2915,7 +2900,7 @@ function preview_projection_display_series(
             xanchor: 'left',
             y: 1.02,
             yanchor: 'bottom',
-            font: {size: 11}
+            font: { size: 11 }
         },
         hovermode: 'x unified',
         hoverlabel: hoverlabelColors(theme)
@@ -2942,8 +2927,8 @@ function preview_projection_display_series(
     setPlotlyThemeColors(container);
 }
 
-
 //////
+
 function preview_projection_spi_query(
     prefix = 'monthly-spi-proj'
 ) {
@@ -2968,11 +2953,11 @@ function preview_projection_spi_query(
     );
 
     if (
-        !Number.isInteger(query.plotStartYear)
-        || !Number.isInteger(query.plotEndYear)
-        || query.plotStartYear < 1981
-        || query.plotEndYear > 2100
-        || query.plotStartYear > query.plotEndYear
+        !Number.isInteger(query.plotStartYear) ||
+        !Number.isInteger(query.plotEndYear) ||
+        query.plotStartYear < 1981 ||
+        query.plotEndYear > 2100 ||
+        query.plotStartYear > query.plotEndYear
     ) {
         flashMessage(
             'Select valid chart display years.',
@@ -2986,7 +2971,6 @@ function preview_projection_spi_query(
         ...spatial
     };
 }
-
 
 function preview_projection_spi_charts(
     tempRes,
@@ -3016,3 +3000,435 @@ function preview_projection_spi_charts(
     );
 }
 
+///////
+
+function preview_analysis_query_seasfcst(tempRes) {
+    let query = queryParamsSpatialAverage();
+    if (!query) {
+        return query;
+    }
+
+    query.temporalRes = tempRes;
+    query.dataset = DATA_SET.use;
+    query.map_variable = $(`#${tempRes}-map-variable`).val();
+    query.variable = query.map_variable;
+
+    query.year = $(`#${tempRes}-forecast-issued-year`).val();
+    query.issued = $(`#${tempRes}-forecast-issued-month`).val();
+    query.target = $(`#${tempRes}-forecast-target`).val();
+
+    return query;
+}
+
+////
+
+function preview_seasfcst_charts_proba(tempRes, contIDs) {
+    const query = preview_analysis_query_seasfcst(tempRes);
+    if (!query) {
+        return false;
+    }
+    if (checkQueryPointOutside(query, tempRes)) {
+        flashMessage(JS_TEXT.point_outside, 'error');
+        return false;
+    }
+    query.chartType = 'probability';
+    query.displayProbaType2 = true;
+    ajaxDisplayChart(
+        '/climate_forecast_seas_proba',
+        query,
+        preview_seasfcst_display_proba,
+        contIDs
+    );
+}
+
+function preview_seasfcst_display_proba(json, container) {
+    preview_seasfcst_display_cdf(json.cdf, container[0]);
+    preview_seasfcst_display_pdf(json.pdf, container[1]);
+}
+
+///////
+
+function preview_seasfcst_display_cdf(json, container) {
+    const divCont = $(`#${container}`);
+    divCont.empty();
+    const theme = $('html').attr('data-bs-theme');
+
+    const obs_e = json.obs_empirical;
+    const obs_p = json.obs_parametric;
+    const fcst = json.forecast;
+
+    const xmin = [
+        Math.min(...obs_e),
+        Math.min(...obs_p),
+        Math.min(...fcst)
+    ];
+    const xmax = [
+        Math.max(...obs_e),
+        Math.max(...obs_p),
+        Math.max(...fcst)
+    ];
+    const xrange = [
+        Math.min(...xmin),
+        Math.max(...xmax)
+    ];
+
+    const data = [{
+            x: obs_e,
+            y: json.proba,
+            mode: 'lines',
+            name: 'Obs Empirical',
+            units: '%',
+            line: {
+                color: plotly_themecolors[theme].color,
+                width: 3
+            },
+            hovertemplate: '%{data.name}: %{y:.1f} %{data.units} <extra></extra>'
+        },
+        {
+            x: obs_p,
+            y: json.proba,
+            mode: 'lines',
+            name: 'Obs Parametric',
+            units: '%',
+            line: {
+                color: 'blue',
+                width: 3
+            },
+            hovertemplate: '%{data.name}: %{y:.1f} %{data.units} <extra></extra>'
+        },
+        {
+            x: fcst,
+            y: json.proba,
+            mode: 'lines',
+            name: 'Forecast',
+            units: '%',
+            line: {
+                color: 'red',
+                width: 3
+            },
+            hovertemplate: '%{data.name}: %{y:.1f} %{data.units} <extra></extra>'
+        }
+    ];
+
+    let layout = {
+        xaxis: {
+            range: xrange,
+            ticks: 'outside',
+            ticklen: 6,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            },
+            unifiedhovertitle: {
+                text: json.info.variable +
+                    ': %{x:.2f} ' +
+                    json.info.units
+            },
+            // mirror: true,
+        },
+        yaxis: {
+            range: [0, 100],
+            ticksuffix: '%',
+            ticks: 'outside',
+            ticklen: 6,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            }
+        },
+        showlegend: false,
+        hovermode: 'x unified',
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(preview_layout, layout);
+    layout.margin.l = 45;
+    layout.margin.b = 30;
+
+    const config = {
+        displayModeBar: false,
+        responsive: true
+    };
+
+    purgePlotlyChart(container);
+    Plotly.newPlot(
+        container,
+        data,
+        layout,
+        config
+    );
+
+    setPlotlyThemeColors(container);
+}
+
+function preview_seasfcst_display_pdf(json, container) {
+    const divCont = $(`#${container}`);
+    divCont.empty();
+    const theme = $('html').attr('data-bs-theme');
+
+    const obs_x = json.observation.x;
+    const fcst_x = json.forecast.x;
+
+    const xmin = [
+        Math.min(...obs_x),
+        Math.min(...fcst_x)
+    ];
+    const xmax = [
+        Math.max(...obs_x),
+        Math.max(...fcst_x)
+    ];
+    const xrange = [
+        Math.min(...xmin),
+        Math.max(...xmax)
+    ];
+
+    const ymax = Math.max(
+        ...json.observation.y,
+        ...json.forecast.y
+    );
+
+    function formatHover(x, ts, tx) {
+        const i = nearestIndex(ts, x);
+        const poe = json.proba[i].toFixed(1);
+        const v = x.toFixed(1);
+        const y = json.info.variable;
+        const u = json.info.units;
+        const t0 = 'chance of exceeding';
+        return `${poe}% ${t0} ${tx} <br> ${y}: ${v} ${u}`;
+    }
+
+    const xaxisHoverObs = obs_x.map((x) => {
+        return formatHover(x, obs_x, 'observation');
+    });
+    const xaxisHoverFcst = fcst_x.map((x) => {
+        return formatHover(x, fcst_x, 'forecast');
+    });
+
+    const data = [{
+            x: json.observation.x,
+            y: json.observation.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Observation',
+            line: {
+                color: 'blue',
+                width: 3
+            },
+            customdata: xaxisHoverObs,
+            hovertemplate: '%{customdata}<extra></extra>'
+        },
+        {
+            x: json.forecast.x,
+            y: json.forecast.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Forecast',
+            line: {
+                color: 'red',
+                width: 3
+            },
+            customdata: xaxisHoverFcst,
+            hovertemplate: '%{customdata}<extra></extra>'
+        }
+    ];
+
+    let layout = {
+        xaxis: {
+            range: xrange,
+            ticks: 'outside',
+            ticklen: 6,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            }
+        },
+        yaxis: {
+            range: [0, ymax + 0.002],
+            ticks: 'outside',
+            ticklen: 6,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            }
+        },
+        showlegend: false,
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(preview_layout, layout);
+
+    const config = {
+        displayModeBar: false,
+        responsive: true
+    };
+
+    purgePlotlyChart(container);
+    Plotly.newPlot(
+        container,
+        data,
+        layout,
+        config
+    );
+
+    setPlotlyThemeColors(container);
+}
+
+///////
+
+function preview_seasfcst_charts_ter(tempRes, contID) {
+    const query = preview_analysis_query_seasfcst(tempRes);
+    if (!query) {
+        return false;
+    }
+    if (checkQueryPointOutside(query, tempRes)) {
+        flashMessage(JS_TEXT.point_outside, 'error');
+        return false;
+    }
+    query.chartType = 'tercile';
+    ajaxDisplayChart(
+        '/climate_forecast_seas_proba',
+        query,
+        preview_seasfcst_display_ter,
+        contID
+    );
+}
+
+function preview_seasfcst_display_ter(json, container) {
+    const divCont = $(`#${container}`);
+    divCont.empty();
+    const theme = $('html').attr('data-bs-theme');
+
+    const keys = Object.keys(json.tercile)
+        .sort((a, b) => Number(a) - Number(b));
+
+    const categories = keys.map(key => json.info.categories[key]);
+    const probabilities = keys.map(key => json.tercile[key]);
+    const colors = {
+        '1': '#b87438',
+        '2': '#aaaaaa',
+        '3': '#3a9b55'
+    };
+
+    const data = [{
+        type: 'bar',
+        x: categories,
+        y: probabilities,
+        width: 0.65,
+        marker: {
+            color: keys.map(key => colors[key]),
+            line: {
+                color: '#333333',
+                width: 0.7
+            }
+        },
+        text: probabilities.map(value =>
+            '<b>' + value.toFixed(1) + json.info.units + '</b>'
+        ),
+        textposition: 'outside',
+        textfont: {
+            family: 'Arial, sans-serif',
+            // size: 14,
+            color: plotly_themecolors[theme].color
+        },
+        cliponaxis: false,
+        hovertemplate: '%{x}<br>Probability: %{y:.2f}' +
+            json.info.units +
+            '<extra></extra>'
+    }];
+
+    let layout = {
+        xaxis: {
+            categoryorder: 'array',
+            categoryarray: categories,
+            showgrid: false,
+            showline: true,
+            mirror: true,
+            linecolor: plotly_themecolors[theme].fontcolor,
+            fixedrange: true,
+        },
+        yaxis: {
+            range: [0, 100],
+            ticksuffix: '%',
+            ticks: 'outside',
+            ticklen: 6,
+            tick0: 0,
+            dtick: 20,
+            showgrid: false,
+            zeroline: false,
+            showline: true,
+            mirror: true,
+            linecolor: plotly_themecolors[theme].fontcolor,
+            fixedrange: true,
+        },
+        shapes: [100 / 3, 200 / 3].map(value => ({
+            type: 'line',
+            xref: 'paper',
+            x0: 0,
+            x1: 1,
+            yref: 'y',
+            y0: value,
+            y1: value,
+            layer: 'below',
+            line: {
+                color: '#777777',
+                width: 1,
+                dash: 'dot'
+            }
+        })),
+        showlegend: false,
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(preview_layout, layout);
+    layout.margin.l = 45;
+
+    purgePlotlyChart(container);
+    Plotly.newPlot(
+        container,
+        data,
+        layout,
+        plotly_config
+    );
+
+    setPlotlyThemeColors(container);
+
+    $('#btn-theme-toggle').on('click', () => {
+        const thm = $('html').attr('data-bs-theme');
+        const linecolor = plotly_themecolors[thm].fontcolor;
+        Plotly.relayout(container, {
+            'xaxis.linecolor': linecolor,
+            'yaxis.linecolor': linecolor
+        });
+    });
+}

@@ -7,7 +7,8 @@ from .read_forecasts import (
     read_seasfcst_flexible_data,
     read_seasfcst_anomaly_data,
     read_seasfcst_mean,
-    read_seasfcst_proba
+    read_seasfcst_proba,
+    read_seasfcst_flexible_point
 )
 from app.scripts.imagepng import (
     create_imagePng,
@@ -66,27 +67,37 @@ def climate_forecast_seas_data(params):
     map_png['date'] = f"{params['target']} {params['year']}"
     return {'status': 0, 'data': map_png}
 
+def climate_forecast_seas_df(params):
+    if params['chartType'] == 'probability':
+        obs, fcst = read_seasfcst_flexible_point(params)
+        data = seasonal_probability_functions(obs, fcst, params['variable'])
+        return {'status': 0, 'data': data}
+    elif params['chartType'] == 'tercile':
+        fcst_da = read_seasfcst_proba(params)
+        data = seasonal_probability_tercile(
+            fcst_da,
+            params['pointsList'][0]
+        )
+        return {'status': 0, 'data': data}
+    else:
+        return {'status': -1, 'message': 'Unknown chart type'}
 
 def get_seasonal_probability_map(params):
-    obs_da, fcst_ds, _ = read_seasfcst_flexible_data(params)
+    obs_da, fcst_ds = read_seasfcst_flexible_data(params)
     data = seasonal_probability_map(
         obs_da, fcst_ds,
         params['probaType'],
-        params['probaThres']
+        params['probaThres'],
+        params['variable']
     )
     data = blank_numpy_dict(data, buffer=True)
 
     if params['parameter'] == 'probExc':
         data['data'] = 1 - data['data']
-
-    # breaks = [
-    #     round(x.item(), 1)
-    #     for x in np.arange(0.1, 1.0, 0.1)
-    # ]
     return data
 
 def get_seasonal_deterministic_map(params):
-    mean, _ = read_seasfcst_mean(params)
+    mean = read_seasfcst_mean(params)
     mean = blank_xarray_dataarray(mean)
     return {
         'lon': mean['X'],
@@ -95,7 +106,7 @@ def get_seasonal_deterministic_map(params):
     }
 
 def get_seasonal_anomaly_map(params):
-    anom, _ = read_seasfcst_anomaly_data(params)
+    anom = read_seasfcst_anomaly_data(params)
     anom = blank_xarray_dataarray(anom)
     return {
         'lon': anom['X'],
@@ -121,7 +132,8 @@ def seasonal_probability_map(
     obs_da: xr.DataArray,
     fcst_ds: xr.Dataset,
     proba_type: str,
-    threshold: float
+    threshold: float,
+    variable: str
 ) -> dict:
     if proba_type == 'percentile':
         obs_mean = obs_da.mean(dim='T')
@@ -138,8 +150,8 @@ def seasonal_probability_map(
                 'scale': obs_std
             }
         )
-        ## precipitation data
-        obs_ppf = obs_ppf.clip(min=0)
+        if variable == 'rainfall':
+            obs_ppf = obs_ppf.clip(min=0)
     else:
         obs_ppf = float(threshold)
 
@@ -160,3 +172,129 @@ def seasonal_probability_map(
         'lat': fcst_ds['Y'].values,
         'data': fcst_cdf
     }
+
+def seasonal_probability_functions(
+    obs: xr.DataArray,
+    fcst: xr.Dataset,
+    variable: str
+) -> dict:
+    quantiles = np.arange(1, 512) / 512
+    quantiles = xr.DataArray(
+        quantiles,
+        dims='percentile',
+        coords={
+            'percentile': quantiles
+        }
+    )
+    obs_q, obs_mu = xr.broadcast(
+        quantiles,
+        obs.mean(dim='T')
+    )
+    obs_stddev = obs.std(dim='T')
+    obs_ppf = xr.apply_ufunc(
+        stats.norm.ppf,
+        obs_q,
+        kwargs={
+            'loc': obs_mu,
+            'scale': obs_stddev
+        },
+    ).rename('obs_ppf')
+    obs_quant = obs.quantile(quantiles, dim='T')
+
+    fcst_dof = obs['T'].size - 1
+    fcst_mean = fcst['deterministic']
+    fcst_var = fcst['prediction_error_variance']
+
+    fcst_q, fcst_mu = xr.broadcast(
+        quantiles, fcst_mean
+    )
+    fcst_ppf = xr.apply_ufunc(
+        stats.t.ppf,
+        fcst_q,
+        fcst_dof,
+        kwargs={
+            'loc': fcst_mu,
+            'scale': np.sqrt(fcst_var)
+        }
+    ).rename('fcst_ppf')
+
+    if variable == 'rainfall':
+        fcst_ppf = fcst_ppf.clip(min=0)
+        obs_ppf = obs_ppf.clip(min=0)
+
+    fcst_pdf = xr.apply_ufunc(
+        stats.t.pdf,
+        fcst_ppf,
+        fcst_dof,
+        kwargs={
+            'loc': fcst_mean,
+            'scale': np.sqrt(fcst_var)
+        }
+    ).rename('fcst_pdf')
+
+    obs_pdf = xr.apply_ufunc(
+        stats.norm.pdf,
+        obs_ppf,
+        kwargs={
+            'loc': obs_mu,
+            'scale': obs_stddev
+        }
+    ).rename('obs_pdf')
+
+    probaExc = fcst_ppf['percentile'] * -1 + 1
+    probaExc = probaExc.squeeze().values * 100
+
+    data = {}
+    data['cdf'] = {
+        'proba': probaExc.tolist(),
+        'forecast': fcst_ppf.squeeze().values.tolist(),
+        'obs_empirical': obs_quant.squeeze().values.tolist(),
+        'obs_parametric': obs_ppf.squeeze().values.tolist()
+    }
+    data['cdf']['info'] = {
+        'variable': 'Total Rainfall',
+        'units': 'mm',
+        'ylab': 'Probability of exceeding'
+    }
+    data['pdf'] = {
+        'proba': probaExc.tolist(),
+        'forecast': {
+            'x': fcst_ppf.squeeze().values.tolist(),
+            'y': fcst_pdf.squeeze().values.tolist()
+        },
+        'observation': {
+            'x': obs_ppf.squeeze().values.tolist(),
+            'y': obs_pdf.squeeze().values.tolist()
+        }
+    }
+    data['pdf']['info'] = {
+        'variable': 'Total Rainfall',
+        'units': 'mm',
+        'ylab': 'Probability density'
+    }
+    return data
+
+def seasonal_probability_tercile(
+    fcst_ter: xr.DataArray,
+    loc: dict
+) -> dict:
+    fcst = fcst_ter.sel(
+        X=float(loc['lon']),
+        Y=float(loc['lat']),
+        method='nearest'
+    )
+    proba = fcst.values.squeeze().tolist()
+    category = fcst['C'].values.tolist()
+    data = {}
+    data['tercile'] = {c: p for c, p in zip(category, proba)}
+    data['info'] = {
+        'xlab': 'Tercile categories',
+        'ylab': 'Tercile probabilities',
+        'units': '%',
+        'categories': {
+            '1': 'Below Normal',
+            '2': 'Near Normal', 
+            '3': 'Above Normal'
+        }
+    }
+    return data
