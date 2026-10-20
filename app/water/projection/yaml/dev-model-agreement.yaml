@@ -94,13 +94,23 @@ opt_season:
             en: End month
             fr: Mois de fin
 
+season:
+    start_month: 3
+    end_month: 5
+
 scenarios:
-    SSP2:
-        label: SSP2
-        value: SSP2
-    SSP8:
-        label: SSP8
-        value: SSP8
+    ssp1_2_6:
+        label: SSP1-2.6
+        value: ssp1_2_6
+    ssp2_4_5:
+        label: SSP2-4.5
+        value: ssp2_4_5
+    ssp3_7_0:
+        label: SSP3-7.0
+        value: ssp3_7_0
+    ssp5_8_5:
+        label: SSP5-8.5
+        value: ssp5_8_5
 
 change_signal:
     positive:
@@ -114,12 +124,13 @@ change_signal:
             fr: Négatif
         value: negative
 
+
 opt_inputs:
     scenarios:
         label:
             en: Scenario
             fr: Scénario
-        default: SSP2
+        default: ssp2_4_5
     change_signal:
         label:
             en: Change signal
@@ -128,7 +139,8 @@ opt_inputs:
 
 climatological_period:
     historical:
-        start_year: 1991
+        start_year: 1981
+        end_year: 2014
     future:
         start_year: 2041
     length: 30

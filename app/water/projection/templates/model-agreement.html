@@ -1,17 +1,73 @@
 {% extends "layout.html" %}
-{% block title %} {{metInfo.pageTitle}} {% endblock %}
+
+{% block title %} {{ metInfo.pageTitle }} {% endblock %}
 {% block head %}
 {{ super() }}
-<!-- block head -->
-<!-- <style> </style> -->
+<style>
+    .card-description {
+        height: 90vh;
+    }
+
+    .card-description-tab {
+        max-height: 78vh;
+    }
+
+    .div-map-container {
+        height: 88vh;
+    }
+</style>
 {% endblock %}
+
 {% block content %}
 <div class="container-fluid" id="container-page">
-    {{ fmacros.tmp_placeholder_image(urlArgs) }}
-    <!--  -->
+    <div class="row">
+        <div class="col-sm-4">
+            {{ fmacros.create_card_information(
+                pageText.description,
+                pageText.instruction
+            ) }}
+        </div>
+
+        <div class="col-sm-8">
+            <div class="row">
+                <div class="col-sm-12 col-map-container">
+                    <div
+                        id="div-map-container"
+                        class="div-map-container">
+
+                        {% call fmacros.create_map_control(pageText, urlArgs) %}
+                            {{ fmacrosMap.create_map_control_model_proj(
+                                "seasonal",
+                                pageText
+                            ) }}
+                        {% endcall %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ fmacros.create_modal_matplotlib(pageText) }}
 </div>
 {% endblock %}
+
 {% block javascript %}
 {% include "block-js.html" %}
-<!--  -->
+<script>
+const VARIABLES = {{ pageText.variables | tojson }};
+const SCENARIOS = {{ pageText.scenarios | tojson }};
+const CHANGE_SIGNAL = {{ pageText.change_signal | tojson }};
+const CLIMATOLOGICAL_PERIOD = {{ pageText.climatological_period | tojson }};
+const SEASON_DEFAULTS = {{ pageText.season | tojson }};
+const PROJECTION_DEFAULTS = {{ pageText.opt_inputs | tojson }};
+</script>
+
+<script
+    type="text/javascript"
+    src="{{ url_for(
+        'climate_projection.static',
+        filename='js/model-agreement.js'
+    ) }}">
+</script>
 {% endblock %}
