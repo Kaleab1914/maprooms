@@ -75,13 +75,13 @@ $(document).ready(function() {
     $("#map-control-offcanvas-dataselect")
         .on("hidden.bs.offcanvas.seasonalProjection", redraw);
 
-    //////////
-    // resolution should be provided from data
-    $('#list-spatial-average').select2({
-        data: [{ id: 'grid', text: '2.50 x 2.50' }]
-    });
+    // //////////
+    // // resolution should be provided from data
+    // $('#list-spatial-average').select2({
+    //     data: [{ id: 'grid', text: '2.50 x 2.50' }]
+    // });
 
-    //// grid point only 
-    $('#support-spatial-average').prop('disabled', true);
-    $('#list-spatial-average').prop('disabled', true);
+    // //// grid point only 
+    // $('#support-spatial-average').prop('disabled', true);
+    // $('#list-spatial-average').prop('disabled', true);
 });
