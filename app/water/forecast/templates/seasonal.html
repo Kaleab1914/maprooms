@@ -16,6 +16,7 @@
                 <div class="col-sm-12 col-map-container">
                     <div id="div-map-container" class="div-map-container">
                         {% call fmacros.create_map_control(pageText, urlArgs) %}
+                        {{ fmacrosMap.create_map_control_seasfcst("seasonal", pageText) }}
                         {% endcall %}
                     </div>
                 </div>
@@ -25,12 +26,21 @@
     <div class="row justify-content-center">
         <div class="col-sm-4">
             {{ fmacros.create_card_charts("div-chart-ter", pageText) }}
+            {% call fmacros.create_modal_expand_charts("div-chart-ter", pageText) %}
+            {{ fmacrosExp.create_expand_charts_seasfcst("seasonal", pageText, "ter") }}
+            {% endcall %}
         </div>
         <div class="col-sm-4">
             {{ fmacros.create_card_charts("div-chart-cdf", pageText) }}
+            {% call fmacros.create_modal_expand_charts("div-chart-cdf", pageText) %}
+            {{ fmacrosExp.create_expand_charts_seasfcst("seasonal", pageText, "cdf") }}
+            {% endcall %}
         </div>
         <div class="col-sm-4">
             {{ fmacros.create_card_charts("div-chart-pdf", pageText) }}
+            {% call fmacros.create_modal_expand_charts("div-chart-pdf", pageText) %}
+            {{ fmacrosExp.create_expand_charts_seasfcst("seasonal", pageText, "pdf") }}
+            {% endcall %}
         </div>
     </div>
     {{ fmacros.create_modal_matplotlib(pageText) }}
@@ -38,5 +48,8 @@
 {% endblock %}
 {% block javascript %}
 {% include "block-js.html" %}
+<script>
+const SEAS_FCST = JSON.parse('{{ pageText.forecasts | tojson }}');
+</script>
 <script type="text/javascript" src="{{ url_for('climate_forecast.static', filename='js/seasonal.js') }}"></script>
 {% endblock %}
