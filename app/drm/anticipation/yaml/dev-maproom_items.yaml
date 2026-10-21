@@ -36,13 +36,13 @@ maprooms:
             fr: Les previsions flexible du Maproom sont des previsions saisonnières avec un format probabiliste.
         # icon_image from /app/drm/static/images
         icon_image: default-emi_flexibleforecast.gif
-    - ondj_forecast:
-        title:
-            en: ONDJ Precipitation Forecast
-            fr: Prévision de Précipitations ONDJ
-        description:
-            en: The Maproom facilitates the exploration of the history of extreme monthly and seasonal rainfall characteristics.
-            fr: Le Maproom facilite l’exploration de l’historique des caractéristiques des précipitations mensuelles et saisonnières extrêmes.
-        # icon_image from /app/drm/static/images
-        icon_image: default-emi_monthlyanticipation.gif
+    # - ondj_forecast:
+    #     title:
+    #         en: ONDJ Precipitation Forecast
+    #         fr: Prévision de Précipitations ONDJ
+    #     description:
+    #         en: The Maproom facilitates the exploration of the history of extreme monthly and seasonal rainfall characteristics.
+    #         fr: Le Maproom facilite l’exploration de l’historique des caractéristiques des précipitations mensuelles et saisonnières extrêmes.
+    #     # icon_image from /app/drm/static/images
+    #     icon_image: default-emi_monthlyanticipation.gif
 
