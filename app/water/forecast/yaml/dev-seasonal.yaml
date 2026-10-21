@@ -51,7 +51,106 @@ description:
 dataset:
     use: ALL
     variables:
-        precip: [precip]
-        tmean: [tmin, tmax]
-        tmax: [tmax]
-        tmin: [tmin]
+        rainfall: [precip]
+        temperature: [tmin, tmax]
+
+variables:
+    label:
+        en: Variable
+        fr: Variable
+    select:
+        rainfall:
+            en: Rainfall
+            fr: Précipitation
+        temperature:
+            en: Temperature
+            fr: Température
+
+forecasts:
+    type:
+        label:
+            en: Forecast type
+            fr: Type de prévision
+        select:
+            flexible:
+                en: Flexible presentation
+                fr: Représentation flexible
+            tercile:
+                en: Tercile probability
+                fr: Probabilité du tercile
+
+    parameters:
+        rainfall:
+            TotRain:
+                en: Total rainfall
+                fr: Cumul de précipitations
+            AnomRain:
+                en: Rainfall anomaly
+                fr: Anomalie de précipitation
+            probExc:
+                en: Probability of exceeding
+                fr: Probabilité de dépassement
+            probNoExc:
+                en: Probability of non-exceeding
+                fr: Probabilité de non-dépassement
+        temperature:
+            MeanTemp:
+                en: Mean temperature
+                fr: Température moyenne
+            AnomTemp:
+                en: Mean temperature anomaly
+                fr: Anomalie de température moyenne
+            probExc:
+                en: Probability of exceeding
+                fr: Probabilité de dépassement
+            probNoExc:
+                en: Probability of non-exceeding
+                fr: Probabilité de non-dépassement
+
+    order:
+        rainfall: [TotRain, AnomRain, probExc, probNoExc]
+        temperature: [MeanTemp, AnomTemp, probExc, probNoExc]
+
+    proba:
+        rainfall:
+            percentile: 
+                select:
+                    en: Percentile
+                    fr: Percentile
+                units:
+                    en: '%-ile'
+                    fr: '%-ile'
+                value: 75
+            rainfall: 
+                select:
+                    en: Rainfall
+                    fr: Précipitation
+                units:
+                    en: mm
+                    fr: mm
+                value: 500
+        temperature:
+            percentile: 
+                select:
+                    en: Percentile
+                    fr: Percentile
+                units:
+                    en: '%-ile'
+                    fr: '%-ile'
+                value: 50
+            temperature: 
+                select:
+                    en: Temperature
+                    fr: Température
+                units:
+                    en: °C
+                    fr: °C
+                value: 25
+
+    season:
+        issued:
+            en: Forecast issued
+            fr: Prévision émise
+        target:
+            en: Forecast season
+            fr: Prévision saison
