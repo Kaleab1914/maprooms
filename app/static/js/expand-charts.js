@@ -596,8 +596,6 @@ function setAnalysisExpandModalProba(tempRes, contID) {
         .on('click.chartTsProba', function() {
             downloadPlotlyImageJPG(`${contChart}-plot`);
         });
-
-    // setPlotlyChartSettingsDialog(contID, contChart, test_climate_analysis_season_daily);
 }
 
 function setAnalysisExpandModalSeason(tempRes, contID) {
@@ -1212,8 +1210,6 @@ function setAnalysisExpandModalDrmExt_cdf(tempRes, contID) {
         });
 
     $(`#${tempRes}-proba-parameters`).trigger('change');
-
-
 }
 
 function setAnalysisExpandModalDrmExt_pdf(tempRes, contID) {
@@ -1279,9 +1275,7 @@ function setAnalysisExpandModalDrmExt_pdf(tempRes, contID) {
         });
 
     $(`#${tempRes}-pdf-parameters`).trigger('change');
-
 }
-
 
 //////
 
@@ -1383,8 +1377,6 @@ function setProjectionExpandModalDistribution(tempRes, contID) {
         });
 }
 
-
-
 function setProjectionExpandModalSeries(tempRes, contID) {
     const prefix = `${tempRes}-series-proj`;
     const source = `${tempRes}-seasonal-proj`;
@@ -1408,9 +1400,8 @@ function setProjectionExpandModalSeries(tempRes, contID) {
     const previousScenarios = scenarioSelect.val();
 
     scenarioSelect.val(
-        previousScenarios && previousScenarios.length
-            ? previousScenarios
-            : ['ssp1_2_6', 'ssp5_8_5']
+        previousScenarios && previousScenarios.length ?
+        previousScenarios : ['ssp1_2_6', 'ssp5_8_5']
     ).trigger('change.select2');
 
     $(`.${prefix}-select2`).each(function() {
@@ -1535,9 +1526,9 @@ async function setProjectionExpandModalSpi(tempRes, contID) {
         .off('change.projectionSpiExpand')
         .on('change.projectionSpiExpand', async function() {
             if (await setProjectionSpiDateCalendars(
-                tempRes,
-                prefix
-            )) {
+                    tempRes,
+                    prefix
+                )) {
                 draw();
             }
         });
@@ -1557,4 +1548,135 @@ async function setProjectionExpandModalSpi(tempRes, contID) {
         });
 }
 
+//////
 
+async function setAnalysisExpandModalSeasFcst(tempRes, contID, expandID) {
+    const expand_functions = {
+        'ter': expand_seasfcst_charts_ter,
+        'cdf': expand_seasfcst_charts_cdf,
+        'pdf': expand_seasfcst_charts_pdf
+    };
+
+    showModalDialog(`modal-expand-${contID}`);
+    expandModalCharts(
+        contID,
+        expand_functions[expandID],
+        tempRes
+    );
+    purgePlotlyChartExpandModal(contID);
+
+    const contChart = `container-chart-${contID}`;
+
+    $(`#${tempRes}-chart-forecast-variable-${expandID}`)
+        .off(`change.seasonalForecast${expandID}`)
+        .on(`change.seasonalForecast${expandID}`, function() {
+            const this_val = $(this).val();
+            return setChartSeasFcstSeasonSelect(tempRes, this_val, expandID);
+        });
+    await $(`#${tempRes}-chart-forecast-variable-${expandID}`)
+        .triggerHandler('change');
+
+    const selVar = `#${tempRes}-chart-forecast-variable-${expandID}`;
+    const selYear = `#${tempRes}-chart-forecast-issued-year-${expandID}`;
+    const selMon = `#${tempRes}-chart-forecast-issued-month-${expandID}`;
+    const selTrgt = `#${tempRes}-chart-forecast-target-${expandID}`;
+    $(`${selVar}, ${selYear}, ${selMon}, ${selTrgt}`)
+        .off(`change.seasonalForecast${expandID}`)
+        .on(`change.seasonalForecast${expandID}`, function() {
+            expand_functions[expandID](contChart, tempRes);
+        });
+
+    // update chart
+    $(`#plotly-replot-${contID}`)
+        .off(`click.seasonalForecast${expandID}`)
+        .on(`click.seasonalForecast${expandID}`, function() {
+            expand_functions[expandID](contChart, tempRes);
+        });
+
+    // download chart
+    $(`#plotly-download-${contID}`)
+        .off(`click.seasonalForecast${expandID}`)
+        .on(`click.seasonalForecast${expandID}`, function() {
+            downloadPlotlyImageJPG(contChart);
+        });
+}
+
+function setChartSeasFcstSeasonSelect(tempRes, variable, expandID) {
+    return $.ajax({
+            url: '/get_seasonal_forecasts_data',
+            method: 'GET',
+            data: { variable: variable },
+            dataType: 'json'
+        })
+        .then(function(json) {
+            if (json.status !== 0) {
+                flashMessage(json.message, 'error');
+                return false;
+            }
+            return setChartSeasFcstDefSeasons(
+                tempRes, json.data, expandID
+            );
+        }, function(jqXHR, textStatus, errorThrown) {
+            displayAjaxError(jqXHR, textStatus, errorThrown);
+            return false;
+        });
+}
+
+function setChartSeasFcstDefSeasons(tempRes, fcst_obj, expandID) {
+    const year_id = $(`#${tempRes}-chart-forecast-issued-year-${expandID}`);
+    for (const yr of fcst_obj.years) {
+        year_id.append(
+            $('<option>').text(yr).val(yr)
+        );
+    }
+    year_id.val(fcst_obj.display.year);
+    year_id
+        .off(`change.fcstYear${expandID}`)
+        .on(`change.fcstYear${expandID}`, function() {
+            setChartSeasFcstIssuedMonth(
+                tempRes, $(this).val(), fcst_obj, expandID
+            );
+        });
+    year_id.trigger('change');
+
+    //
+    return new Promise(resolve => {
+        setTimeout(() => {
+            $(`#${tempRes}-chart-forecast-target-${expandID}`)
+                .val(fcst_obj.display.target)
+                .trigger('change.select2');
+            resolve();
+        }, 100);
+    });
+}
+
+function setChartSeasFcstIssuedMonth(tempRes, year, fcst_obj, expandID) {
+    const month_id = $(`#${tempRes}-chart-forecast-issued-month-${expandID}`);
+    month_id.empty();
+    const fcst = fcst_obj.forecast[year].issued;
+    for (const mo of fcst) {
+        month_id.append(
+            $('<option>').text(mo.text).val(mo.val)
+        );
+    }
+    month_id.val(fcst_obj.display.month);
+    month_id
+        .off(`change.fcstMonth${expandID}`)
+        .on(`change.fcstMonth${expandID}`, function() {
+            setChartSeasFcstTargets(
+                tempRes, year, $(this).val(), fcst_obj, expandID
+            );
+        });
+    month_id.trigger('change');
+}
+
+function setChartSeasFcstTargets(tempRes, year, month, fcst_obj, expandID) {
+    const target_id = $(`#${tempRes}-chart-forecast-target-${expandID}`);
+    target_id.empty();
+    const fcst = fcst_obj.forecast[year].targets[month];
+    for (const tg of fcst) {
+        target_id.append(
+            $('<option>').text(tg).val(tg)
+        );
+    }
+}

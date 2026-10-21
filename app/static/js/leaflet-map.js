@@ -1270,6 +1270,11 @@ function checkQueryPointOutside(query, time_res) {
     } else {
         p = query.variable;
     }
+
+    if (p === undefined) {
+        p = Object.keys(DATA_SET.variables)[0];
+    }
+
     const d = query.dataset;
     const v = DATA_SET.variables[p][0];
     const bbox = DATA_INFO[d][time_res][v].spatial_coverage;

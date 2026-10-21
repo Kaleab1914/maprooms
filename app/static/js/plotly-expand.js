@@ -3259,6 +3259,437 @@ function expand_analysis_display_spei_ts(json, container) {
 
 ///////
 
+function expand_analysis_query_seasfcst(tempRes, expandID) {
+    let query = queryParamsSpatialAverage();
+    if (!query) {
+        return query;
+    }
+    query.temporalRes = tempRes;
+    query.dataset = DATA_SET.use;
+    query.chart_variable = $(`#${tempRes}-chart-forecast-variable-${expandID}`).val();
+    query.variable = query.chart_variable;
+
+    query.year = $(`#${tempRes}-chart-forecast-issued-year-${expandID}`).val();
+    query.issued = $(`#${tempRes}-chart-forecast-issued-month-${expandID}`).val();
+    query.target = $(`#${tempRes}-chart-forecast-target-${expandID}`).val();
+
+    return query;
+}
+
+function expand_seasfcst_charts(container_id, tempRes, expandID) {
+    const query = expand_analysis_query_seasfcst(tempRes, expandID);
+    if (!query) {
+        return false;
+    }
+    if (checkQueryPointOutside(query, tempRes)) {
+        return false;
+    }
+
+    let dispFun;
+    if (expandID === 'ter') {
+        query.chartType = 'tercile';
+        dispFun = expand_seasfcst_display_ter;
+    } else if (expandID === 'cdf') {
+        query.chartType = 'probability';
+        dispFun = expand_seasfcst_display_cdf;
+    } else if (expandID === 'pdf') {
+        query.chartType = 'probability';
+        dispFun = expand_seasfcst_display_pdf;
+    } else {
+        return false;
+    }
+
+    return ajaxDisplayChart(
+        '/climate_forecast_seas_proba',
+        query, dispFun, container_id
+    );
+}
+
+////
+
+function expand_seasfcst_charts_ter(container_id, tempRes) {
+    return expand_seasfcst_charts(container_id, tempRes, 'ter');
+}
+
+function expand_seasfcst_display_ter(json, container) {
+    const divCont = $(`#${container}`);
+    divCont.empty();
+    const theme = $('html').attr('data-bs-theme');
+
+    const keys = Object.keys(json.tercile)
+        .sort((a, b) => Number(a) - Number(b));
+
+    const categories = keys.map(key => json.info.categories[key]);
+    const probabilities = keys.map(key => json.tercile[key]);
+    const colors = {
+        '1': '#b87438',
+        '2': '#aaaaaa',
+        '3': '#3a9b55'
+    };
+
+    const data = [{
+        type: 'bar',
+        x: categories,
+        y: probabilities,
+        width: 0.65,
+        marker: {
+            color: keys.map(key => colors[key]),
+            line: {
+                color: '#333333',
+                width: 1
+            }
+        },
+        text: probabilities.map(value =>
+            '<b>' + value.toFixed(1) + json.info.units + '</b>'
+        ),
+        textposition: 'outside',
+        textfont: {
+            family: 'Arial, sans-serif',
+            // size: 14,
+            color: plotly_themecolors[theme].color
+        },
+        cliponaxis: false,
+        hovertemplate: '%{x}<br>Probability: %{y:.2f}' +
+            json.info.units +
+            '<extra></extra>'
+    }];
+
+    let layout = {
+        xaxis: {
+            title: { text: json.info.xlab },
+            categoryorder: 'array',
+            categoryarray: categories,
+            showgrid: false,
+            showline: true,
+            mirror: true,
+            linecolor: plotly_themecolors[theme].fontcolor,
+            fixedrange: true,
+        },
+        yaxis: {
+            title: {
+                text: json.info.ylab + ' (' + json.info.units + ')'
+            },
+            range: [0, 100],
+            ticksuffix: '%',
+            ticks: 'outside',
+            ticklen: 6,
+            tick0: 0,
+            dtick: 20,
+            showgrid: false,
+            zeroline: false,
+            showline: true,
+            mirror: true,
+            linecolor: plotly_themecolors[theme].fontcolor,
+            fixedrange: true,
+        },
+        shapes: [100 / 3, 200 / 3].map(value => ({
+            type: 'line',
+            xref: 'paper',
+            x0: 0,
+            x1: 1,
+            yref: 'y',
+            y0: value,
+            y1: value,
+            layer: 'below',
+            line: {
+                color: '#777777',
+                width: 1,
+                dash: 'dot'
+            }
+        })),
+        showlegend: false,
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    layout.margin = { t: 10, b: 70, l: 70, r: 10 };
+    // layout.print_legend = 'probability';
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(expand_layout, layout);
+
+    purgePlotlyChart(container);
+    Plotly.newPlot(
+        container,
+        data,
+        layout,
+        plotly_config
+    );
+
+    setPlotlyThemeColors(container);
+}
+
+//
+function expand_seasfcst_charts_cdf(container_id, tempRes) {
+    return expand_seasfcst_charts(container_id, tempRes, 'cdf');
+}
+
+function expand_seasfcst_display_cdf(json, container) {
+    const divCont = $(`#${container}`);
+    divCont.empty();
+    const theme = $('html').attr('data-bs-theme');
+    //
+
+    const obs_e = json.cdf.obs_empirical;
+    const obs_p = json.cdf.obs_parametric;
+    const fcst = json.cdf.forecast;
+
+    const xmin = [
+        Math.min(...obs_e),
+        Math.min(...obs_p),
+        Math.min(...fcst)
+    ];
+    const xmax = [
+        Math.max(...obs_e),
+        Math.max(...obs_p),
+        Math.max(...fcst)
+    ];
+    const xrange = [
+        Math.min(...xmin),
+        Math.max(...xmax)
+    ];
+
+    const data = [{
+            x: obs_e,
+            y: json.cdf.proba,
+            mode: 'lines',
+            name: 'Obs Empirical',
+            units: '%',
+            line: {
+                color: plotly_themecolors[theme].color,
+                width: 3
+            },
+            hovertemplate: '%{data.name}: %{y:.1f} %{data.units} <extra></extra>'
+        },
+        {
+            x: obs_p,
+            y: json.cdf.proba,
+            mode: 'lines',
+            name: 'Obs Parametric',
+            units: '%',
+            line: {
+                color: 'blue',
+                width: 3
+            },
+            hovertemplate: '%{data.name}: %{y:.1f} %{data.units} <extra></extra>'
+        },
+        {
+            x: fcst,
+            y: json.cdf.proba,
+            mode: 'lines',
+            name: 'Forecast',
+            units: '%',
+            line: {
+                color: 'red',
+                width: 3
+            },
+            hovertemplate: '%{data.name}: %{y:.1f} %{data.units} <extra></extra>'
+        }
+    ];
+
+    let layout = {
+        xaxis: {
+            range: xrange,
+            ticks: 'outside',
+            ticklen: 6,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            },
+            unifiedhovertitle: {
+                text: json.cdf.info.variable +
+                    ': %{x:.2f} ' +
+                    json.cdf.info.units
+            },
+            title: {
+                text: json.cdf.info.variable +
+                    ' (' + json.cdf.info.units + ')'
+            }
+        },
+        yaxis: {
+            range: [0, 100],
+            ticksuffix: '%',
+            ticks: 'outside',
+            ticklen: 6,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            },
+            title: {
+                text: json.cdf.info.ylab
+            }
+        },
+        showlegend: true,
+        hovermode: 'x unified',
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    layout.margin = { t: 10, b: 70, l: 70, r: 10 };
+    // layout.print_legend = 'probability';
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(expand_layout, layout);
+
+    purgePlotlyChart(container);
+    Plotly.newPlot(
+        container,
+        data,
+        layout,
+        plotly_config
+    );
+
+    setPlotlyThemeColors(container);
+}
+
+//
+function expand_seasfcst_charts_pdf(container_id, tempRes) {
+    return expand_seasfcst_charts(container_id, tempRes, 'pdf');
+}
+
+function expand_seasfcst_display_pdf(json, container) {
+    const divCont = $(`#${container}`);
+    divCont.empty();
+    const theme = $('html').attr('data-bs-theme');
+
+    const obs_x = json.pdf.observation.x;
+    const fcst_x = json.pdf.forecast.x;
+
+    const xmin = [
+        Math.min(...obs_x),
+        Math.min(...fcst_x)
+    ];
+    const xmax = [
+        Math.max(...obs_x),
+        Math.max(...fcst_x)
+    ];
+    const xrange = [
+        Math.min(...xmin),
+        Math.max(...xmax)
+    ];
+
+    const ymax = Math.max(
+        ...json.pdf.observation.y,
+        ...json.pdf.forecast.y
+    );
+
+    function formatHover(x, ts, tx) {
+        const i = nearestIndex(ts, x);
+        const poe = json.pdf.proba[i].toFixed(1);
+        const v = x.toFixed(1);
+        const y = json.pdf.info.variable;
+        const u = json.pdf.info.units;
+        const t0 = 'chance of exceeding';
+        return `${poe}% ${t0} ${tx} <br> ${y}: ${v} ${u}`;
+    }
+
+    const xaxisHoverObs = obs_x.map((x) => {
+        return formatHover(x, obs_x, 'observation');
+    });
+    const xaxisHoverFcst = fcst_x.map((x) => {
+        return formatHover(x, fcst_x, 'forecast');
+    });
+
+    const data = [{
+            x: json.pdf.observation.x,
+            y: json.pdf.observation.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Observation',
+            line: {
+                color: 'blue',
+                width: 3
+            },
+            customdata: xaxisHoverObs,
+            hovertemplate: '%{customdata}<extra></extra>'
+        },
+        {
+            x: json.pdf.forecast.x,
+            y: json.pdf.forecast.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Forecast',
+            line: {
+                color: 'red',
+                width: 3
+            },
+            customdata: xaxisHoverFcst,
+            hovertemplate: '%{customdata}<extra></extra>'
+        }
+    ];
+
+    let layout = {
+        xaxis: {
+            range: xrange,
+            ticks: 'outside',
+            ticklen: 6,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            },
+            title: {
+                text: json.pdf.info.variable +
+                    ' (' + json.pdf.info.units + ')'
+            }
+        },
+        yaxis: {
+            range: [0, ymax + 0.002],
+            ticks: 'outside',
+            ticklen: 6,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.5,
+            gridcolor: 'lightgray',
+            minor: {
+                showgrid: true,
+                gridwidth: 0.3,
+                gridcolor: 'lightgray',
+                griddash: 'dot'
+            },
+            title: {
+                text: json.pdf.info.ylab
+            }
+        },
+        showlegend: true,
+        hoverlabel: hoverlabelColors(theme)
+    };
+
+    layout.margin = { t: 10, b: 70, l: 70, r: 10 };
+    // layout.print_legend = 'probability';
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(expand_layout, layout);
+
+    purgePlotlyChart(container);
+    Plotly.newPlot(
+        container,
+        data,
+        layout,
+        plotly_config
+    );
+
+    setPlotlyThemeColors(container);
+}
+
+///////
+
 function expand_analysis_query_drmExt_cdf(tempRes) {
     let query = queryParamsSpatialAverage();
     if (!query) {
@@ -3304,22 +3735,22 @@ function expand_analysis_query_drmExt_cdf(tempRes) {
         $(`#${tempRes}-proba-def-number-thres-val`).val().trim()
     );
     if (query.variable === 'rainfall') {
-        query.defSpell = parseInt($(`#${tempRes}-proba-def-spell-thres-val`).val().trim(),10);
+        query.defSpell = parseInt($(`#${tempRes}-proba-def-spell-thres-val`).val().trim(), 10);
     };
 
     //
     if (
         ['max_temperature', 'min_temperature']
-            .includes(query.variable)
+        .includes(query.variable)
     ) {
         const selectedVariable = query.variable;
         query.variable = 'temperature';
 
         if (query.seasParams === 'seasAvg') {
             query.seasParams =
-                selectedVariable === 'max_temperature'
-                    ? 'MaxTemp'
-                    : 'MinTemp';
+                selectedVariable === 'max_temperature' ?
+                'MaxTemp' :
+                'MinTemp';
         }
     }
 
@@ -3348,8 +3779,7 @@ function expand_analysis_display_drmExt_cdf(json, container) {
     divCont.empty();
     const theme = $('html').attr('data-bs-theme');
 
-    const data = [
-        {
+    const data = [{
             x: json.cdf.smoothed.x,
             y: json.cdf.smoothed.y,
             type: 'scatter',
@@ -3429,6 +3859,7 @@ function expand_analysis_display_drmExt_cdf(json, container) {
     setPlotlyThemeColors(container);
 
 }
+
 function expand_analysis_query_drmExt_pdf(tempRes) {
     let query = queryParamsSpatialAverage();
     if (!query) {
@@ -3475,22 +3906,22 @@ function expand_analysis_query_drmExt_pdf(tempRes) {
     );
 
     if (query.variable === 'rainfall') {
-        query.defSpell = parseInt($(`#${tempRes}-pdf-def-spell-thres-val`).val().trim(),10);
+        query.defSpell = parseInt($(`#${tempRes}-pdf-def-spell-thres-val`).val().trim(), 10);
     };
 
     //
     if (
         ['max_temperature', 'min_temperature']
-            .includes(query.variable)
+        .includes(query.variable)
     ) {
         const selectedVariable = query.variable;
         query.variable = 'temperature';
 
         if (query.seasParams === 'seasAvg') {
             query.seasParams =
-                selectedVariable === 'max_temperature'
-                    ? 'MaxTemp'
-                    : 'MinTemp';
+                selectedVariable === 'max_temperature' ?
+                'MaxTemp' :
+                'MinTemp';
         }
     }
 
@@ -3521,16 +3952,14 @@ function expand_analysis_display_drmExt_pdf(json, container) {
 
     const xlab = json.info.labels.pdf.x;
     const ylab = json.info.labels.pdf.y;
-    const data = [
-        {
+    const data = [{
             x: json.pdf.kde.x,
             y: json.pdf.kde.y,
             type: 'scatter',
             mode: 'lines',
             name: 'Kernel Density Estimation',
             line: { color: '#1e90ff', width: 4 },
-            hovertemplate:
-                '%{data.name}: %{y:.4f}<extra></extra>'
+            hovertemplate: '%{data.name}: %{y:.4f}<extra></extra>'
         },
         {
             x: json.pdf.fitted.x,
@@ -3539,8 +3968,7 @@ function expand_analysis_display_drmExt_pdf(json, container) {
             mode: 'lines',
             name: 'Fitted PDF',
             line: { color: 'red', width: 3 },
-            hovertemplate:
-                '%{data.name}: %{y:.4f}<extra></extra>'
+            hovertemplate: '%{data.name}: %{y:.4f}<extra></extra>'
         }
     ];
 
@@ -3618,7 +4046,6 @@ function expand_projection_query_distribution(tempRes) {
     );
 }
 
-
 function expand_projection_charts_distribution(container, tempRes) {
     const query = expand_projection_query_distribution(tempRes);
 
@@ -3639,7 +4066,6 @@ function expand_projection_charts_distribution(container, tempRes) {
         'projection_distribution'
     );
 }
-
 
 function expand_projection_display_distribution(json, container) {
     const divCont = $(`#${container}`);
@@ -3667,17 +4093,15 @@ function expand_projection_display_distribution(json, container) {
         const sample = json[key];
 
         if (isCDF) {
-            return [
-                {
+            return [{
                     x: sample.cdf.smoothed.x,
                     y: sample.cdf.smoothed.y,
                     type: 'scatter',
                     mode: 'lines',
                     name: `${sample.label} — Smoothed`,
                     legendgroup: key,
-                    line: {color: color, width: 3},
-                    hovertemplate:
-                        '%{data.name}: %{y:.2f}%<extra></extra>'
+                    line: { color: color, width: 3 },
+                    hovertemplate: '%{data.name}: %{y:.2f}%<extra></extra>'
                 },
                 {
                     x: sample.cdf.empirical.x,
@@ -3691,9 +4115,8 @@ function expand_projection_display_distribution(json, container) {
                         width: 1,
                         dash: 'dot'
                     },
-                    marker: {color: color, size: 6},
-                    hovertemplate:
-                        '%{data.name}: %{y:.2f}%<extra></extra>'
+                    marker: { color: color, size: 6 },
+                    hovertemplate: '%{data.name}: %{y:.2f}%<extra></extra>'
                 }
             ];
         }
@@ -3704,9 +4127,8 @@ function expand_projection_display_distribution(json, container) {
             type: 'scatter',
             mode: 'lines',
             name: sample.label,
-            line: {color: color, width: 3},
-            hovertemplate:
-                '%{data.name}: %{y:.4f}<extra></extra>'
+            line: { color: color, width: 3 },
+            hovertemplate: '%{data.name}: %{y:.4f}<extra></extra>'
         }];
     });
 
@@ -3750,14 +4172,13 @@ function expand_projection_display_distribution(json, container) {
         yaxis: {
             ...grid,
             title: {
-                text: isCDF
-                    ? 'Probability of exceeding (%)'
-                    : 'Probability density'
+                text: isCDF ?
+                    'Probability of exceeding (%)' : 'Probability density'
             },
             rangemode: 'tozero'
         },
         showlegend: true,
-        legend: {orientation: 'h'},
+        legend: { orientation: 'h' },
         hovermode: 'x unified',
         hoverlabel: hoverlabelColors(theme)
     };
@@ -3798,9 +4219,6 @@ function expand_projection_display_distribution(json, container) {
     setPlotlyThemeColors(container);
 }
 
-
-
-
 function expand_projection_query_series(tempRes) {
     const prefix = `${tempRes}-series-proj`;
     const scenarios = $(`#${prefix}-scenarios`).val() || [];
@@ -3811,7 +4229,6 @@ function expand_projection_query_series(tempRes) {
         scenarios
     );
 }
-
 
 function expand_projection_charts_series(container, tempRes) {
     const query = expand_projection_query_series(tempRes);
@@ -3833,7 +4250,6 @@ function expand_projection_charts_series(container, tempRes) {
         'projection_series_expand'
     );
 }
-
 
 function expand_projection_display_series(json, container) {
     const prefix = `${json.info.time_res}-series-proj`;
@@ -3873,7 +4289,6 @@ function expand_projection_spi_charts(container, tempRes) {
     );
 }
 
-
 function expand_projection_spi_display(json, container) {
     return preview_drm_display_spi(
         json,
@@ -3881,4 +4296,3 @@ function expand_projection_spi_display(json, container) {
         true
     );
 }
-
