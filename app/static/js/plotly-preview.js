@@ -2906,25 +2906,40 @@ function preview_projection_display_series(
         hoverlabel: hoverlabelColors(theme)
     };
 
-    layout = deepMerge(setPlotlyColors(), layout);
-    layout = deepMerge(
-        expanded ? expand_layout : preview_layout,
-        layout
-    );
 
-    // layout.margin = expanded
-    //     ? {t: 120, b: 60, l: 75, r: 20}
-    //     : {t: 10, b: 30, l: 45, r: 10};
+    layout = deepMerge(setPlotlyColors(), layout);
+
+    if (expanded) {
+        layout = deepMerge(expand_layout, layout);
+    } else {
+        layout = deepMerge(preview_layout, layout);
+        layout.margin.l = 40;
+
+        layout.xaxis.tickfont = deepMerge(
+            layout.xaxis.tickfont || {},
+            { size: 10 }
+        );
+
+        layout.xaxis.automargin = false;
+    };
+
+    const config = {
+        displayModeBar: false,
+        responsive: true
+    };
 
     purgePlotlyChart(container);
     $(`#${container}`).empty();
 
-    Plotly.newPlot(container, data, layout, {
-        displayModeBar: false,
-        responsive: true
-    });
+    Plotly.newPlot(
+        container,
+        data,
+        layout,
+        config
+    );
 
     setPlotlyThemeColors(container);
+
 }
 
 //////
