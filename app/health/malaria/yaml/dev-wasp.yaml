@@ -55,7 +55,7 @@ wasp:
 
     comparison:
         start_year: 1995
-        end_year: 1999
+        end_year: 1996
         start_month: 1
 
     labels:
@@ -78,8 +78,8 @@ wasp:
             en: End year
             fr: Année de fin
         minimum_years:
-            en: Minimum valid years per calendar month
-            fr: Nombre minimum d'années valides par mois
+            en: Minimum valid years
+            fr: Nombre minimum d'années
         chart_period:
             en: Chart period
             fr: Période du graphique
@@ -105,8 +105,8 @@ wasp:
             fr: Référence de comparaison
 
         comparison_start_month:
-            en: Starting month of comparison windows
-            fr: Mois de début des périodes de comparaison
+            en: Starting month
+            fr: Mois de début
 
         departure:
             en: Departure from baseline

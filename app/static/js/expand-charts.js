@@ -1621,27 +1621,6 @@ async function setHealthWaspExpandedControls(tempRes) {
         area.data('waspAreasReady', true);
     }
 
-    // if (month.children('option').length === 0) {
-    //     getListOfMonthsCalendar().short.forEach(
-    //         (label, index) => {
-    //             month.append(
-    //                 new Option(label, index + 1)
-    //             );
-    //         }
-    //     );
-
-    //     month.val(
-    //         String(month.attr('data-default') || 1)
-    //     );
-    // }
-
-    // if (!month.hasClass('select2-hidden-accessible')) {
-    //     month.select2({
-    //         dropdownParent: parent,
-    //         minimumResultsForSearch: -1
-    //     });
-    // }
-
 
     const monthHolder = `${prefix}-comparison-month`;
 
@@ -1701,7 +1680,8 @@ async function setHealthExpandModalWasp(tempRes, contID) {
     if (!query) {
         return false;
     }
-
+    
+    const preparing = new Spinner(spinnerChartOptions());
     controls.data('waspBusy', true);
     controls.off('.healthWaspExpanded');
     controls.off('.healthWaspCalculation');
@@ -1720,28 +1700,76 @@ async function setHealthExpandModalWasp(tempRes, contID) {
     setHealthWaspControls(prefix);
     showModalDialog(`modal-expand-${contID}`);
 
-    try {
-        const ready = await setHealthWaspDateCalendars(
-            tempRes,
-            prefix
-        );
+    const initialization = (async () => {
+        try {
+            const ready = await setHealthWaspDateCalendars(
+                tempRes,
+                prefix
+            );
 
-        if (!ready) {
+            if (!ready) {
+                return false;
+            }
+
+            await setHealthWaspExpandedControls(tempRes);
+            return true;
+
+        } catch (error) {
+            console.error(error);
+            flashMessage(error.message, 'error');
             return false;
+
+        } finally {
+            controls.data('waspBusy', false);
         }
+    })();
 
-        await setHealthWaspExpandedControls(tempRes);
 
-    } catch (error) {
-        console.error(error);
-        flashMessage(error.message, 'error');
+    expandModalCharts(
+        contID,
+        async (chartContainer, resolution) => {
+            const ready = await initialization;
+
+            if (controls.data('waspBusy')) {
+                return;
+            }
+
+            preparing.stop();
+
+            if (ready && modal.hasClass('show')) {
+                expand_health_wasp_charts(
+                    chartContainer,
+                    resolution
+                );
+            }
+        },
+        tempRes
+    );
+
+    $(`#${container}`).addClass('position-relative');
+
+    preparing.spin(
+        document.getElementById(container)
+    );
+
+    modal
+        .off('hidden.bs.modal.healthWaspPreparing')
+        .on('hidden.bs.modal.healthWaspPreparing', () => {
+            preparing.stop();
+        });
+
+    purgePlotlyChartExpandModal(contID);
+    $(`#rangeselector-${contID}`).show();
+
+    if (!(await initialization)) {
+        preparing.stop();
         return false;
-
-    } finally {
-        controls.data('waspBusy', false);
     }
 
-    if (!modal.hasClass('show')) {
+    purgePlotlyChartExpandModal(contID);
+    $(`#rangeselector-${contID}`).show();
+
+    if (!(await initialization)) {
         return false;
     }
 
@@ -1757,15 +1785,6 @@ async function setHealthExpandModalWasp(tempRes, contID) {
         }
     };
 
-    expandModalCharts(
-        contID,
-        expand_health_wasp_charts,
-        tempRes
-    );
-
-    purgePlotlyChartExpandModal(contID);
-    $(`#rangeselector-${contID}`).show();
-
     let revision = 0;
 
     controls.on(
@@ -1779,7 +1798,9 @@ async function setHealthExpandModalWasp(tempRes, contID) {
         async () => {
             const current = ++revision;
             controls.data('waspBusy', true);
-
+            preparing.spin(
+                document.getElementById(container)
+            );
             try {
                 const ready = await setHealthWaspDateCalendars(
                     tempRes,
@@ -1804,11 +1825,17 @@ async function setHealthExpandModalWasp(tempRes, contID) {
                     draw();
                 }
 
+
             } catch (error) {
                 if (current === revision) {
                     controls.data('waspBusy', false);
                     console.error(error);
                     flashMessage(error.message, 'error');
+                }
+
+            } finally {
+                if (current === revision) {
+                    preparing.stop();
                 }
             }
         }
