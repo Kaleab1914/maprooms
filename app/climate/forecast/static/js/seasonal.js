@@ -12,7 +12,35 @@ $(document).ready(async function() {
 
     ////////////
     // Modal Expand Charts
+    $('.seasonal-ter-select2').select2({
+        minimumResultsForSearch: -1,
+        dropdownParent: $('#seasonal-ter-control')
+    });
+    $('#btn-div-chart-ter').on('click', async () => {
+        await setAnalysisExpandModalSeasFcst(
+            'seasonal', 'div-chart-ter', 'ter'
+        );
+    });
 
+    $('.seasonal-cdf-select2').select2({
+        minimumResultsForSearch: -1,
+        dropdownParent: $('#seasonal-cdf-control')
+    });
+    $('#btn-div-chart-cdf').on('click', async () => {
+        await setAnalysisExpandModalSeasFcst(
+            'seasonal', 'div-chart-cdf', 'cdf'
+        );
+    });
+
+    $('.seasonal-pdf-select2').select2({
+        minimumResultsForSearch: -1,
+        dropdownParent: $('#seasonal-pdf-control')
+    });
+    $('#btn-div-chart-pdf').on('click', async () => {
+        await setAnalysisExpandModalSeasFcst(
+            'seasonal', 'div-chart-pdf', 'pdf'
+        );
+    });
 
     ////////////
     // initialize map

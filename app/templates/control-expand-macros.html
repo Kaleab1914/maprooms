@@ -936,7 +936,6 @@
             {% endfor %}
         </select>
     </fieldset>
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">{{ pageText.opt_season.label_year.start }}</legend>
         <div id="{{ tempRes }}-chart-proba-startdate" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Start date" style="width: 6.5em">
@@ -949,7 +948,6 @@
             <input id="{{ tempRes }}-chart-proba-enddate-calendar" type="text" class="form-control">
         </div>
     </fieldset>
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">{{ pageText.opt_season.label_season.start }}</legend>
         <div class="row w-auto">
@@ -973,12 +971,10 @@
             </div>
         </div>
     </fieldset>
-
     <!--  -->
     {% set definition = pageText.definition.number
-        if variable == "rainfall"
-        else pageText.definition %}
-
+    if variable == "rainfall"
+    else pageText.definition %}
     <fieldset id="{{ tempRes }}-proba-def-number" class="border border-secondary rounded-3 py-1">
         <legend id="{{ tempRes }}-proba-def-number-thres-lab" class="legend-label">{{ definition.label }}</legend>
         <div class="row w-auto">
@@ -1007,11 +1003,9 @@
         </div>
     </fieldset>
     {% endif %}
-
     <!--  -->
 </div>
 {% endmacro %}
-
 <!--  -->
 {% macro create_expand_charts_drmExt_pdf(tempRes, pageText, variable="rainfall") %}
 <div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-drmExt-pdf-control">
@@ -1024,7 +1018,6 @@
             {% endfor %}
         </select>
     </fieldset>
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">{{ pageText.opt_season.label_year.start }}</legend>
         <div id="{{ tempRes }}-chart-pdf-startdate" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Start date" style="width: 6.5em">
@@ -1037,7 +1030,6 @@
             <input id="{{ tempRes }}-chart-pdf-enddate-calendar" type="text" class="form-control">
         </div>
     </fieldset>
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">{{ pageText.opt_season.label_season.start }}</legend>
         <div class="row w-auto">
@@ -1062,9 +1054,8 @@
         </div>
     </fieldset>
     {% set definition = pageText.definition.number
-        if variable == "rainfall"
-        else pageText.definition %}
-
+    if variable == "rainfall"
+    else pageText.definition %}
     <fieldset id="{{ tempRes }}-pdf-def-number" class="border border-secondary rounded-3 py-1">
         <legend id="{{ tempRes }}-pdf-def-number-thres-lab" class="legend-label">{{ definition.label }}</legend>
         <div class="row w-auto">
@@ -1079,7 +1070,6 @@
             </div>
         </div>
     </fieldset>
-
     {% if variable == "rainfall" %}
     <fieldset id="{{ tempRes }}-pdf-def-spell" class="border border-secondary rounded-3">
         <legend id="{{ tempRes }}-pdf-def-spell-thres-lab" class="legend-label">{{ pageText.definition.spell.label }}</legend>
@@ -1093,171 +1083,124 @@
         </div>
     </fieldset>
     {% endif %}
-
     <!--  -->
 </div>
 {% endmacro %}
-
-
 <!--  -->
 {% macro create_expand_charts_spi_proj(tempRes, pageText) %}
-    {% import 'control-map-macros.html' as projectionControls %}
-
-    {{ projectionControls.create_map_control_spi_proj(
-        tempRes,
-        pageText,
-        prefix=tempRes ~ '-chart-spi-proj',
-        include_map=false
-    ) }}
+{% import 'control-map-macros.html' as projectionControls %}
+{{ projectionControls.create_map_control_spi_proj(
+tempRes,
+pageText,
+prefix=tempRes ~ '-chart-spi-proj',
+include_map=false
+) }}
 {% endmacro %}
-
 <!--  -->
 {% macro create_expand_charts_anom_proj(tempRes, pageText, variable="rainfall") %}
 <div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-spi-proj-control">
     <fieldset>
-        
     </fieldset>
 </div>
 {% endmacro %}
-
-
-
 <!--  -->
 {% macro create_expand_charts_model_proj(tempRes, pageText, variable="rainfall") %}
 <div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-model-proj-control">
     <fieldset>
-        
     </fieldset>
 </div>
 {% endmacro %}
-
-
 <!--  -->
-
 {% macro create_expand_charts_seasonal_proj(tempRes, pageText, variable="rainfall") %}
 {% set prefix = tempRes ~ '-series-proj' %}
-
-<div class="container d-flex flex-wrap justify-content-start w-100"
-     id="{{ prefix }}-control">
-
+<div class="container d-flex flex-wrap justify-content-start w-100" id="{{ prefix }}-control">
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">
             {{ pageText.variables.label }}
         </legend>
-        <select id="{{ prefix }}-variable"
-                class="form-select {{ prefix }}-select2"
-                style="width: 220px;">
+        <select id="{{ prefix }}-variable" class="form-select {{ prefix }}-select2" style="width: 220px;">
             {% for key, label in pageText.variables.select.items() %}
             <option value="{{ key }}">{{ label }}</option>
             {% endfor %}
         </select>
     </fieldset>
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">
             {{ pageText.opt_inputs.scenarios.label }}
         </legend>
-        <select id="{{ prefix }}-scenarios"
-                class="form-select {{ prefix }}-select2"
-                multiple
-                style="width: 300px;">
+        <select id="{{ prefix }}-scenarios" class="form-select {{ prefix }}-select2" multiple style="width: 300px;">
             {% for key, scenario in pageText.scenarios.items() %}
             <option value="{{ key }}">{{ scenario.label }}</option>
             {% endfor %}
         </select>
     </fieldset>
-
     {% for boundary, label in [
-        ('start', pageText.opt_season.season_map.start),
-        ('end', pageText.opt_season.season_map.end)
+    ('start', pageText.opt_season.season_map.start),
+    ('end', pageText.opt_season.season_map.end)
     ] %}
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">{{ label }}</legend>
-        <select id="{{ prefix }}-{{ boundary }}-month"
-                class="form-select {{ prefix }}-select2"
-                style="width: 120px;"></select>
+        <select id="{{ prefix }}-{{ boundary }}-month" class="form-select {{ prefix }}-select2" style="width: 120px;"></select>
     </fieldset>
     {% endfor %}
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">
             {{ pageText.series_chart.label }}
         </legend>
-        <select id="{{ prefix }}-plot-type"
-                class="form-select {{ prefix }}-select2"
-                style="width: 200px;">
+        <select id="{{ prefix }}-plot-type" class="form-select {{ prefix }}-select2" style="width: 200px;">
             {% for key, label in pageText.series_chart.select.items() %}
             <option value="{{ key }}">{{ label }}</option>
             {% endfor %}
         </select>
     </fieldset>
-
 </div>
 {% endmacro %}
-
-
 <!--  -->
 {% macro create_expand_charts_distribution_proj(tempRes, pageText, variable="rainfall") %}
 {% set prefix = tempRes ~ '-distribution-proj' %}
 <div class="container d-flex flex-wrap justify-content-start w-100" id="{{ prefix }}-control">
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">
             {{ pageText.variables.label }}
         </legend>
-        <select id="{{ prefix }}-variable"
-                class="form-select {{ prefix }}-select2"
-                style="width: 220px;">
+        <select id="{{ prefix }}-variable" class="form-select {{ prefix }}-select2" style="width: 220px;">
             {% for key, label in pageText.variables.select.items() %}
             <option value="{{ key }}">{{ label }}</option>
             {% endfor %}
         </select>
     </fieldset>
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">
             {{ pageText.opt_inputs.GCM.label }}
         </legend>
-        <select id="{{ prefix }}-gcm"
-                class="form-select {{ prefix }}-select2"
-                style="width: 220px;">
+        <select id="{{ prefix }}-gcm" class="form-select {{ prefix }}-select2" style="width: 220px;">
             {% for key, model in pageText.GCM.items() %}
             <option value="{{ key }}">{{ model.label }}</option>
             {% endfor %}
         </select>
     </fieldset>
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">
             {{ pageText.opt_inputs.scenarios.label }}
         </legend>
-        <select id="{{ prefix }}-scenario"
-                class="form-select {{ prefix }}-select2"
-                style="width: 150px;">
+        <select id="{{ prefix }}-scenario" class="form-select {{ prefix }}-select2" style="width: 150px;">
             {% for key, scenario in pageText.scenarios.items() %}
             <option value="{{ key }}">{{ scenario.label }}</option>
             {% endfor %}
         </select>
     </fieldset>
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">
             {{ pageText.opt_season.season_map.start }}
         </legend>
-        <select id="{{ prefix }}-start-month"
-                class="form-select {{ prefix }}-select2"
-                style="width: 120px;"></select>
+        <select id="{{ prefix }}-start-month" class="form-select {{ prefix }}-select2" style="width: 120px;"></select>
     </fieldset>
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">
             {{ pageText.opt_season.season_map.end }}
         </legend>
-        <select id="{{ prefix }}-end-month"
-                class="form-select {{ prefix }}-select2"
-                style="width: 120px;"></select>
+        <select id="{{ prefix }}-end-month" class="form-select {{ prefix }}-select2" style="width: 120px;"></select>
     </fieldset>
-
     {# <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">
             {{ pageText.opt_climatological_period.label }}
@@ -1266,54 +1209,34 @@
             1981–2014
         </div>
     </fieldset> #}
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">
             {{ pageText.opt_climatological_period.future_start_year }}
         </legend>
-        <input id="{{ prefix }}-future-date-calendar"
-               type="number"
-               min="1"
-               max="9998"
-               step="1"
-               class="form-control text-center"
-               style="width: 110px;">
+        <input id="{{ prefix }}-future-date-calendar" type="number" min="1" max="9998" step="1" class="form-control text-center" style="width: 110px;">
     </fieldset>
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">
             {{ pageText.opt_climatological_period.length }}
         </legend>
-        <input id="{{ prefix }}-period-length"
-               type="number"
-               min="1"
-               max="9998"
-               step="1"
-               class="form-control text-center"
-               style="width: 100px;">
+        <input id="{{ prefix }}-period-length" type="number" min="1" max="9998" step="1" class="form-control text-center" style="width: 100px;">
     </fieldset>
-
     <fieldset class="border border-secondary rounded-3 py-1">
         <legend class="legend-label">
             {{ pageText.distribution_chart.label }}
         </legend>
-        <select id="{{ prefix }}-plot-type"
-                class="form-select {{ prefix }}-select2"
-                style="width: 230px;">
+        <select id="{{ prefix }}-plot-type" class="form-select {{ prefix }}-select2" style="width: 230px;">
             {% for key, label in pageText.distribution_chart.select.items() %}
             <option value="{{ key }}">{{ label }}</option>
             {% endfor %}
         </select>
     </fieldset>
-
 </div>
 {% endmacro %}
-
 <!--  -->
 
 
 {% macro create_expand_charts_health_wasp(tempRes, pageText) %}
-
 {% set prefix = tempRes ~ '-wasp-chart' %}
 {% set labels = pageText.wasp.labels %}
 {% set calibration = pageText.wasp.calibration %}
@@ -1524,16 +1447,32 @@
 <!--  -->
 {% macro create_expand_charts_health_cmst(tempRes, pageText) %}
 <div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-health-cmst-control">
-    
-
 </div>
 {% endmacro %}
-
-
 <!--  -->
 {% macro create_expand_charts_health_ndvi(tempRes, pageText) %}
 <div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-health-ndvi-control">
-    
-
+</div>
+{% endmacro %}
+<!--  -->
+{% macro create_expand_charts_seasfcst(tempRes, pageText, expandID) %}
+<div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-{{ expandID }}-control">
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.variables.label }}</legend>
+        <select id="{{ tempRes }}-chart-forecast-variable-{{ expandID }}" class="form-select {{ tempRes }}-{{ expandID }}-select2" style="width: 150px;">
+            {% for key, value in pageText.variables.select.items() %}
+            <option value="{{key}}">{{value}}</option>
+            {% endfor %}
+        </select>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.forecasts.season.issued }}</legend>
+        <select id="{{ tempRes }}-chart-forecast-issued-month-{{ expandID }}" class="form-select {{ tempRes }}-{{ expandID }}-select2 d-inline-block align-middle"></select>
+        <select id="{{ tempRes }}-chart-forecast-issued-year-{{ expandID }}" class="form-select {{ tempRes }}-{{ expandID }}-select2 d-inline-block align-middle"></select>
+    </fieldset>
+    <fieldset class="border border-secondary rounded-3 py-1">
+        <legend class="legend-label">{{ pageText.forecasts.season.target }}</legend>
+        <select id="{{ tempRes }}-chart-forecast-target-{{ expandID }}" class="form-select {{ tempRes }}-{{ expandID }}-select2 d-inline-block align-middle"></select>
+    </fieldset>
 </div>
 {% endmacro %}

@@ -26,12 +26,21 @@
     <div class="row justify-content-center">
         <div class="col-sm-4">
             {{ fmacros.create_card_charts("div-chart-ter", pageText) }}
+            {% call fmacros.create_modal_expand_charts("div-chart-ter", pageText) %}
+            {{ fmacrosExp.create_expand_charts_seasfcst("seasonal", pageText, "ter") }}
+            {% endcall %}
         </div>
         <div class="col-sm-4">
             {{ fmacros.create_card_charts("div-chart-cdf", pageText) }}
+            {% call fmacros.create_modal_expand_charts("div-chart-cdf", pageText) %}
+            {{ fmacrosExp.create_expand_charts_seasfcst("seasonal", pageText, "cdf") }}
+            {% endcall %}
         </div>
         <div class="col-sm-4">
             {{ fmacros.create_card_charts("div-chart-pdf", pageText) }}
+            {% call fmacros.create_modal_expand_charts("div-chart-pdf", pageText) %}
+            {{ fmacrosExp.create_expand_charts_seasfcst("seasonal", pageText, "pdf") }}
+            {% endcall %}
         </div>
     </div>
     {{ fmacros.create_modal_matplotlib(pageText) }}

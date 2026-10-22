@@ -47,7 +47,6 @@ description:
         Les échelles de couleurs indiquent si la distribution de la prévision tend vers des conditions plus sèches (nuances de brun) ou plus humides (nuances de bleu) que la normale (couleur mocassin).
         </p>
 
-
 dataset:
     use: ALL
     variables:

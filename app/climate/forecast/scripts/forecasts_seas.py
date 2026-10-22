@@ -25,8 +25,17 @@ def climate_forecast_seas_data(params):
     if check['status'] == -1: return check
 
     if params['forecast'] == 'flexible':
+        units = None
+        pthres = None
         if params['parameter'] in ['probExc', 'probNoExc']:
             data = get_seasonal_probability_map(params)
+
+            pthres = params['probaThres']
+            if params['probaType'] == 'percentile':
+                units = '%-ile'
+            else:
+                var_units = {'rainfall': 'mm', 'temperature': '°C'}
+                units = var_units[params['variable']]
         elif params['parameter'] in ['TotRain', 'MeanTemp']:
             data = get_seasonal_deterministic_map(params)
         elif params['parameter'] in ['AnomRain', 'AnomTemp']:
@@ -51,9 +60,10 @@ def climate_forecast_seas_data(params):
                 colors=params['colorbar']['color_cbar'],
                 colors_ext=params['colorbar']['color_ext']
             )
+
         titles = {
-            'probExc': 'Probability of exceeding',
-            'probNoExc': 'Probability of non-exceeding',
+            'probExc': f"Probability of exceeding {pthres} {units}",
+            'probNoExc': f"Probability of non-exceeding {pthres} {units}",
             'TotRain': 'Total rainfall (mm)',
             'AnomRain': 'Rainfall anomaly (mm)',
             'MeanTemp': 'Mean temperature (°C)',
