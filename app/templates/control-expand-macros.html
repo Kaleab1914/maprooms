@@ -1234,10 +1234,216 @@ include_map=false
 </div>
 {% endmacro %}
 <!--  -->
+
+
 {% macro create_expand_charts_health_wasp(tempRes, pageText) %}
-<div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-health-wasp-control">
+{% set prefix = tempRes ~ '-wasp-chart' %}
+{% set labels = pageText.wasp.labels %}
+{% set calibration = pageText.wasp.calibration %}
+{% set comparison = pageText.wasp.comparison %}
+
+<div id="{{ tempRes }}-health-wasp-control"
+     class="d-flex flex-column gap-2 w-100 p-0"
+     data-baseline-label="{{ labels.comparison_baseline }}"
+     data-start-month-label="{{ labels.comparison_start_month }}"
+     data-departure-label="{{ labels.departure }}">
+
+    <div id="{{ prefix }}-control"
+         class="d-flex flex-wrap align-items-start gap-2 w-100">
+
+        <fieldset class="border border-secondary rounded-3 py-1"
+                  style="width: 9rem; max-width: 100%; min-width: 0;">
+
+            <legend class="legend-label">
+                {{ labels.accumulation }}
+            </legend>
+
+            <select id="{{ prefix }}-timescale"
+                    class="form-select {{ prefix }}-select2"
+                    style="width: 100%;">
+
+                {% for length in pageText.wasp.scales %}
+                <option value="{{ length }}"
+                        {% if length == pageText.wasp.default_scale %}
+                        selected
+                        {% endif %}>
+                    {{ length }} {{ labels.months }}
+                </option>
+                {% endfor %}
+            </select>
+        </fieldset>
+
+        <fieldset class="border border-secondary rounded-3 py-1"
+                  style="width: 26rem; max-width: 100%; min-width: 0;">
+
+            <legend class="legend-label">
+                {{ labels.calibration }}
+            </legend>
+
+            <div class="row g-2 align-items-end">
+
+                <div class="col-3">
+                    <label for="{{ prefix }}-base-start"
+                           class="d-block small mb-1">
+                        {{ labels.start_year }}
+                    </label>
+
+                    <input id="{{ prefix }}-base-start"
+                           type="number"
+                           class="form-control text-center"
+                           value="{{ calibration.start_year }}">
+                </div>
+
+                <div class="col-3">
+                    <label for="{{ prefix }}-base-end"
+                           class="d-block small mb-1">
+                        {{ labels.end_year }}
+                    </label>
+
+                    <input id="{{ prefix }}-base-end"
+                           type="number"
+                           class="form-control text-center"
+                           value="{{ calibration.end_year }}">
+                </div>
+
+                <div class="col-6">
+                    <label for="{{ prefix }}-base-min"
+                           class="d-block small mb-1">
+                        {{ labels.minimum_years }}
+                    </label>
+
+                    <input id="{{ prefix }}-base-min"
+                           type="number"
+                           class="form-control text-center"
+                           value="{{ calibration.minimum_years }}"
+                           style="width: 6em; max-width: 100%;">
+                </div>
+
+            </div>
+        </fieldset>
+
+    </div>
+
+    <div class="d-flex flex-wrap align-items-start gap-2 w-100">
+
+        <fieldset class="border border-secondary rounded-3 py-1"
+                  style="width: 16rem; max-width: 100%; min-width: 0;">
+
+            <legend class="legend-label">
+                {{ labels.chart_area }}
+            </legend>
+
+            <select id="{{ prefix }}-area"
+                    class="form-select"
+                    data-country-label="{{ labels.whole_country }}"
+                    style="width: 100%;">
+
+                <option value="country" selected>
+                    {{ labels.whole_country }}
+                </option>
+            </select>
+        </fieldset>
+
+        <fieldset class="border border-secondary rounded-3 py-1"
+                  style="width: 26rem; max-width: 100%; min-width: 0;">
+
+            <legend class="legend-label">
+                {{ labels.comparison_baseline }}
+            </legend>
+
+            <div class="row g-2 align-items-end">
+
+                <div class="col-auto">
+                    <label for="{{ prefix }}-comparison-start"
+                           class="d-block small mb-1">
+                        {{ labels.start_year }}
+                    </label>
+
+                    <input id="{{ prefix }}-comparison-start"
+                           type="number"
+                           step="1"
+                           class="form-control text-center"
+                           value="{{ comparison.start_year }}"
+                           style="width: 6em;">
+                </div>
+
+                <div class="col-auto">
+                    <label for="{{ prefix }}-comparison-end"
+                           class="d-block small mb-1">
+                        {{ labels.end_year }}
+                    </label>
+
+                    <input id="{{ prefix }}-comparison-end"
+                           type="number"
+                           step="1"
+                           class="form-control text-center"
+                           value="{{ comparison.end_year }}"
+                           style="width: 6em;">
+                </div>
+
+                <div class="col-auto"
+                     style="width: 11em; max-width: 100%;">
+
+                    <label for="{{ prefix }}-comparison-month-calendar"
+                           class="d-block small mb-1">
+                        {{ labels.comparison_start_month }}
+                    </label>
+
+                    <div id="{{ prefix }}-comparison-month"
+                         data-default="{{ comparison.start_month }}"
+                         style="width: 100%;">
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+
+        <fieldset class="border border-secondary rounded-3 py-1"
+                  style="width: 16rem; max-width: 100%; min-width: 0;">
+
+            <legend class="legend-label">
+                {{ labels.chart_period }}
+            </legend>
+
+            <div class="row g-2 align-items-end">
+
+                <div class="col-auto">
+                    <label for="{{ prefix }}-startdate-calendar"
+                           class="d-block small mb-1">
+                        {{ labels.start_year }}
+                    </label>
+
+                    <div id="{{ prefix }}-startdate"
+                         data-bs-toggle="tooltip"
+                         data-bs-placement="top"
+                         data-bs-title="{{ labels.start_year }}"
+                         style="width: 6em;">
+                    </div>
+                </div>
+
+                <div class="col-auto">
+                    <label for="{{ prefix }}-enddate-calendar"
+                           class="d-block small mb-1">
+                        {{ labels.end_year }}
+                    </label>
+
+                    <div id="{{ prefix }}-enddate"
+                         data-bs-toggle="tooltip"
+                         data-bs-placement="top"
+                         data-bs-title="{{ labels.end_year }}"
+                         style="width: 6em;">
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+
+    </div>
+
 </div>
 {% endmacro %}
+
+
 <!--  -->
 {% macro create_expand_charts_health_cmst(tempRes, pageText) %}
 <div class="container d-flex flex-wrap justify-content-start w-100" id="{{ tempRes }}-health-cmst-control">

@@ -64,8 +64,8 @@ dataset:
         dataset: PROJ
     variables:
         rainfall: [precip]
-        min_temperature: [tmin]
-        max_temperature: [tmax]
+        minimum_temperature: [tasmin]
+        maximum_temperature: [tasmax]
 
 variables:
     label:
@@ -75,10 +75,10 @@ variables:
         rainfall:
             en: Rainfall
             fr: Précipitations
-        min_temperature:
+        minimum_temperature:
             en: Minimum temperature
             fr: Température minimale
-        max_temperature:
+        maximum_temperature:
             en: Maximum temperature
             fr: Température maximale
 

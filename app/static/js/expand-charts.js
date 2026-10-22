@@ -1548,7 +1548,317 @@ async function setProjectionExpandModalSpi(tempRes, contID) {
         });
 }
 
-//////
+///////
+
+async function setHealthWaspExpandedControls(tempRes) {
+    const prefix = `${tempRes}-wasp-chart`;
+    const parent = $(`#${tempRes}-health-wasp-control`);
+    const area = $(`#${prefix}-area`);
+    const month = $(`#${prefix}-comparison-month`);
+
+    if (!area.data('waspAreasReady')) {
+        let subdivisions = SUBDIV_BE;
+
+        if (!subdivisions) {
+            const json = await $.getJSON(
+                '/map_subdivisions_data'
+            );
+
+            if (json.status !== 0) {
+                throw new Error(
+                    json.message ||
+                    'Unable to load administrative areas.'
+                );
+            }
+
+            subdivisions = json.data;
+        }
+
+        const options = [{
+            id: 'country',
+            text: area.attr('data-country-label')
+        }];
+
+        ['region', 'zone'].forEach(key => {
+            const layer = LAYERS.subdivision[key];
+            const source = subdivisions[key];
+
+            if (!layer || !source) {
+                return;
+            }
+
+            const geojson = typeof source === 'string'
+                ? JSON.parse(source)
+                : source;
+
+            const names = [...new Set(
+                geojson.features
+                    .map(feature => feature.properties.field)
+                    .filter(name =>
+                        name !== null && name !== undefined
+                    )
+                    .map(String)
+            )].sort((a, b) => a.localeCompare(b));
+
+            options.push({
+                text: typeof layer.name === 'string'
+                    ? layer.name
+                    : key,
+                children: names.map(name => ({
+                    id: JSON.stringify([key, name]),
+                    text: name
+                }))
+            });
+        });
+
+        area.empty().select2({
+            data: options,
+            dropdownParent: parent,
+            minimumResultsForSearch: 0
+        });
+
+        area.val('country').trigger('change.select2');
+        area.data('waspAreasReady', true);
+    }
+
+    // if (month.children('option').length === 0) {
+    //     getListOfMonthsCalendar().short.forEach(
+    //         (label, index) => {
+    //             month.append(
+    //                 new Option(label, index + 1)
+    //             );
+    //         }
+    //     );
+
+    //     month.val(
+    //         String(month.attr('data-default') || 1)
+    //     );
+    // }
+
+    // if (!month.hasClass('select2-hidden-accessible')) {
+    //     month.select2({
+    //         dropdownParent: parent,
+    //         minimumResultsForSearch: -1
+    //     });
+    // }
+
+
+    const monthHolder = `${prefix}-comparison-month`;
+
+    if (!$(`#${monthHolder}-calendar`).length) {
+        setNamesCalendar(
+            monthHolder,
+            'monthly',
+            parent,
+            false,
+            Number(
+                $(`#${monthHolder}`).attr('data-default') || 1
+            )
+        );
+    }
+
+    const coverage = $(`#${prefix}-control`)
+        .data('waspCoverage');
+
+    ['comparison-start', 'comparison-end'].forEach(field => {
+        const input = $(`#${prefix}-${field}`);
+        const value = Number(input.val());
+
+        input.attr({
+            min: coverage.plot_start_year,
+            max: coverage.plot_end_year
+        });
+
+        input.val(Math.max(
+            coverage.plot_start_year,
+            Math.min(
+                Number.isInteger(value)
+                    ? value
+                    : coverage.plot_start_year,
+                coverage.plot_end_year
+            )
+        ));
+    });
+
+    const start = $(`#${prefix}-comparison-start`);
+    const end = $(`#${prefix}-comparison-end`);
+
+    if (Number(start.val()) > Number(end.val())) {
+        end.val(start.val());
+    }
+}
+
+
+async function setHealthExpandModalWasp(tempRes, contID) {
+    const source = `${tempRes}-wasp-map`;
+    const prefix = `${tempRes}-wasp-chart`;
+    const container = `container-chart-${contID}`;
+    const modal = $(`#modal-expand-${contID}`);
+    const controls = $(`#${tempRes}-health-wasp-control`);
+
+    const query = queryParamsHealthWasp(tempRes, source);
+
+    if (!query) {
+        return false;
+    }
+
+    controls.data('waspBusy', true);
+    controls.off('.healthWaspExpanded');
+    controls.off('.healthWaspCalculation');
+
+    [
+        'timescale',
+        'base-start',
+        'base-end',
+        'base-min'
+    ].forEach(field => {
+        $(`#${prefix}-${field}`)
+            .val($(`#${source}-${field}`).val())
+            .trigger('change.select2');
+    });
+
+    setHealthWaspControls(prefix);
+    showModalDialog(`modal-expand-${contID}`);
+
+    try {
+        const ready = await setHealthWaspDateCalendars(
+            tempRes,
+            prefix
+        );
+
+        if (!ready) {
+            return false;
+        }
+
+        await setHealthWaspExpandedControls(tempRes);
+
+    } catch (error) {
+        console.error(error);
+        flashMessage(error.message, 'error');
+        return false;
+
+    } finally {
+        controls.data('waspBusy', false);
+    }
+
+    if (!modal.hasClass('show')) {
+        return false;
+    }
+
+    const draw = () => {
+        if (
+            modal.hasClass('show') &&
+            !controls.data('waspBusy')
+        ) {
+            expand_health_wasp_charts(
+                container,
+                tempRes
+            );
+        }
+    };
+
+    expandModalCharts(
+        contID,
+        expand_health_wasp_charts,
+        tempRes
+    );
+
+    purgePlotlyChartExpandModal(contID);
+    $(`#rangeselector-${contID}`).show();
+
+    let revision = 0;
+
+    controls.on(
+        'change.healthWaspCalculation',
+        [
+            `#${prefix}-timescale`,
+            `#${prefix}-base-start`,
+            `#${prefix}-base-end`,
+            `#${prefix}-base-min`
+        ].join(','),
+        async () => {
+            const current = ++revision;
+            controls.data('waspBusy', true);
+
+            try {
+                const ready = await setHealthWaspDateCalendars(
+                    tempRes,
+                    prefix
+                );
+
+                if (current !== revision) {
+                    return;
+                }
+
+                if (ready) {
+                    await setHealthWaspExpandedControls(tempRes);
+                }
+
+                if (current !== revision) {
+                    return;
+                }
+
+                controls.data('waspBusy', false);
+
+                if (ready) {
+                    draw();
+                }
+
+            } catch (error) {
+                if (current === revision) {
+                    controls.data('waspBusy', false);
+                    console.error(error);
+                    flashMessage(error.message, 'error');
+                }
+            }
+        }
+    );
+
+
+    const redraw = () => {
+        if (
+            !modal.hasClass('show') ||
+            controls.data('waspBusy')
+        ) {
+            return;
+        }
+
+        maproomDB.getData('ts_health_wasp', data => {
+            if (data) {
+                expand_health_display_wasp(data, container);
+            }
+        });
+    };
+
+    controls.on(
+        'change.healthWaspExpanded',
+        `#${prefix}-area`,
+        draw
+    );
+
+    controls.on(
+        'change.healthWaspExpanded',
+        [
+            `#${prefix}-comparison-start`,
+            `#${prefix}-comparison-end`,
+            `#${prefix}-comparison-month-calendar`,
+            `#${prefix}-startdate-calendar`,
+            `#${prefix}-enddate-calendar`
+        ].join(','),
+        redraw
+    );
+
+
+    $(`#plotly-replot-${contID}`)
+        .off('click.healthWaspExpand')
+        .on('click.healthWaspExpand', draw);
+
+    $(`#plotly-download-${contID}`)
+        .off('click.healthWaspExpand')
+        .on('click.healthWaspExpand', () => {
+            downloadPlotlyImageJPG(container);
+        });
+}
 
 async function setAnalysisExpandModalSeasFcst(tempRes, contID, expandID) {
     const expand_functions = {
@@ -1680,3 +1990,4 @@ function setChartSeasFcstTargets(tempRes, year, month, fcst_obj, expandID) {
         );
     }
 }
+

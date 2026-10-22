@@ -4295,4 +4295,454 @@ function expand_projection_spi_display(json, container) {
         container,
         true
     );
+
+}
+
+
+///////
+
+function expand_health_wasp_query(tempRes) {
+    const prefix = `${tempRes}-wasp-chart`;
+    const control = $(`#${prefix}-control`);
+
+    if (!control.data('waspCalendarReady')) {
+        return false;
+    }
+
+    const query = queryParamsHealthWasp(tempRes, prefix);
+
+    if (!query) {
+        return false;
+    }
+
+    const selectedArea = $(`#${prefix}-area`).val();
+
+    if (selectedArea === 'country') {
+        Object.assign(query, {
+            geomExtract: 'polygons',
+            countryAverage: true,
+            Poly: 'Whole country'
+        });
+
+    } else {
+        let selection;
+
+        try {
+            selection = JSON.parse(selectedArea);
+        } catch (error) {
+            flashMessage(
+                'Select a country, region or zone.',
+                'error'
+            );
+            return false;
+        }
+
+        if (
+            !Array.isArray(selection) ||
+            selection.length !== 2
+        ) {
+            return false;
+        }
+
+        const [key, name] = selection;
+        const layer = LAYERS.subdivision[key];
+
+        if (
+            !['region', 'zone'].includes(key) ||
+            !layer ||
+            typeof name !== 'string' ||
+            !name
+        ) {
+            flashMessage(
+                'Select a valid administrative area.',
+                'error'
+            );
+            return false;
+        }
+
+        Object.assign(query, {
+            geomExtract: 'polygons',
+            countryAverage: false,
+            shpSource: 'default',
+            shpFile: layer.file,
+            shpField: layer.field,
+            Poly: name,
+            allPolygons: false
+        });
+    }
+
+    return query;
+}
+
+
+function expand_health_wasp_charts(container, tempRes) {
+    const query = expand_health_wasp_query(tempRes);
+
+    if (!query) {
+        return false;
+    }
+
+    return ajaxDisplayChart(
+        createEndpoint(
+            'health_malaria',
+            'health_wasp_series'
+        ),
+        query,
+        expand_health_display_wasp,
+        container,
+        'ts_health_wasp'
+    );
+}
+
+
+
+function expand_health_format_wasp(jsonInput) {
+    const json = makeCopy(jsonInput);
+    const prefix = `${json.info.time_res}-wasp-chart`;
+
+    const readNumber = suffix => Number(
+        $(`#${prefix}-${suffix}`).val()
+    );
+
+    const firstYear = Number(json.time[0].slice(0, 4));
+    const lastYear = Number(json.time.at(-1).slice(0, 4));
+
+    const baseStart = readNumber('comparison-start');
+    const baseEnd = readNumber('comparison-end');
+    const startMonth = readNumber('comparison-month-calendar');
+    const plotStart = readNumber('startdate-calendar');
+    const plotEnd = readNumber('enddate-calendar');
+    const length = json.info.time_scale;
+
+    try {
+        const numbers = [
+            baseStart, baseEnd, startMonth,
+            plotStart, plotEnd, length
+        ];
+
+        if (
+            !numbers.every(Number.isInteger) ||
+            baseStart > baseEnd ||
+            plotStart > plotEnd ||
+            baseStart < firstYear ||
+            baseEnd > lastYear ||
+            plotStart < firstYear ||
+            plotEnd > lastYear ||
+            startMonth < 1 || startMonth > 12 ||
+            length < 1 || length > 12
+        ) {
+            throw new Error(
+                'Select valid comparison and chart dates.'
+            );
+        }
+
+        // Stored WASP values are dated at the ending month, like SPI
+        const valuesByMonth = new Map(
+            json.time.map((date, index) => [
+                date.slice(0, 7),
+                json.values[index]
+            ])
+        );
+
+        const samples = [];
+        const windowEnds = [];
+
+        for (let year = baseStart; year <= baseEnd; year++) {
+            const endingDate = new Date(Date.UTC(
+                year,
+                startMonth - 1 + length - 1,
+                1
+            ));
+
+            const month = endingDate
+                .toISOString()
+                .slice(0, 7);
+
+            const value = valuesByMonth.get(month);
+
+            if (!Number.isFinite(value)) {
+                throw new Error(
+                    `No complete WASP comparison window ` +
+                    `for starting year ${year}.`
+                );
+            }
+
+            samples.push(value);
+            windowEnds.push(`${month}-01`);
+        }
+
+        const baseline = samples.reduce(
+            (total, value) => total + value,
+            0
+        ) / samples.length;
+
+        // Determine the baseline before displaying years
+        const selected = json.time
+            .map((date, index) => ({
+                date,
+                value: json.values[index]
+            }))
+            .filter(item => {
+                const year = Number(item.date.slice(0, 4));
+                return year >= plotStart && year <= plotEnd;
+            });
+
+        if (!selected.some(item =>
+            Number.isFinite(item.value)
+        )) {
+            throw new Error(
+                'No valid WASP values in the chart period.'
+            );
+        }
+
+        json.time = selected.map(item => item.date);
+        json.values = selected.map(item => item.value);
+
+        json.comparison = {
+            baseline,
+            start_year: baseStart,
+            end_year: baseEnd,
+            start_month: startMonth,
+            window_length: length,
+            sample_count: samples.length,
+            window_end_dates: windowEnds
+        };
+
+        let limit = Math.max(3, Math.ceil(Math.abs(baseline)));
+
+        json.values.forEach(value => {
+            if (Number.isFinite(value)) {
+                limit = Math.max(limit, Math.ceil(Math.abs(value)));
+            }
+        });
+
+        json.yrange = [-limit, limit];
+        json.yticks = Array.from(
+            { length: 2 * limit + 1 },
+            (_, index) => index - limit
+        );
+
+        return json;
+
+    } catch (error) {
+        flashMessage(error.message, 'error');
+        return null;
+    }
+}
+
+
+function expand_health_display_wasp(jsonInput, container) {
+    const json = expand_health_format_wasp(jsonInput);
+
+    if (json === null) {
+        return false;
+    }
+
+    const comparison = json.comparison;
+
+    if (
+        !comparison ||
+        !Number.isFinite(comparison.baseline)
+    ) {
+        flashMessage(
+            'The comparison baseline is unavailable.',
+            'error'
+        );
+        return false;
+    }
+
+    const baseline = comparison.baseline;
+    const theme = $('html').attr('data-bs-theme');
+    const lineColor = theme === 'dark'
+        ? '#f8f9fa'
+        : '#212529';
+
+    const controls = $('#monthly-health-wasp-control');
+
+    const baselineLabel = controls.attr(
+        'data-baseline-label'
+    ) || 'Comparison baseline';
+
+    const startMonthLabel = controls.attr(
+        'data-start-month-label'
+    ) || 'Starting month';
+
+    const departureLabel = controls.attr(
+        'data-departure-label'
+    ) || 'Departure from baseline';
+
+    const months = getListOfMonthsCalendar().short;
+
+    const years = comparison.start_year === comparison.end_year
+        ? String(comparison.start_year)
+        : `${comparison.start_year}–${comparison.end_year}`;
+
+    const monthLabel = months[
+        comparison.start_month - 1
+    ];
+
+    const hoverDates = json.time.map(time => {
+        return formatPlotlyHoverDate(
+            time,
+            json.info.time_res,
+            json.info.seas_len,
+            json.info.seas_daily
+        );
+    });
+
+    const departures = json.values.map(value => {
+        return value === null
+            ? null
+            : value - baseline;
+    });
+
+    const data = [
+        {
+            x: json.time,
+            y: departures,
+            base: baseline,
+            type: 'bar',
+            name: departureLabel,
+            showlegend: false,
+            customdata: json.values.map((value, index) => [
+                hoverDates[index],
+                value
+            ]),
+            marker: {
+                color: json.values.map(value => {
+                    if (value === null) {
+                        return 'rgba(0,0,0,0)';
+                    }
+
+                    return value >= baseline
+                        ? '#198754'
+                        : '#8c510a';
+                }),
+                line: { width: 0 }
+            },
+            hovertemplate:
+                '%{customdata[0]}<br>' +
+                json.info.var.name +
+                ': %{customdata[1]:.2f}<br>' +
+                departureLabel +
+                ': %{y:.2f}<extra></extra>'
+        },
+        {
+            x: json.time,
+            y: json.values,
+            type: 'scatter',
+            mode: 'lines',
+            name: json.info.var.name,
+            line: {
+                color: lineColor,
+                width: 1
+            },
+            connectgaps: false,
+            hoverinfo: 'skip'
+        },
+        {
+            x: [
+                json.time[0],
+                json.time[json.time.length - 1]
+            ],
+            y: [baseline, baseline],
+            type: 'scatter',
+            mode: 'lines',
+            name: (
+                `${baselineLabel}: ${baseline.toFixed(2)}`
+            ),
+            line: {
+                color: lineColor,
+                width: 2
+            },
+            hoverinfo: 'skip'
+        }
+    ];
+
+    let layout = {
+        // title: {
+        //     text: (
+        //         `${json.info.geom.name} — ` +
+        //         `${baselineLabel}: ${years}; ` +
+        //         `${startMonthLabel}: ${monthLabel}`
+        //     ),
+        //     font: { size: 13 },
+        //     x: 0.05,
+        //     xanchor: 'left'
+        // },
+
+        title: {
+            text: (
+                `Precipitation relative to years ${years}, ` +
+                `starting ${monthLabel}`
+            ),
+            font: { size: 13 },
+            x: 0.05,
+            xanchor: 'left'
+        },
+
+        xaxis: {
+            type: 'date',
+            tickformat: '%Y',
+            tickangle: 0,
+            dtick: xaxisPlotlyLabelYears(json.time),
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.3,
+            griddash: 'dot',
+            rangeslider: deepMerge(
+                plotly_rangeslider,
+                { visible: true }
+            )
+        },
+        yaxis: {
+            range: json.yrange,
+            tickvals: json.yticks,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.3,
+            griddash: 'dot',
+            zeroline: true,
+            title: {
+                text: json.info.var.name
+            }
+        },
+        showlegend: true,
+        legend: {
+            orientation: 'h',
+            x: 0,
+            xanchor: 'left',
+            y: 1.02,
+            yanchor: 'bottom'
+        },
+        barmode: 'overlay',
+        bargap: 0.05
+    };
+
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(expand_layout, layout);
+    layout.margin.t = 85;
+
+    purgePlotlyChart(container);
+
+    return Plotly.newPlot(
+        container,
+        data,
+        layout,
+        {
+            displayModeBar: false,
+            displaylogo: false,
+            responsive: true
+        }
+    ).then(() => {
+        setPlotlyThemeColors(container);
+        resizePlotlyChart(container);
+
+        addRangeselector(
+            container,
+            ['1Y', '5Y', '10Y', '15Y', '20Y', '30Y', 'ALL'],
+            new Date(json.time[json.time.length - 1])
+        );
+    });
 }

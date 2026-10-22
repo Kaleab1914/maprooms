@@ -1,29 +1,34 @@
 {% extends "layout.html" %}
-{% block title %} {{metInfo.pageTitle}} {% endblock %}
+{% block title %}
+{{ metInfo.pageTitle }}
+{% endblock %}
 {% block head %}
 {{ super() }}
 <style>
     .card-description {
         height: 90vh;
     }
+
     .card-description-tab {
         max-height: 78vh;
     }
 </style>
 {% endblock %}
 {% block content %}
-<!--  -->
 <div class="container-fluid" id="container-page">
     <div class="row">
+
         <div class="col-sm-4">
             {{ fmacros.create_card_information(pageText.description, pageText.instruction) }}
         </div>
+
         <div class="col-sm-8">
             <div class="row">
                 <div class="col-sm-12 col-map-container">
-                    <div id="div-map-container" class="div-map-container">
-                        {% call fmacros.create_map_control(pageText, urlArgs) %}
-                        {{ fmacrosMap.create_map_control_health_wasp("seasonal", pageText) }}
+                    <div id="div-map-container"
+                         class="div-map-container">
+                        {% call fmacros.create_map_control(pageText,urlArgs) %}
+                            {{ fmacrosMap.create_map_control_health_wasp("monthly", pageText) }}
                         {% endcall %}
                     </div>
                 </div>
@@ -32,7 +37,7 @@
                 <div class="col-sm-6">
                     {{ fmacros.create_card_charts("div-chart-wasp", pageText) }}
                     {% call fmacros.create_modal_expand_charts("div-chart-wasp", pageText) %}
-                    {{ fmacrosExp.create_expand_charts_health_wasp("seasonal", pageText) }}
+                        {{ fmacrosExp.create_expand_charts_health_wasp("monthly",pageText) }}
                     {% endcall %}
                 </div>
             </div>
@@ -43,6 +48,5 @@
 {% endblock %}
 {% block javascript %}
 {% include "block-js.html" %}
-<script type="text/javascript" src="{{ url_for('health_malaria.static', filename='js/wasp.js') }}"></script>
+<script src="{{ url_for('health_malaria.static', filename='js/wasp.js') }}"></script>
 {% endblock %}
-
