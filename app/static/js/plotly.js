@@ -303,7 +303,9 @@ function addPlotlyExportLogo(chart_url, icon, box, scale) {
     });
 }
 
-async function downloadPlotlyImageJPG(container) {
+// infoContainer: where the chart info is saved, when the chart is drawn
+// in a child of that container
+async function downloadPlotlyImageJPG(container, infoContainer = container) {
     const logo = await loadPlotlyExportLogo();
     var gd = document.getElementById(container);
     const plot_layout = gd.layout;
@@ -416,7 +418,8 @@ async function downloadPlotlyImageJPG(container) {
         .then(function(jpegUrl) {
             const link = document.createElement('a');
             link.href = jpegUrl;
-            link.download = 'this_graph.jpeg';
+            const name = getChartDownloadName(infoContainer) || 'this_graph';
+            link.download = `${name}.jpeg`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);

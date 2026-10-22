@@ -229,11 +229,21 @@ function formatChartInfoSeason(query) {
 
 
 function getChartInfoPeriod(query, data) {
+    const period = getChartPeriod(query, data);
+    if (period === null) {
+        return null;
+    }
+    return {
+        start: formatChartInfoDate(period.start, query.temporalRes),
+        end: formatChartInfoDate(period.end, query.temporalRes)
+    };
+}
+
+// start and end dates as the query sends them (2022-01, 2022-01-1
+// for a dekad, 1997 for a year), or the first and last years of the data
+function getChartPeriod(query, data) {
     if (query.startDate !== undefined && query.endDate !== undefined) {
-        return {
-            start: formatChartInfoDate(query.startDate, query.temporalRes),
-            end: formatChartInfoDate(query.endDate, query.temporalRes)
-        };
+        return { start: String(query.startDate), end: String(query.endDate) };
     }
 
     if (query.startYear !== undefined) {
@@ -250,6 +260,31 @@ function getChartInfoPeriod(query, data) {
     }
 
     return null;
+}
+
+// file name of a downloaded chart: its variable and the start and end
+// dates of its data, e.g. Monthly_rainfall_2022-01_2026-05;
+// null if the chart has no variable
+function getChartDownloadName(container) {
+    const info = CHART_INFOS[container];
+    const variable = info && info.data && info.data.info && info.data.info.var;
+    if (!variable || !variable.name) {
+        return null;
+    }
+
+    const parts = [variable.name];
+    const period = getChartPeriod(info.query, info.data);
+    if (period) {
+        parts.push(period.start, period.end);
+    } else if (info.query.minYear !== undefined) {
+        // a climatology has no dates, only its base period
+        parts.push(info.query.startYear, info.query.endYear);
+    }
+
+    // drop characters that file names cannot hold; spaces become _
+    return parts.join('_')
+        .replace(/[\\/:*?"<>|]/g, '')
+        .replace(/\s+/g, '_');
 }
 
 

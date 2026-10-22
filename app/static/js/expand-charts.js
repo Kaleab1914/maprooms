@@ -594,7 +594,7 @@ function setAnalysisExpandModalProba(tempRes, contID) {
     $(`#plotly-download-${contID}`)
         .off('click.chartTsProba')
         .on('click.chartTsProba', function() {
-            downloadPlotlyImageJPG(`${contChart}-plot`);
+            downloadPlotlyImageJPG(`${contChart}-plot`, contChart);
         });
 }
 
