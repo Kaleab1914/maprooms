@@ -1119,3 +1119,138 @@ function displayClimateProjectionSeasonalMap(options, map) {
         map
     );
 }
+
+
+///////
+
+function queryParamsHealthWasp(tempRes, prefix = `${tempRes}-wasp-map`) {
+    const query = {
+        dataset: DATA_SET.use,
+        temporalRes: 'monthly',
+        variable: 'rainfall',
+        analysis: 'wasp',
+        timeScale: Number(
+            $(`#${prefix}-timescale`).val()
+        ),
+        startYear: Number(
+            $(`#${prefix}-base-start`).val()
+        ),
+        endYear: Number(
+            $(`#${prefix}-base-end`).val()
+        ),
+        minYear: Number(
+            $(`#${prefix}-base-min`).val()
+        )
+    };
+
+    const valid = (
+        Number.isInteger(query.timeScale) &&
+        query.timeScale >= 1 &&
+        query.timeScale <= 12 &&
+        Number.isInteger(query.startYear) &&
+        query.startYear >= 1 &&
+        query.startYear <= 9998 &&
+        Number.isInteger(query.endYear) &&
+        query.endYear >= query.startYear &&
+        query.endYear <= 9998 &&
+        Number.isInteger(query.minYear) &&
+        query.minYear >= 2 &&
+        query.minYear <= query.endYear - query.startYear + 1
+    );
+
+    if (!valid) {
+        flashMessage(
+            'Enter valid accumulation and calibration parameters.',
+            'error'
+        );
+        return false;
+    }
+
+    return query;
+}
+
+
+function queryParamsHealthWaspMap(tempRes) {
+    const prefix = `${tempRes}-wasp-map`;
+    const control = $(`#${prefix}-control`);
+
+    if (!control.data('waspCalendarReady')) {
+        return false;
+    }
+
+    const query = queryParamsHealthWasp(tempRes, prefix);
+
+    if (!query) {
+        return false;
+    }
+
+    const coverage = control.data('waspCoverage');
+
+    const endingMonth = String(
+        $(`#${tempRes}-map-date-calendar`).val() || ''
+    ).trim();
+
+    if (
+        !/^\d{4}-(0[1-9]|1[0-2])$/.test(endingMonth) ||
+        endingMonth < coverage.start.slice(0, 7) ||
+        endingMonth > coverage.end.slice(0, 7)
+    ) {
+        flashMessage(
+            'Select an ending month within WASP coverage.',
+            'error'
+        );
+        return false;
+    }
+
+    const beginning = new Date(
+        `${endingMonth}-01T00:00:00Z`
+    );
+
+    beginning.setUTCMonth(
+        beginning.getUTCMonth() - query.timeScale + 1
+    );
+
+    query.Date = endingMonth;
+    query.StartDate = beginning.toISOString().slice(0, 7);
+    query.colorbar = colorbarGetData();
+
+    if (!query.colorbar) {
+        return false;
+    }
+
+    return query;
+}
+
+
+function displayHealthWaspMap(tempRes, options, map) {
+    const query = queryParamsHealthWaspMap(tempRes);
+
+    if (!query) {
+        return false;
+    }
+
+    return ajaxLeafletMap(
+        createEndpoint(
+            'health_malaria',
+            'health_wasp_map'
+        ),
+        query,
+        (data, settings, targetMap) => {
+            displayRasterImage(
+                data,
+                settings,
+                targetMap
+            );
+
+            const label = $('<div>')
+                .text(data.date)
+                .html();
+
+            targetMap.displayText_date.update(
+                label.replace('; ', '<br>')
+            );
+        },
+        options,
+        map
+    );
+}

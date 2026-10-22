@@ -15,7 +15,7 @@ description:
         <h6>References</h6>
         <ul>
         <li>
-        Lyon, B., and A. G. Barnston.ENSO and the spatial extent of interannual precipitation extremes in tropical land areas.Journal of Climate, 200518:5095-5109.
+        Lyon, B., and A. G. Barnston. <a href="http://journals.ametsoc.org/doi/abs/10.1175/JCLI3598.1"> ENSO and the spatial extent of interannual precipitation extremes in tropical land areas </a>. Journal of Climate, 200518:5095-5109.
         </li>
         </ul>
 
@@ -34,17 +34,81 @@ description:
         <h6>Références</h6>
         <ul>
         <li>
-        Lyon, B., and A. G. Barnston. ENSO and the spatial extent of interannual precipitation extremes in tropical land areas. Journal of Climate, 2005, 18:5095-5109.
+        Lyon, B., and A. G. Barnston. <a href="http://journals.ametsoc.org/doi/abs/10.1175/JCLI3598.1">ENSO and the spatial extent of interannual precipitation extremes in tropical land areas </a>. Journal of Climate, 2005, 18:5095-5109.
         </li>
         </ul>
 
-# all about daily
+
 dataset:
-    rawdata:
-        dataset: ALL
-    dryday:
-        dataset: ALL
-    climatology:
-        dataset: ALL
-    anomaly:
-        dataset: ALL
+    use: ALL
+    variables:
+        rainfall: [precip]
+
+wasp:
+    default_scale: 12
+    scales: [1, 3, 12]
+
+    calibration:
+        start_year: 1991
+        end_year: 2020
+        minimum_years: 30
+
+    comparison:
+        start_year: 1995
+        end_year: 1999
+        start_month: 1
+
+    labels:
+        accumulation:
+            en: Accumulation
+            fr: Accumulation
+        months:
+            en: months
+            fr: mois
+        ending_month:
+            en: Ending month
+            fr: Mois de fin
+        calibration:
+            en: Rainfall calibration period
+            fr: Période de référence des précipitations
+        start_year:
+            en: Start year
+            fr: Année de début
+        end_year:
+            en: End year
+            fr: Année de fin
+        minimum_years:
+            en: Minimum valid years per calendar month
+            fr: Nombre minimum d'années valides par mois
+        chart_period:
+            en: Chart period
+            fr: Période du graphique
+
+        start_month:
+            en: Starting month and year
+            fr: Mois et année de début
+
+        chart_area:
+            en: Chart spatial average
+            fr: Moyenne spatiale du graphique
+
+        whole_country:
+            en: Whole country
+            fr: Ensemble du pays
+
+        selected_area:
+            en: Selected point, region or zone
+            fr: Point, région ou zone sélectionné
+
+        comparison_baseline:
+            en: Comparison baseline
+            fr: Référence de comparaison
+
+        comparison_start_month:
+            en: Starting month of comparison windows
+            fr: Mois de début des périodes de comparaison
+
+        departure:
+            en: Departure from baseline
+            fr: Écart à la référence
+

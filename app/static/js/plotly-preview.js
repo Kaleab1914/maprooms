@@ -3447,3 +3447,132 @@ function preview_seasfcst_display_ter(json, container) {
         });
     });
 }
+
+
+///////
+function preview_health_wasp_query(
+    tempRes,
+    prefix = `${tempRes}-wasp-map`
+) {
+    if (
+        !$(`#${prefix}-control`)
+            .data('waspCalendarReady')
+    ) {
+        return false;
+    }
+
+    const query = queryParamsHealthWasp(tempRes, prefix);
+
+    if (!query) {
+        return false;
+    }
+
+    return {
+        ...query,
+        geomExtract: 'polygons',
+        countryAverage: true,
+        Poly: 'Whole country'
+    };
+}
+
+
+function preview_health_wasp_charts(
+    tempRes,
+    container = 'div-chart-wasp'
+) {
+    const query = preview_health_wasp_query(tempRes);
+
+    if (!query) {
+        return false;
+    }
+
+    return ajaxDisplayChart(
+        createEndpoint(
+            'health_malaria',
+            'health_wasp_series'
+        ),
+        query,
+        preview_health_display_wasp,
+        container
+    );
+}
+
+
+function preview_health_display_wasp(json, container) {
+    $(`#${container}`).empty();
+
+    const hoverDates = json.time.map(time => {
+        return formatPlotlyHoverDate(
+            time,
+            json.info.time_res,
+            json.info.seas_len,
+            json.info.seas_daily
+        );
+    });
+
+    const data = [{
+        x: json.time,
+        y: json.values,
+        type: 'bar',
+        name: json.info.var.name,
+        customdata: hoverDates,
+        marker: {
+            color: json.values.map(value => {
+                if (value === null) {
+                    return 'rgba(0,0,0,0)';
+                }
+
+                return value >= 0 ? '#198754' : '#8c510a';
+            }),
+            line: { width: 0 }
+        },
+        hovertemplate:
+            '%{customdata}<br>' +
+            '%{data.name}: %{y:.2f}<extra></extra>'
+    }];
+
+    let layout = {
+        xaxis: {
+            type: 'date',
+            tickformat: '%Y',
+            tickangle: 0,
+            dtick: xaxisPlotlyLabelYears(json.time),
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.3,
+            griddash: 'dot'
+        },
+        yaxis: {
+            range: json.yrange,
+            tickvals: json.yticks,
+            fixedrange: true,
+            showline: true,
+            showgrid: true,
+            gridwidth: 0.3,
+            griddash: 'dot',
+            zeroline: true
+        },
+        showlegend: false,
+        bargap: 0.05
+    };
+
+    layout = deepMerge(setPlotlyColors(), layout);
+    layout = deepMerge(preview_layout, layout);
+    layout.margin.l = 40;
+
+    purgePlotlyChart(container);
+
+    return Plotly.newPlot(
+        container,
+        data,
+        layout,
+        {
+            displayModeBar: false,
+            responsive: true
+        }
+    ).then(() => {
+        setPlotlyThemeColors(container);
+    });
+}
+

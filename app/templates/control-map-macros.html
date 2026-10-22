@@ -1369,11 +1369,100 @@
 
 </div>
 {% endmacro %}
+
 <!--  -->
-{% macro create_map_control_health_wasp(tempRes, pageText) %}
-<div class="container">
+
+{% macro create_map_control_health_wasp(tempRes, pageText, prefix=none, include_map=true) %}
+{% set prefix = prefix or tempRes ~ '-wasp-map' %}
+{% set labels = pageText.wasp.labels %}
+{% set calibration = pageText.wasp.calibration %}
+
+<div class="container" id="{{ prefix }}-control">
+
+   {# {% if include_map %} #}
+    <select id="{{ tempRes }}-map-variable" hidden>
+        <option value="rainfall" selected>Rainfall</option>
+    </select>
+   {# {% endif %}  #}
+
+    <fieldset class="border border-secondary rounded-3">
+        <legend class="legend-label">
+            {{ labels.accumulation }}
+        </legend>
+
+        <select id="{{ prefix }}-timescale"
+                class="form-select {{ prefix }}-select2"
+                style="width: 50%;">
+            {% for length in pageText.wasp.scales %}
+            <option value="{{ length }}"
+                    {% if length == pageText.wasp.default_scale %}
+                    selected
+                    {% endif %}>
+                {{ length }} {{ labels.months }}
+            </option>
+            {% endfor %}
+        </select>
+    </fieldset>
+
+    {% if include_map %}
+    <fieldset class="border border-secondary rounded-3">
+        <legend class="legend-label">
+            {{ labels.ending_month }}
+        </legend>
+
+        <div id="{{ tempRes }}-map-date"
+             data-bs-toggle="tooltip"
+             data-bs-placement="top"
+             data-bs-title="{{ labels.ending_month }}">
+        </div>
+    </fieldset>
+    {% endif %}
+
+    <fieldset class="border border-secondary rounded-3">
+        <legend class="legend-label">
+            {{ labels.calibration }}
+        </legend>
+
+        <div class="row gx-1">
+            <div class="col-md-4">
+                <label for="{{ prefix }}-base-start">
+                    {{ labels.start_year }}
+                </label>
+
+                <input id="{{ prefix }}-base-start"
+                       type="number"
+                       class="form-control text-center"
+                       value="{{ calibration.start_year }}">
+            </div>
+
+            <div class="col-6">
+                <label for="{{ prefix }}-base-end">
+                    {{ labels.end_year }}
+                </label>
+
+                <input id="{{ prefix }}-base-end"
+                       type="number"
+                       class="form-control text-center"
+                       value="{{ calibration.end_year }}">
+            </div>
+
+            <div class="col-12">
+                <label for="{{ prefix }}-base-min">
+                    {{ labels.minimum_years }}
+                </label>
+
+                <input id="{{ prefix }}-base-min"
+                       type="number"
+                       class="form-control text-center"
+                       value="{{ calibration.minimum_years }}">
+            </div>
+        </div>
+    </fieldset>
+
 </div>
 {% endmacro %}
+
+
 <!--  -->
 {% macro create_map_control_health_cmst(tempRes, pageText) %}
 <div class="container">
